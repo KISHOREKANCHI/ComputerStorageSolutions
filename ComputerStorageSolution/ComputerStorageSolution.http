@@ -1,0 +1,6 @@
+@ComputerStorageSolution_HostAddress = http://localhost:5236
+
+GET {{ComputerStorageSolution1_HostAddress}}/ComputerStorageSolutions/
+Accept: application/json
+
+###

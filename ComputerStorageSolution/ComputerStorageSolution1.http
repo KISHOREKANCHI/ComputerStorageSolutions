@@ -1,6 +1,0 @@
-@ComputerStorageSolution1_HostAddress = http://localhost:5236
-
-GET {{ComputerStorageSolution1_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
