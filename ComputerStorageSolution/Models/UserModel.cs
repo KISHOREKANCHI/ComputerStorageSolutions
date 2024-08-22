@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
+using System.Text.Json.Serialization;
 
 namespace ComputerStorageSolutions.Models
 {
-    public class UserDbModel
+    public class UserModel
     {
         [Key]
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -21,16 +21,17 @@ namespace ComputerStorageSolutions.Models
         [StringLength(255)]
         public string Email { get; set; } = string.Empty;
 
-        [ForeignKey("Role")]
-        public int RoleId { get; set; }
+        [ForeignKey(nameof( Role))]
+        public Guid RoleId { get; set; }
 
         public DateTime CreatedDate { get; set; }
 
         [Required]
         public bool IsActive { get; set; }
 
-        // Navigation property
-        public virtual RoleDbModel Role { get; set; }
+        [JsonIgnore]
+        public virtual RoleModel? Role { get; set; }
+        /*public virtual ICollection<OrdersDbModel> Orders { get; set; } = new List<OrdersDbModel>();*/
     }
 
 }
