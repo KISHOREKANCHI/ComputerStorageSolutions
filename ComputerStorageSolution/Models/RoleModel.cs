@@ -2,16 +2,16 @@
 
 namespace ComputerStorageSolutions.Models
 {
-    public class RoleDbModel
+    public class RoleModel
     {
         [Key]
-        public int RoleId { get; set; }
+        public Guid RoleId { get; set; }
 
         [Required]
         [StringLength(50)]
         public string RoleName { get; set; } = string.Empty;
 
         // Navigation property
-        public virtual ICollection<UserDbModel> Users { get; set; } = new List<UserDbModel>();
+        /*public virtual ICollection<UserDbModel> Users { get; set; } = new List<UserDbModel>();*/
     }
 }
