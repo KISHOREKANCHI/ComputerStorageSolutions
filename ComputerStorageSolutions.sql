@@ -104,6 +104,24 @@ VALUES
 ('32GB Memory Card', 4, '32GB MicroSD Memory Card', 10.00, 300, '/images/32gb_sd.png', 'Available'),
 ('64GB Memory Card', 4, '64GB MicroSD Memory Card', 20.00, 250, '/images/64gb_sd.png', 'Available');
 
+
+INSERT INTO Orders (OrderId, UserId, OrderDate, TotalAmount, OrderStatus, ShippingAddress)
+VALUES 
+(NEWID(), 'A2887F44-4F46-4196-8B61-BAD0E46DF7D9', '2024-08-01', 150.00, 'Shipped', '123 Main St, City, Country'),
+(NEWID(), '45CF8051-E083-4873-B273-FA4A467687AD', '2024-08-02', 200.00, 'Processing', '456 Elm St, City, Country'),
+(NEWID(), 'A2887F44-4F46-4196-8B61-BAD0E46DF7D9', '2024-08-03', 250.00, 'Delivered', '789 Oak St, City, Country'),
+(NEWID(), '45CF8051-E083-4873-B273-FA4A467687AD', '2024-08-04', 300.00, 'Cancelled', '101 Pine St, City, Country'),
+(NEWID(), 'A2887F44-4F46-4196-8B61-BAD0E46DF7D9', '2024-08-05', 350.00, 'Pending', '202 Maple St, City, Country');
+
+
+INSERT INTO OrderDetails (OrderDetailId, OrderId, ProductId, Quantity, UnitPrice)
+VALUES 
+(NEWID(), '8F3E99AB-AEF0-44CD-A5E7-01D449F3D5A7', '3FA85F64-5717-4562-B3FC-2C963F66AFA6', 2, 75.00),
+(NEWID(), '6843CE9E-8506-4296-9083-2E739AB956D0', '665BBC35-DE5E-EF11-8496-BC035861A58E', 1, 200.00),
+(NEWID(), 'DC976F92-66CC-4CD3-801B-6B267CB8E16C', '675BBC35-DE5E-EF11-8496-BC035861A58E', 5, 50.00),
+(NEWID(), '9075B42A-9923-4E5E-8E06-B1D4417E5E32', '685BBC35-DE5E-EF11-8496-BC035861A58E', 3, 100.00),
+(NEWID(), 'DBD91776-72C7-4704-9641-CF69FCFD9C4A', '695BBC35-DE5E-EF11-8496-BC035861A58E', 7, 50.00)
+
 -- Display data from all tables
  
 -- Display Roles

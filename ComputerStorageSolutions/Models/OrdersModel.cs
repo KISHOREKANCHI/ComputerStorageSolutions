@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace ComputerStorageSolutions.Models
 {
-    public class OrdersDbModel
+    public class OrdersModel
     {
         [Key]
         public Guid OrderId { get; set; }
@@ -25,9 +25,7 @@ namespace ComputerStorageSolutions.Models
         public string ShippingAddress { get; set; } = string.Empty;
 
         [JsonIgnore]
-        public virtual UserDbModel? Users { get; set; }
-        /*public ICollection<OrderDetailsDbModel> Details { get; set; } = new List<OrderDetailsDbModel>();
-
-        public ICollection<InvoicesDbModel> Invoices { get; set; } = new List<InvoicesDbModel>();*/
+        public virtual UserModel? Users { get; set; }
+       
     }
 }

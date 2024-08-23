@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
 namespace ComputerStorageSolutions.Controllers
@@ -61,7 +60,7 @@ namespace ComputerStorageSolutions.Controllers
                 {
                     return Ok("Username must be unique");
                 }
-                Database.Users.Add(new UserDbModel
+                Database.Users.Add(new UserModel
                 {
                     Username = input.Username,
                     PasswordHash = input.PasswordHash,

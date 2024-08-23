@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace ComputerStorageSolutions.Models
 {
-    public class OrderDetailsDbModel
+    public class OrderDetailsModel
     {
         [Key]
         public Guid InvoiceId { get; set; }
@@ -23,9 +23,9 @@ namespace ComputerStorageSolutions.Models
         public decimal TotalAmount { get; set; }
 
         [JsonIgnore]
-        public virtual OrdersDbModel? Orders { get; set; }
+        public virtual OrdersModel? Orders { get; set; }
         [JsonIgnore]
-        public virtual ProductsDbModel? Products { get; set; }
+        public virtual ProductsModel? Products { get; set; }
 
     }
 }

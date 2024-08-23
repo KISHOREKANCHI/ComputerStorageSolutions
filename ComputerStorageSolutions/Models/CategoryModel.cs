@@ -2,7 +2,7 @@
 
 namespace ComputerStorageSolutions.Models
 {
-    public class CategoryDbModel
+    public class CategoryModel
     {
         [Key]
         public int CategoryId { get; set; }
@@ -14,7 +14,6 @@ namespace ComputerStorageSolutions.Models
         [StringLength(255)]
         public string Description { get; set; } = string.Empty;
 
-        /*public virtual ICollection<ProductsDbModel> Products { get; set; } = new List<ProductsDbModel>();*/
     }
 }
 

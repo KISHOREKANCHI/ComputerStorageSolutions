@@ -1,1 +1,31 @@
+@ComputerStorageSolutions_HostAddress = http://localhost:5037
+
+GET {{ComputerStorageSolutions_HostAddress}}/ComputerStorageSolutions/
+Accept: application/json
+
+###
+
+POST {{ComputerStorageSolutions_HostAddress}}/api/Login
+Content-Type:application/json
+
+{
+  "email": "admin1@gmail.com",
+  "passwordHash": "password"
+}
+
+###
+PATCH {{ComputerStorageSolutions_HostAddress}}/api/Products/ModifyProduct
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKd3RTdWJqZWN0IiwianRpIjoiNTliMmY0NDYtNDViMy00MWIyLWJhNzUtOTM2YTQ2NGJjYmM4IiwiVXNlcklkIjoiNDY2Y2E3NzUtYzU4Ny00ZGVjLWFjNzQtMWQyZmU1OWEzNDVkIiwiRW1haWwiOiJhZG1pbjFAZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiMmY4MzgxODEtNGZmZC00Y2QxLThhZjgtOTk1Mzg5NmIwZTg4IiwiZXhwIjoxNzI0NDEyMzk4LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMzciLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUwMzcifQ.gky2SORnWc_uXxqsy2Jt1aKh1xz0nnt9e-OQGDaEiU1qnzq6GnI4jcN6GLoW9cXpEYPfnUIU9_tqgXDjYSYAWw
+Content-Type:application/json
+
+{
+  "productId": "6A0B70AF-8660-EF11-93BA-005056BDF33B",
+  "productName": "500GB SSD",
+  "categoryId": 1,
+  "description": "Mid-range SSD with 500GB capacity",
+  "price": 70,
+  "stockQuantity": 25,
+  "imageUrl": "/images/500gb_ssd.png",
+  "status": "Available"
+}
 

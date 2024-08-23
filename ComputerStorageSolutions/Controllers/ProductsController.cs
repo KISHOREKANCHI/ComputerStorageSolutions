@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ComputerStorageSolutions.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace ComputerStorageSolutions.Controllers
 {
@@ -17,27 +16,95 @@ namespace ComputerStorageSolutions.Controllers
 
         public enum CategoryList
         {
-            [Display(Name = "SSD")]
             SSD = 1,
-            [Display(Name = "HDD")]
             HDD = 2,
-            [Display(Name = "Flash Drives")]
             FLashDrives = 3,
-            [Display(Name = "Memory Cards")]
             MemoryCards = 4,
+
         }
 
-        [HttpGet(Name = "CategoryList")]
-
-
-        public ActionResult GetCategories(CategoryList CategoryList)
+        [HttpGet]
+        public IActionResult GetProducts()
         {
             var result = (from Products in Database.Products
-                          where Products.CategoryId == (int)CategoryList
                           select Products).ToList();
             return Ok(result);
-
-
         }
+
+        [HttpGet]
+        [Route("Categories")]
+        public IActionResult GetCategories(CategoryList CategoryList)
+        { 
+            var result = (from Products in Database.Products
+                          where ((Products.CategoryId == (int)CategoryList) && (Products.Status == "Available"))
+                          select Products).ToList();
+            return Ok(result);
+        }
+
+        [HttpDelete]
+        [Authorize(Policy = SecurityPolicy.Admin)]
+        [Route("DeleteProducts")]
+        public IActionResult DeleteProduct(Guid Guid)
+        {
+            var result = (from Products in Database.Products
+                          where Products.ProductId == Guid
+                          select Products
+                          );
+            foreach (var item in result)
+            {
+                item.Status = "NotAvailable";
+                /*
+                stock quantity is not set to 0 bcz sometimes admin might not want to display product even thought its available
+                item.StockQuantity = 0;
+                */
+            }
+            Database.SaveChanges();
+            return Ok(Database.Products.ToList());
+        }
+
+        [Authorize(Policy = SecurityPolicy.Admin)]
+        [HttpPost("AddProduct")]
+        public IActionResult AddProduct([FromBody] ProductsModel Product)
+        {
+            Database.Products.Add(Product);
+            Database.SaveChanges();
+            return Ok(Database.Products.ToList());
+        }
+
+        [Authorize(Policy = SecurityPolicy.Admin)]
+        [HttpPatch("ModifyProduct")]
+        public IActionResult ModifyProduct([FromBody] ProductsModel Product)
+        {
+            var result = from product in Database.Products
+                         where product.ProductId == Product.ProductId
+                         select product;
+            foreach (var item in result)
+            {
+                item.ProductName = Product.ProductName;
+                item.CategoryId = Product.CategoryId;
+                item.Description = Product.Description;
+                item.Price = Product.Price;
+                item.StockQuantity = Product.StockQuantity;
+                item.ImageUrl = Product.ImageUrl;
+                item.Status = Product.Status;
+            }
+            Database.SaveChanges();
+            return Ok(Database.Products.ToList());
+        }
+
+
+        /*
+        Example  Note- Existing Product
+        {
+          "productId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "productName": "500GB HDD",
+          "categoryId": 2,
+          "description": "Affordable HDD with 500GB capacity",
+          "price": 25,
+          "stockQuantity": 25,
+          "imageUrl": "/images/500gb_hdd.png",
+          "status": "NotAvailable"
+        }
+        */
     }
 }

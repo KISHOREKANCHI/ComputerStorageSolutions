@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace ComputerStorageSolutions.Models
 {
-    public class UserDbModel
+    public class UserModel
     {
         [Key]
         /*[DatabaseGenerated(DatabaseGeneratedOption.Identity)]*/
@@ -31,8 +31,7 @@ namespace ComputerStorageSolutions.Models
         public bool IsActive { get; set; }
 
         [JsonIgnore]
-        public virtual RoleDbModel? Role { get; set; }
-        /*public virtual ICollection<OrdersDbModel> Orders { get; set; } = new List<OrdersDbModel>();*/
+        public virtual RoleModel? Role { get; set; }
     }
 
 }

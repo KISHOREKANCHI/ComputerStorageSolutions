@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace ComputerStorageSolutions.Models
 {
-    public class ProductsDbModel
+    public class ProductsModel
     {
         [Key]
         public Guid ProductId { get; set; }
@@ -29,9 +29,11 @@ namespace ComputerStorageSolutions.Models
         [StringLength(255)]
         public string ImageUrl { get; set; } = string.Empty;
 
-        [JsonIgnore]
-        public virtual CategoryDbModel? Category { get; set; }
+        [Required]
+        public String Status { get; set; } = String.Empty;
 
-        /*public virtual ICollection<OrderDetailsDbModel> OrderDetails { get; set; } = new List<OrderDetailsDbModel>();*/
+        [JsonIgnore]
+        public virtual CategoryModel? Category { get; set; }
+
     }
 }
