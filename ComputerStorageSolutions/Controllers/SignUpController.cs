@@ -44,9 +44,6 @@ namespace ComputerStorageSolutions.Controllers
             else if (!email.Success)
             {
                 return BadRequest("Please follow valid email structure");
-                string abc = "abc";
-                string bcd = "bcd";
-                string gca = "gca";
             }
             else
             {
