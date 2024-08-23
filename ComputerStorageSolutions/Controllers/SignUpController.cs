@@ -1,8 +1,8 @@
 ﻿using ComputerStorageSolutions.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ComputerStorageSolutions.Controllers
 {
@@ -60,22 +60,29 @@ namespace ComputerStorageSolutions.Controllers
                 {
                     return Ok("Username must be unique");
                 }
-                Database.Users.Add(new UserModel
-                {
-                    Username = input.Username,
-                    PasswordHash = input.PasswordHash,
-                    Email = input.Email,
-                    RoleId = Customer,
-                    CreatedDate = DateTime.Now,
-                    IsActive = true,
-                });
-                Database.SaveChanges();
-                return Ok("Created Successfully");
 
+                // Hash the password using SHA-512
+                using (SHA512 sha512 = SHA512.Create())
+                {
+                    var hashedPasswordBytes = sha512.ComputeHash(Encoding.UTF8.GetBytes(input.PasswordHash));
+                    var hashedPassword = Convert.ToBase64String(hashedPasswordBytes);
+
+                    Database.Users.Add(new UserModel
+                    {
+                        Username = input.Username,
+                        PasswordHash = hashedPassword, 
+                        Email = input.Email,
+                        RoleId = Customer,
+                        CreatedDate = DateTime.Now,
+                        IsActive = true,
+                    });
+                    Database.SaveChanges();
+                }
+                return Ok("Created Successfully");
             }
         }
 
-        public class SignUpInput()
+        public class SignUpInput
         {
             public string Username { get; set; } = string.Empty;
             public string PasswordHash { get; set; } = string.Empty;
