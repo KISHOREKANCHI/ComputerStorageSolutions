@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComputerStorageSolutionsWebApi", "ComputerStorageSolutions\ComputerStorageSolutionsWebApi.csproj", "{982260FF-E6E0-433D-9683-CF30E235E299}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComputerStorageSolutionsWebApi", "ComputerStorageSolutionsWebApi\ComputerStorageSolutionsWebApi.csproj", "{982260FF-E6E0-433D-9683-CF30E235E299}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
