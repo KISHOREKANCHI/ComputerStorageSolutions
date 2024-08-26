@@ -482,3 +482,25 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+
+# Angular specific ignores
+node_modules/
+dist/
+tmp/
+temp/
+*.log
+.sass-cache/
+*.sass-cache
+*.scss-cache
+*.css-cache
+*.css.map
+*.scss.map
+*.sass.map
+*.tscache
+*.tsbuildinfo
+.angular/
+.angular-cli.json
+.angular.json
+.idea/
+.vscode/
