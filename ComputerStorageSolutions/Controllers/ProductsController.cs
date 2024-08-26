@@ -16,6 +16,7 @@ namespace ComputerStorageSolutions.Controllers
 
         public enum CategoryList
         {
+
             SSD = 1,
             HDD = 2,
             FLashDrives = 3,
@@ -24,6 +25,7 @@ namespace ComputerStorageSolutions.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetProducts()
         {
             var result = (from Products in Database.Products
@@ -32,9 +34,11 @@ namespace ComputerStorageSolutions.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("Categories")]
         public IActionResult GetCategories(CategoryList CategoryList)
-        { 
+        {
+
             var result = (from Products in Database.Products
                           where ((Products.CategoryId == (int)CategoryList) && (Products.Status == "Available"))
                           select Products).ToList();
@@ -91,20 +95,5 @@ namespace ComputerStorageSolutions.Controllers
             Database.SaveChanges();
             return Ok(Database.Products.ToList());
         }
-
-
-        /*
-        Example  Note- Existing Product
-        {
-          "productId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "productName": "500GB HDD",
-          "categoryId": 2,
-          "description": "Affordable HDD with 500GB capacity",
-          "price": 25,
-          "stockQuantity": 25,
-          "imageUrl": "/images/500gb_hdd.png",
-          "status": "NotAvailable"
-        }
-        */
     }
 }
