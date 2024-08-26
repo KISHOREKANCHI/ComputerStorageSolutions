@@ -9,23 +9,26 @@ POST {{ComputerStorageSolutions_HostAddress}}/api/Login
 Content-Type:application/json
 
 {
-  "email": "admin1@gmail.com",
-  "passwordHash": "password"
+  "email": "janedoe@gmail.com",
+  "passwordHash": "hashed_pw3"
 }
 
 ###
+GET {{ComputerStorageSolutions_HostAddress}}/api/Products
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKd3RTdWJqZWN0IiwianRpIjoiYmVmODg5MDgtODMyMi00YWM1LTg3OTUtNjEyNDA0ZmY0ODg3IiwiVXNlcklkIjoiYTI4ODdmNDQtNGY0Ni00MTk2LThiNjEtYmFkMGU0NmRmN2Q5IiwiRW1haWwiOiJqYW5lZG9lQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6Ijk2YWM4ZDEyLWI2MzEtNDYzOC1hOWM2LWM0ODU2MGFmNDk5MSIsImV4cCI6MTcyNDY1MDg5NCwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDM3IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo1MDM3In0.iEfsU9kpo-RMnfc8bgBd3z_ePZ1Q2QfiDueY0vFqDvBbYMlNPXtvQQxPfQCf_u6uPwAq4bVNAOzLndA8zRmEQg
+###
 PATCH {{ComputerStorageSolutions_HostAddress}}/api/Products/ModifyProduct
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKd3RTdWJqZWN0IiwianRpIjoiNTliMmY0NDYtNDViMy00MWIyLWJhNzUtOTM2YTQ2NGJjYmM4IiwiVXNlcklkIjoiNDY2Y2E3NzUtYzU4Ny00ZGVjLWFjNzQtMWQyZmU1OWEzNDVkIiwiRW1haWwiOiJhZG1pbjFAZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiMmY4MzgxODEtNGZmZC00Y2QxLThhZjgtOTk1Mzg5NmIwZTg4IiwiZXhwIjoxNzI0NDEyMzk4LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMzciLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUwMzcifQ.gky2SORnWc_uXxqsy2Jt1aKh1xz0nnt9e-OQGDaEiU1qnzq6GnI4jcN6GLoW9cXpEYPfnUIU9_tqgXDjYSYAWw
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKd3RTdWJqZWN0IiwianRpIjoiZDRlNWJkNDQtODU1MS00MGQ2LTk0MTktZWI4YmVhMzk5YmQ5IiwiVXNlcklkIjoiYTI4ODdmNDQtNGY0Ni00MTk2LThiNjEtYmFkMGU0NmRmN2Q5IiwiRW1haWwiOiJqYW5lZG9lQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6Ijk2YWM4ZDEyLWI2MzEtNDYzOC1hOWM2LWM0ODU2MGFmNDk5MSIsImV4cCI6MTcyNDM5OTQ0MiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDM3IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo1MDM3In0.Ovf61dFVFjDzQVDdO5Rk0Yupt5hrD1ciJiNu3xsgSlviw7Lv9yPUyQcjsHVXjIZfUyjcYF0csYhz2R3f-CjNsw
 Content-Type:application/json
 
 {
-  "productId": "6A0B70AF-8660-EF11-93BA-005056BDF33B",
-  "productName": "500GB SSD",
-  "categoryId": 1,
-  "description": "Mid-range SSD with 500GB capacity",
-  "price": 70,
+  "productId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "productName": "500GB HDD",
+  "categoryId": 2,
+  "description": "Affordable HDD with 500GB capacity",
+  "price": 25,
   "stockQuantity": 25,
-  "imageUrl": "/images/500gb_ssd.png",
-  "status": "Available"
+  "imageUrl": "/images/500gb_hdd.png",
+  "status": "NotAvailable"
 }
-
