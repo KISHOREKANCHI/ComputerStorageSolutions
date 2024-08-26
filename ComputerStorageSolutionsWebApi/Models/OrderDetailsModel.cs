@@ -7,7 +7,7 @@ namespace ComputerStorageSolutions.Models
     public class OrderDetailsModel
     {
         [Key]
-        public Guid InvoiceId { get; set; }
+        public Guid OrderDetailId { get; set; }
 
         [ForeignKey(nameof(Orders))]
         public Guid OrderId { get; set; }
@@ -20,7 +20,7 @@ namespace ComputerStorageSolutions.Models
 
         [Required]
         [Column(TypeName = "decimal(10, 2)")]
-        public decimal TotalAmount { get; set; }
+        public decimal UnitPrice { get; set; }
 
         [JsonIgnore]
         public virtual OrdersModel? Orders { get; set; }

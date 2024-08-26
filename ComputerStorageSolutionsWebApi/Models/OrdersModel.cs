@@ -17,6 +17,7 @@ namespace ComputerStorageSolutions.Models
 
         [Required]
         [Column(TypeName = "decimal(10, 2)")]
+        public decimal TotalAmount { get; set; }
 
         [StringLength(50)]
         public string OrderStatus { get; set; } = string.Empty;
@@ -26,6 +27,5 @@ namespace ComputerStorageSolutions.Models
 
         [JsonIgnore]
         public virtual UserModel? Users { get; set; }
-       
     }
 }
