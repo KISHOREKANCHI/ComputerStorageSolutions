@@ -27,5 +27,10 @@ namespace ComputerStorageSolutions.Models
 
         [JsonIgnore]
         public virtual UserModel? Users { get; set; }
+<<<<<<< Updated upstream
+=======
+        /*public ICollection<OrderDetailsModel>? OrderDetails { get; set; } = new List<OrderDetailsModel>();*/
+
+>>>>>>> Stashed changes
     }
 }

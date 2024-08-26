@@ -13,6 +13,12 @@ namespace ComputerStorageSolutions.Controllers
         public DbSet<ProductsModel> Products { get; set; }
 
         public DbSet<RoleModel> Roles { get; set; }
+<<<<<<< Updated upstream
+=======
+        public DbSet<OrdersModel> Orders { get; set; }
+        public DbSet<OrderDetailsModel> OrderDetails { get; set; }
+    }
+>>>>>>> Stashed changes
 
         public DbSet<OrderDetailsModel> OrderDetails { get; set; }
 

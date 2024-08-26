@@ -9,7 +9,7 @@ namespace ComputerStorageSolutions.Models
         [Key]
         public Guid OrderDetailId { get; set; }
 
-        [ForeignKey(nameof(Orders))]
+        [ForeignKey(nameof(Order))]
         public Guid OrderId { get; set; }
 
         [ForeignKey(nameof(Products))]
@@ -23,9 +23,11 @@ namespace ComputerStorageSolutions.Models
         public decimal UnitPrice { get; set; }
 
         [JsonIgnore]
-        public virtual OrdersModel? Orders { get; set; }
+        public virtual OrdersModel? Order { get; set; }
         [JsonIgnore]
         public virtual ProductsModel? Products { get; set; }
+        //public ICollection<OrderDetailsModel>? OrderDetails { get; set; } = new List<OrderDetailsModel>();
+
 
     }
 }

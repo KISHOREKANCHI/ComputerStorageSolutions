@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace ComputerStorageSolutions.Controllers
 {
@@ -17,7 +18,7 @@ namespace ComputerStorageSolutions.Controllers
         }
 
         [HttpPost(Name = "CreateUser")]
-        public ActionResult SignUp([FromBody] SignUpInput input)
+        public async Task<IActionResult> SignUp([FromBody] SignUpInput input)
         {
             var regexUsernamePassword = @"^[a-zA-Z][a-zA-Z0-9]{2,}$";
             var regexEmail = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
@@ -45,42 +46,41 @@ namespace ComputerStorageSolutions.Controllers
             {
                 return BadRequest("Please follow valid email structure");
             }
-            else
+
+            var checkEmail = await Database.Users
+                                      .Where(user => user.Email == input.Email)
+                                      .ToListAsync();
+
+            var customerRoleId = await Database.Roles
+                                .Where(roles => roles.RoleName == "Customer")
+                                .Select(roles => roles.RoleId)
+                                .SingleOrDefaultAsync();
+
+            if (checkEmail.Count > 0)
             {
-                var CheckEmail = (
-                                     from user in Database.Users
-                                     where user.Email == input.Email
-                                     select user
-                                     ).ToList();
-                var Customer = (from roles in Database.Roles
-                                where roles.RoleName == "Customer"
-                                select roles.RoleId).SingleOrDefault();
-
-                if (CheckEmail.Count > 0)
-                {
-                    return Ok("Username must be unique");
-                }
-
-                // Hash the password using SHA-512
-                using (SHA512 sha512 = SHA512.Create())
-                {
-                    var hashedPasswordBytes = sha512.ComputeHash(Encoding.UTF8.GetBytes(input.PasswordHash));
-                    var hashedPassword = Convert.ToBase64String(hashedPasswordBytes);
-
-                    Database.Users.Add(new UserModel
-                    {
-                        Username = input.Username,
-                        PasswordHash = hashedPassword, 
-                        Email = input.Email,
-                        RoleId = Customer,
-                        CreatedDate = DateTime.Now,
-                        IsActive = true,
-                    });
-                    Database.SaveChanges();
-                }
-                return Ok("Created Successfully");
+                return Ok("Email must be unique");
             }
-        }
+
+            // Hash the password using SHA-512
+            using (SHA512 sha512 = SHA512.Create())
+            {
+                var hashedPasswordBytes = sha512.ComputeHash(Encoding.UTF8.GetBytes(input.PasswordHash));
+                var hashedPassword = Convert.ToBase64String(hashedPasswordBytes);
+
+                Database.Users.Add(new UserModel
+                {
+                    Username = input.Username,
+                    PasswordHash = hashedPassword,
+                    Email = input.Email,
+                    RoleId = customerRoleId,
+                    CreatedDate = DateTime.Now,
+                    IsActive = true,
+                });
+               await Database.SaveChangesAsync();
+            }
+            return Ok("Created Successfully");
+        
+}
 
         public class SignUpInput
         {
