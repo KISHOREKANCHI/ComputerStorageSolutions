@@ -14,7 +14,7 @@ namespace ComputerStorageSolutions.Controllers
             Database = database;
         }
         [HttpGet("UserOrders")]
-        /*[Authorize]*/
+        [Authorize]
         public async Task<IActionResult> GetUserOrders(Guid userId)
         {
             // Retrieve the orders and their details for the specified user
