@@ -26,35 +26,21 @@ namespace ComputerStorageSolutions.Controllers
         }
 
         [HttpGet]
-<<<<<<< Updated upstream:ComputerStorageSolutionsWebApi/Controllers/ProductsController.cs
         [Authorize]
-        public IActionResult GetProducts()
-=======
         public async Task<IActionResult> GetProducts()
->>>>>>> Stashed changes:ComputerStorageSolutions/Controllers/ProductsController.cs
         {
             var result = await Database.Products.ToListAsync();
             return Ok(result);
         }
 
-<<<<<<< Updated upstream:ComputerStorageSolutionsWebApi/Controllers/ProductsController.cs
         [HttpGet]
         [Authorize]
         [Route("Categories")]
-        public IActionResult GetCategories(CategoryList CategoryList)
-        {
-
-            var result = (from Products in Database.Products
-                          where ((Products.CategoryId == (int)CategoryList) && (Products.Status == "Available"))
-                          select Products).ToList();
-=======
-        [HttpGet("Categories")]
         public async Task<IActionResult> GetCategories(CategoryList categoryList)
         {
             var result = await Database.Products
                 .Where(p => p.CategoryId == (int)categoryList && p.Status == "Available")
                 .ToListAsync();
->>>>>>> Stashed changes:ComputerStorageSolutions/Controllers/ProductsController.cs
             return Ok(result);
         }
 
@@ -103,14 +89,9 @@ namespace ComputerStorageSolutions.Controllers
                 item.ImageUrl = product.ImageUrl;
                 item.Status = product.Status;
             }
-<<<<<<< Updated upstream:ComputerStorageSolutionsWebApi/Controllers/ProductsController.cs
-            Database.SaveChanges();
-            return Ok(Database.Products.ToList());
-=======
 
             await Database.SaveChangesAsync();
             return Ok(await Database.Products.ToListAsync());
->>>>>>> Stashed changes:ComputerStorageSolutions/Controllers/ProductsController.cs
         }
     }
 }

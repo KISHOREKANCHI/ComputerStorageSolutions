@@ -1,0 +1,29 @@
+<div>
+    <h2>Login</h2>
+    <form (ngSubmit)="Login()">
+      <label for="email">Email:</label>
+      <input type="text" id="email" [(ngModel)]="email" name="email" required>
+      <br>
+      <label for="password">Password:</label>
+      <input type="password" id="password" [(ngModel)]="passwordHash" name="password" required>
+      <br>
+      <button type="submit">Login</button>
+    </form>
+  
+    <div *ngIf="UserDetails">
+        <h3>User Details</h3>
+        <p><strong>User ID:</strong> {{ UserDetails.UserId }}</p>
+        <p><strong>Username:</strong> {{ UserDetails.Username }}</p>
+        <p><strong>Email:</strong> {{ UserDetails.Email }}</p>
+        <p><strong>Role ID:</strong> {{ UserDetails.RoleId }}</p>
+        <p><strong>Created Date:</strong> {{ UserDetails.CreatedDate | date }}</p>
+        <p><strong>Is Active:</strong> {{ UserDetails.IsActive }}</p>
+    </div>
+  </div>
+  
+
+   <!-- <div>
+    <button (click)="getData()">Get Data</button>
+    <p *ngIf="response">Response: {{ response }}</p>
+  </div> -->
+  
