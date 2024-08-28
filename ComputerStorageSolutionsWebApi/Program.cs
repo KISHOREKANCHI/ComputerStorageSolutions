@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
     .WriteTo.Console()
-    .WriteTo.File("Logs/ComputerStorageSolutions.txt", rollingInterval: RollingInterval.Day)
+    .WriteTo.File("Logs/ComputerStorageSolutions.log", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
 builder.Host.UseSerilog();
@@ -61,6 +61,7 @@ builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
+app.UseSerilogRequestLogging();
 app.UseCors(options =>
 {
     options.AllowAnyHeader();

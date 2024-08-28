@@ -9,9 +9,11 @@ namespace ComputerStorageSolutions.Controllers
     public class OrderDetailsController : ControllerBase
     {
         private readonly DataBaseConnect Database;
-        public OrderDetailsController(DataBaseConnect database)
+        private readonly ILogger<OrderDetailsController> Logger;
+        public OrderDetailsController(DataBaseConnect database, ILogger<OrderDetailsController> _Logger)
         {
             Database = database;
+            Logger = _Logger;
         }
         [HttpGet("UserOrders")]
         [Authorize]

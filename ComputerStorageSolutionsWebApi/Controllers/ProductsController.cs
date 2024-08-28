@@ -10,10 +10,12 @@ namespace ComputerStorageSolutions.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly DataBaseConnect Database;
+        private readonly ILogger<ProductsController> Logger;
 
-        public ProductsController(DataBaseConnect _Database)
+        public ProductsController(DataBaseConnect _Database, ILogger<ProductsController> _Logger)
         {
             Database = _Database;
+            Logger = _Logger;
         }
 
         public enum CategoryList

@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace ComputerStorageSolutions.Controllers
 {
@@ -13,71 +13,95 @@ namespace ComputerStorageSolutions.Controllers
     {
         private readonly DataBaseConnect Database;
         private readonly IConfiguration Configuration;
+        private readonly ILogger<LoginController> Logger;
 
-        public LoginController(DataBaseConnect database, IConfiguration configuration)
+        public LoginController(DataBaseConnect _Database, IConfiguration _Configuration, ILogger<LoginController> _Logger)
         {
-           Database = database;
-            Configuration = configuration;
+            Database = _Database;
+            Configuration = _Configuration;
+            Logger = _Logger;
         }
 
         [HttpPost(Name = "VerifyUser")]
-        public async Task<IActionResult> Login([FromBody] LoginInput input)
+        public IActionResult Login([FromBody] LoginInput input)
         {
-            if (string.IsNullOrEmpty(input.Email))
+            try
             {
-                return BadRequest("Email cannot be empty");
-            }
-            else if (string.IsNullOrEmpty(input.PasswordHash))
-            {
-                return BadRequest("Password cannot be empty");
-            }
-
-            var result = await (from user in Database.Users
-                                join role in Database.Roles on user.RoleId equals role.RoleId
-                                where user.Email == input.Email && user.PasswordHash == input.PasswordHash
-                                select new
-                                {
-                                    User = user,
-                                    Role = role.RoleName
-                                }).ToListAsync();
-
-            if (result.Count > 0)
-            {
-                var claims = new[]
+                if (string.IsNullOrEmpty(input.Email))
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, Configuration["Jwt:Subject"]!),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim("UserId", result[0].User.UserId.ToString()),
-                    new Claim("Email", result[0].User.Email.ToString()),
-                    new Claim(ClaimTypes.Role, result[0].User.RoleId.ToString())
-                };
-
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]!));
-                var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
-                var token = new JwtSecurityToken(
-                    Configuration["Jwt:Issuer"],
-                    Configuration["Jwt:Audience"],
-                    claims,
-                    expires: DateTime.UtcNow.AddMinutes(60),
-                    signingCredentials: signIn
-                );
-
-                string tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
-
-                return Ok(new
+                    Logger.LogWarning("Login attempt with empty email.");
+                    return BadRequest("Email cannot be empty");
+                }
+                if (string.IsNullOrEmpty(input.Password))
                 {
-                    Token = tokenValue,
-                    User = result
-                });
-            }
+                    Logger.LogWarning("Login attempt with empty password for email: {Email}", input.Email);
+                    return BadRequest("Password cannot be empty");
+                }
 
-            return BadRequest("Email or password does not exist");
+                // Hash the input password using SHA-512
+                string hashedPassword;
+                using (SHA512 sha512 = SHA512.Create())
+                {
+                    var hashedPasswordBytes = sha512.ComputeHash(Encoding.UTF8.GetBytes(input.Password));
+                    hashedPassword = Convert.ToBase64String(hashedPasswordBytes);
+                }
+
+                var result = (from user in Database.Users
+                              join role in Database.Roles on user.RoleId equals role.RoleId
+                              where user.Email == input.Email && user.PasswordHash == hashedPassword
+                              select new
+                              {
+                                  User = user,
+                                  Role = role.RoleName
+                              }).ToList();
+
+                if (result.Count != 0)
+                {
+                    var claims = new[]
+                    {
+                        new Claim(JwtRegisteredClaimNames.Sub, Configuration["Jwt:Subject"] ?? string.Empty),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        new Claim("UserId", result[0].User.UserId.ToString()),
+                        new Claim("Email", result[0].User.Email),
+                        new Claim(ClaimTypes.Role, result[0].Role)
+                    };
+
+                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"] ?? string.Empty));
+                    var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
+
+                    var token = new JwtSecurityToken(
+                        Configuration["Jwt:Issuer"],
+                        Configuration["Jwt:Audience"],
+                        claims,
+                        expires: DateTime.UtcNow.AddMinutes(60),
+                        signingCredentials: signIn
+                    );
+
+                    string tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
+
+                    Logger.LogInformation("User {Email} logged in successfully at {Time}.", input.Email, DateTime.UtcNow);
+
+                    return Ok(new
+                    {
+                        Token = tokenValue,
+                        User = result
+                    });
+                }
+
+                Logger.LogWarning("Failed login attempt for email: {Email} at {Time}.", input.Email, DateTime.UtcNow);
+                return BadRequest("Email or password does not exist");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "An error occurred during login attempt for email: {Email} at {Time}.", input.Email, DateTime.UtcNow);
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
         }
 
         public class LoginInput
         {
             public string Email { get; set; } = string.Empty;
-            public string PasswordHash { get; set; } = string.Empty;
+            public string Password { get; set; } = string.Empty;
         }
     }
 }
