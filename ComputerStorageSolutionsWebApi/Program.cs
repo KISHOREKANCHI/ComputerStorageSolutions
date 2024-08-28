@@ -45,6 +45,15 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(SecurityPolicy.Admin, SecurityPolicy.AdminPolicy());
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder.WithOrigins("http://localhost:4200")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials());
+});
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -52,6 +61,12 @@ builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
+app.UseCors(options =>
+{
+    options.AllowAnyHeader();
+    options.AllowAnyMethod();
+    options.AllowAnyOrigin();
+});
 app.UseAuthentication();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
