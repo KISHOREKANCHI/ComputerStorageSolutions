@@ -11,11 +11,13 @@ namespace ComputerStorageSolutions.Controllers
     {
         private readonly DataBaseConnect Database;
         private readonly ILogger<ProductsController> Logger;
+        private readonly ITokenService tokenService;
 
-        public ProductsController(DataBaseConnect _Database, ILogger<ProductsController> _Logger)
+        public ProductsController(DataBaseConnect _Database, ILogger<ProductsController> _Logger, ITokenService _tokenService)
         {
             Database = _Database;
             Logger = _Logger;
+            tokenService = _tokenService;
         }
 
         public enum CategoryList
@@ -27,12 +29,19 @@ namespace ComputerStorageSolutions.Controllers
             MemoryCards = 4,
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize]
-        public async Task<IActionResult> GetProducts()
+        public async Task<IActionResult> GetProducts([FromBody] string token)
         {
-            var result = await Database.Products.ToListAsync();
-            return Ok(result);
+            if (tokenService.ValidateToken(token))
+            {
+                var result = await Database.Products.ToListAsync();
+                return Ok(result);
+            }
+            else
+            {
+                return Unauthorized("Invalid token");
+            }
         }
 
         [HttpGet]

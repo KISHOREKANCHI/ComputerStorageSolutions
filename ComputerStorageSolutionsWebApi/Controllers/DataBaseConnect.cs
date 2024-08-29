@@ -21,6 +21,7 @@ namespace ComputerStorageSolutions.Controllers
         
         public DbSet<InvoicesModel> Invoices { get; set; }
 
-        public DbSet<CartModel> Cart { get; set; }
+        
+        public DbSet<Cart> Carts { get; set; }
     }
 }

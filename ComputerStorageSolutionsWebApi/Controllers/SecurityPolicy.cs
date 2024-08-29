@@ -7,7 +7,7 @@ namespace ComputerStorageSolutions.Controllers
     {
 
         public const string Admin = "2F838181-4FFD-4CD1-8AF8-9953896B0E88";
-        public const string User = "BC39DC2C-AC04-4D9F-8361-7E4744DE7B5D";
+        public const string User = "D8CF7302-366A-4CEF-BF70-AC974CFE48DC";
 
 
         public static AuthorizationPolicy AdminPolicy()

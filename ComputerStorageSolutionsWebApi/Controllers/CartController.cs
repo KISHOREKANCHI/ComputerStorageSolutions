@@ -1,16 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using ComputerStorageSolutions.Models;
 
 namespace ComputerStorageSolutions.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize] // Requires authentication
     public class CartController : ControllerBase
     {
         private readonly DataBaseConnect Database;
@@ -22,107 +19,112 @@ namespace ComputerStorageSolutions.Controllers
             Logger = _Logger;
         }
 
-        // GET: api/Cart
-        [HttpGet]
-        public async Task<IActionResult> GetCart()
+        // GET: api/Cart/{userId}
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<IEnumerable<Cart>>> GetCart(int userId)
         {
-            var userId = User.FindFirst("UserId")?.Value; // Assuming UserId is stored in claims
-            if (string.IsNullOrEmpty(userId))
+            var cartItems = await (from cart in Database.Carts
+                                   where cart.UserId == userId
+                                   select new { cart.ProductId, cart.Quantity }).ToListAsync()
+
+            if (cartItems.Count == 0)
             {
-                return Unauthorized();
+                Logger.LogInformation("Cart not found for user ID: {UserId}", userId);
+                return NotFound("Cart not found.");
             }
 
-            var cartItems = Database.CartItems.Where(ci => ci.UserId == userId).ToList();
             return Ok(cartItems);
         }
 
-        // POST: api/Cart
-        [HttpPost]
-        public async Task<IActionResult> AddToCart([FromBody] CartItemDto cartItemDto)
+        // POST: api/Cart/{userId}
+        [HttpPost("{userId}")]
+        public async Task<ActionResult> AddItemToCart(int userId, [FromBody] Cart cartItem)
         {
-            var userId = User.FindFirst("UserId")?.Value;
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized();
-            }
-
-            var existingCartItem = _context.CartItems.FirstOrDefault(ci => ci.UserId == userId && ci.ProductId == cartItemDto.ProductId);
+            // Check if the item already exists in the cart
+            var existingCartItem = await Database.Carts
+                .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == cartItem.ProductId);
 
             if (existingCartItem != null)
             {
-                existingCartItem.Quantity += cartItemDto.Quantity;
+                // Update the quantity and total price
+                existingCartItem.Quantity += cartItem.Quantity;
+                // Assuming `UnitPrice` is not in the single table, if so, you may need additional logic to update `TotalPrice`
             }
             else
             {
-                var cartItem = new CartItem
-                {
-                    UserId = userId,
-                    ProductId = cartItemDto.ProductId,
-                    Quantity = cartItemDto.Quantity
-                };
-                _context.CartItems.Add(cartItem);
+                // Add new cart item
+                cartItem.UserId = userId;
+                Database.Carts.Add(cartItem);
             }
 
-            await _context.SaveChangesAsync();
-
-            _logger.LogInformation("Product {ProductId} added to cart for user {UserId}.", cartItemDto.ProductId, userId);
+            await Database.SaveChangesAsync();
+            Logger.LogInformation("Item added to cart for user ID: {UserId}", userId);
 
             return Ok();
         }
 
-        // PUT: api/Cart/{id}
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCartItem(int id, [FromBody] CartItemDto cartItemDto)
+        // PUT: api/Cart/{userId}/items/{productId}
+        [HttpPut("{userId}/items/{productId}")]
+        public async Task<ActionResult> UpdateCartItem(int userId, int productId, [FromBody] CartItem updatedItem)
         {
-            var userId = User.FindFirst("UserId")?.Value;
-            if (string.IsNullOrEmpty(userId))
+            var existingCartItem = await Database.Carts
+                .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == productId);
+
+            if (existingCartItem == null)
             {
-                return Unauthorized();
+                Logger.LogInformation("Item not found in cart for product ID: {ProductId}", productId);
+                return NotFound("Item not found in cart.");
             }
 
-            var cartItem = _context.CartItems.FirstOrDefault(ci => ci.Id == id && ci.UserId == userId);
-            if (cartItem == null)
-            {
-                return NotFound();
-            }
+            existingCartItem.Quantity = updatedItem.Quantity;
+            // Update `TotalPrice` if needed
 
-            cartItem.Quantity = cartItemDto.Quantity;
-            await _context.SaveChangesAsync();
-
-            _logger.LogInformation("Cart item {CartItemId} updated for user {UserId}.", id, userId);
-
-            return Ok(cartItem);
-        }
-
-        // DELETE: api/Cart/{id}
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> RemoveFromCart(int id)
-        {
-            var userId = User.FindFirst("UserId")?.Value;
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized();
-            }
-
-            var cartItem = _context.CartItems.FirstOrDefault(ci => ci.Id == id && ci.UserId == userId);
-            if (cartItem == null)
-            {
-                return NotFound();
-            }
-
-            _context.CartItems.Remove(cartItem);
-            await _context.SaveChangesAsync();
-
-            _logger.LogInformation("Cart item {CartItemId} removed for user {UserId}.", id, userId);
+            await Database.SaveChangesAsync();
+            Logger.LogInformation("Item updated in cart for user ID: {UserId}", userId);
 
             return Ok();
         }
-    }
 
-    // DTO (Data Transfer Object) for cart items
-    public class CartItem
-    {
-        public int ProductId { get; set; }
-        public int Quantity { get; set; }
+        // DELETE: api/Cart/{userId}/items/{productId}
+        [HttpDelete("{userId}/items/{productId}")]
+        public async Task<ActionResult> RemoveItemFromCart(int userId, int productId)
+        {
+            var cartItem = await Database.Carts
+                .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == productId);
+
+            if (cartItem == null)
+            {
+                Logger.LogInformation("Item not found in cart for product ID: {ProductId}", productId);
+                return NotFound("Item not found in cart.");
+            }
+
+            Database.Carts.Remove(cartItem);
+            await Database.SaveChangesAsync();
+            Logger.LogInformation("Item removed from cart for user ID: {UserId}", userId);
+
+            return Ok();
+        }
+
+        // DELETE: api/Cart/{userId}
+        [HttpDelete("{userId}")]
+        public async Task<ActionResult> ClearCart(int userId)
+        {
+            var cartItems = await Database.Carts
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
+
+            if (cartItems.Count == 0)
+            {
+                Logger.LogInformation("Cart not found for user ID: {UserId}", userId);
+                return NotFound("Cart not found.");
+            }
+
+            Database.Carts.RemoveRange(cartItems);
+            await Database.SaveChangesAsync();
+            Logger.LogInformation("Cart cleared for user ID: {UserId}", userId);
+
+            return Ok("Cart cleared.");
+        }
     }
+    
 }
