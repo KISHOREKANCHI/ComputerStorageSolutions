@@ -12,7 +12,7 @@ export class UserDetailsService {
   private Endpoint = "http://localhost:5037/api/Login"
 
   GetUserDetails(credentials: any) : Observable<any>{
-    console.log("stuff from service",credentials.email,credentials.passwordHash)
+   // const headers = new HttpHeaders({'Content-Type':'application/json'}
     return this.http.post<any>(this.Endpoint,credentials).pipe(
       catchError(this.handleError)
     );
@@ -20,6 +20,6 @@ export class UserDetailsService {
 
   private handleError(error: HttpErrorResponse) {
     console.error('An error occurred:', error.error);
-    return throwError('Something bad happened; please try again later.');
+    return throwError(() => new Error('Unable to fetch user details'));
   }
 }
