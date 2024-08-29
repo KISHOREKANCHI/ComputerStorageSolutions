@@ -9,14 +9,7 @@ import { CookieManagerService } from 'src/app/Services/cookie-manager.service';
   styleUrls: ['./loginpage.component.css']
 })
 export class LoginpageComponent {
-<<<<<<< Updated upstream
-=======
-  email: string = "";
-  Password: string = "";
   
-  UserDetails: any | null = null;
->>>>>>> Stashed changes
-
   email:string ="";
   passwordHash:string="";
   UserDetails:any|null =null;
