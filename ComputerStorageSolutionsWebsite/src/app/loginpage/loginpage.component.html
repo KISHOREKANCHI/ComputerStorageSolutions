@@ -1,29 +1,35 @@
-<div>
-    <h2>Login</h2>
-    <form (ngSubmit)="Login()">
-      <label for="email">Email:</label>
-      <input type="text" id="email" [(ngModel)]="email" name="email" required>
-      <br>
-      <label for="password">Password:</label>
-      <input type="password" id="password" [(ngModel)]="passwordHash" name="password" required>
-      <br>
-      <button type="submit">Login</button>
-    </form>
-  
-    <div *ngIf="UserDetails">
-        <h3>User Details</h3>
-        <p><strong>User ID:</strong> {{ UserDetails.UserId }}</p>
-        <p><strong>Username:</strong> {{ UserDetails.Username }}</p>
-        <p><strong>Email:</strong> {{ UserDetails.Email }}</p>
-        <p><strong>Role ID:</strong> {{ UserDetails.RoleId }}</p>
-        <p><strong>Created Date:</strong> {{ UserDetails.CreatedDate | date }}</p>
-        <p><strong>Is Active:</strong> {{ UserDetails.IsActive }}</p>
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="col-md-6">
+      <div class="card bg-transparent border-0">
+        <div class="card-body">
+          <form>
+            <div class="form-group mb-4">
+              <label for="exampleInputEmail1" class="form-label">Email address</label>
+              <input type="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Enter email">
+            </div>
+            <div class="form-group mb-4">
+              <label for="exampleInputPassword1" class="form-label">Password</label>
+              <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Enter password">
+            </div>
+            <div class="form-check mb-4">
+              <input type="checkbox" class="form-check-input" id="exampleCheck1">
+              <label class="form-check-label" for="exampleCheck1">Remember me</label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-100">Submit</button>
+            <br/>
+          
+            <div class="text-center">
+            <div class="form-check mb-4">
+              <label class="form-check-label" for="exampleCheck1">
+              <p>Not a member? </p>
+            </label>
+            
+            <button type="submit" class="btn btn-primary1 ">Register</button>
+          </div>
+        </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
-  
-
-   <!-- <div>
-    <button (click)="getData()">Get Data</button>
-    <p *ngIf="response">Response: {{ response }}</p>
-  </div> -->
   

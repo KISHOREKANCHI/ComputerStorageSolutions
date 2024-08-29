@@ -8,7 +8,7 @@ import { UserDetailsService } from '../Services/user-details.service';
 })
 export class LoginpageComponent {
   email: string = "";
-  passwordHash: string = "";
+  Password: string = "";
   UserDetails: any | null = null;
 
   constructor(private userDetailsService: UserDetailsService) {}
@@ -16,11 +16,12 @@ export class LoginpageComponent {
   Login() {
     const loginData = {
       email: this.email,
-      passwordHash: this.passwordHash
+      Password: this.Password
     };
     this.userDetailsService.GetUserDetails(loginData).subscribe({
       next: response => {
         console.log("Login Successful", response);
+        this.UserDetails = response;
       },
       error: error => {
         console.log("Login failed", error);

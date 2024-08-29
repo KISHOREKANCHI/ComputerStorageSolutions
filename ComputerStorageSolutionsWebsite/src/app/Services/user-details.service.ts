@@ -12,6 +12,7 @@ export class UserDetailsService {
   private Endpoint = "http://localhost:5037/api/Login"
 
   GetUserDetails(credentials: any) : Observable<any>{
+    console.log("stuff from service",credentials.email,credentials.passwordHash)
     return this.http.post<any>(this.Endpoint,credentials).pipe(
       catchError(this.handleError)
     );
