@@ -29,19 +29,12 @@ namespace ComputerStorageSolutions.Controllers
             MemoryCards = 4,
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetProducts([FromBody] string token)
+        public async Task<IActionResult> GetProducts()
         {
-            if (tokenService.ValidateToken(token))
-            {
-                var result = await Database.Products.ToListAsync();
-                return Ok(result);
-            }
-            else
-            {
-                return Unauthorized("Invalid token");
-            }
+            var result = await Database.Products.ToListAsync();
+            return Ok(result);
         }
 
         [HttpGet]
