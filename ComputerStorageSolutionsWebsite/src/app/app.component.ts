@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CookieManagerService } from 'src/app/Services/cookie-manager.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,13 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'ComputerStorageSolutionsWebsite';
+
+  constructor(private manager : CookieManagerService){}
+
+  ngOnInit(){
+    const expiry = 1;
+    this.manager.checkToken(expiry);
+  }
+
+
 }

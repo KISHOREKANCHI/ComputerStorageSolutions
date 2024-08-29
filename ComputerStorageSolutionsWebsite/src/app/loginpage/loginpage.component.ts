@@ -31,7 +31,7 @@ export class LoginpageComponent {
         this.Token = response;
         document.cookie = `token= ${btoa(this.Token.token)}; Secure;SameSite=Strict; Priority=High; path=/`
         this.cdr.detectChanges();
-        this.router.navigate(['home'])
+        this.router.navigate(['products'])
         const expiry = 3000;
         this.manager.checkToken(expiry);
       },
