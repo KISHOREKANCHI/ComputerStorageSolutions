@@ -84,7 +84,7 @@ namespace ComputerStorageSolutions.Controllers
                     return Ok(new
                     {
                         Token = tokenValue,
-                        User = result
+                        UserName = result[0].User.Username
                     });
                 }
 
