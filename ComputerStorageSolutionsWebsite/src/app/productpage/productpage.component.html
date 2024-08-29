@@ -1,109 +1,57 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container">
-    <!-- Categories Dropdown -->
-    <div class="dropdown me-3">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="categoriesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-        Categories
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
-        <li><a class="dropdown-item" href="#">SSD</a></li>
-        <li><a class="dropdown-item" href="#">HDD</a></li>
-        <li><a class="dropdown-item" href="#">Flash Drive</a></li>
-        <li><a class="dropdown-item" href="#">Memory Card</a></li>
-      </ul>
-    </div>
-
-    <!-- Search Bar -->
-    <form class="d-flex mx-auto" role="search">
-      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success" type="submit">Search</button>
-    </form>
-
-    <!-- User Details -->
-    <div class="d-flex align-items-center">
-      <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-          <span class="user-profile">🙎🏻</span> User Profile
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="userMenuButton">
-          <li><a class="dropdown-item " href="#" ><i class="fa fa-sign-out" style="font-size:20px"></i> Logout</a></li>
-          <!--  <li><a class="dropdown-item" href="#">Profile</a></li>
-          <li><a class="dropdown-item" href="#">Settings</a></li>
-          <li><hr class="dropdown-divider"></li> -->
-          
-            
-            
-          </ul>
-      
-      </div>
-    </div>
-  </div>
-</nav>
-
-
 <section style="background-color: #eee;">
-    <div class="container py-5">
-      <div class="row justify-content-center mb-3">
-        <div class="col-md-12 col-xl-10">
-          <div class="card shadow-0 border rounded-3">
-            <div class="card-body">
-              <div class="row">
-                <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
-                  <div class="bg-image hover-zoom ripple rounded ripple-surface">
-                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/img%20(4).webp"
-                      class="w-100" />
-                    <a href="#!">
-                      <div class="hover-overlay">
-                        <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
-                      </div>
-                    </a>
-                  </div>
-                </div>
-                <div class="col-md-6 col-lg-6 col-xl-6">
-                  <h5>500GB HDD</h5>
-                  <div class="d-flex flex-row">
-                    <div class="text-danger mb-1 me-2">
-                      <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
-                      <i class="fa fa-star"></i>
+  <div class="container py-5">
+    <div class="row justify-content-center mb-3" *ngFor="let product of ProductDetails">
+      <div class="col-md-12 col-xl-10">
+        <div class="card shadow-0 border rounded-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
+                <div class="bg-image hover-zoom ripple rounded ripple-surface">
+                  <img [src]="product.imageUrl"
+                    class="w-100" />
+                  <a href="#!">
+                    <div class="hover-overlay">
+                      <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
                     </div>
-                   
-                  </div>
-                  
-                  
-                  
-                    <!-- Hidden Containers for IDs -->
-                    <div style="display: none;">
-                      <div id="productId" data-product-id="12345"></div>
-                      <div id="categoryId" data-category-id="67890"></div>
-                  </div>
-             
-                  
-                  <p class="text-truncate " ><u>
-                    Product Description:</u>
-                    Affordable HDD with 500GB capacity</p>
+                  </a>
                 </div>
-                <h4 class="mb-1 me-1">Price</h4>
-                <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
-                  <div class="d-flex flex-row align-items-center mb-1">
-                    <h4 class="mb-1 me-1">$13.99</h4>
-                    <span class="text-danger"><s>$20.99</s></span>
+              </div>
+              <div class="col-md-6 col-lg-6 col-xl-6">
+                <h5>{{ product.productName }}</h5>
+                <div class="d-flex flex-row">
+                  <div class="text-danger mb-1 me-2">
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
                   </div>
-                  <h6 class="text-success">Free shipping</h6>
-                  <div class="d-flex flex-column mt-4">
-                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-sm" type="button">Add to Cart</button>
-                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary btn-sm mt-2" type="button">
-                      Buy Now
-                    </button>
-                  </div>
+                </div>
+                <p class="text-truncate"><u>Product Description:</u> {{ product.description }}</p>
+
+                <!-- Hidden Containers for IDs -->
+                <div style="display: none;">
+                  <div id="productId" [attr.data-product-id]="product.productId"></div>
+                  <div id="categoryId" [attr.data-category-id]="product.categoryId"></div>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
+                <div class="d-flex flex-row align-items-center mb-1">
+                  <h4 class="mb-1 me-1">${{ product.price }}</h4>
+                </div>
+                <h6 class="text-success">Free shipping</h6>
+                <div class="d-flex flex-column mt-4">
+                  <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-sm" type="button">
+                    Add to Cart
+                  </button>
+                  <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary btn-sm mt-2" type="button">
+                    Buy Now
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      
-      
     </div>
-  </section>
+  </div>
+</section>

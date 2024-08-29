@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,9 +11,9 @@ export class ApiServiceService {
 
   private productApi="http://localhost:5037/api/Products";
 
-  GetProducts() {
+  GetProducts():Observable<any> {
     const token = (document.cookie.split(';')[0]);
-    const Jwttoken = token.replace("token=", "");
+    const Jwttoken = atob(token.replace("token=", ""));
     const headers = new HttpHeaders({
       'Accept': 'application/json',
       'Authorization': `Bearer ${Jwttoken}`

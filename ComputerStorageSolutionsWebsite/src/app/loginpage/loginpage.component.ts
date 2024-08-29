@@ -21,18 +21,17 @@ export class LoginpageComponent {
     const loginData = {
       // email: this.email,
       // passwordHash: this.passwordHash
-      email:"admin1@gmail.com",
-      passwordHash:"password"
+      email:"Test@gamil.com",
+      Password:"Test@123"
     };
     this.userDetailsService.GetUserDetails(loginData).subscribe({
       next: (response : any) => {
         console.log("Data fetched successfully", response);
-        this.UserDetails = response.user[0];
         this.Token = response;
         document.cookie = `token= ${btoa(this.Token.token)}; Secure;SameSite=Strict; Priority=High; path=/`
         this.cdr.detectChanges();
         this.router.navigate(['products'])
-        const expiry = 3000;
+        const expiry = 1;
         this.manager.checkToken(expiry);
       },
       error: (error: any) => {
