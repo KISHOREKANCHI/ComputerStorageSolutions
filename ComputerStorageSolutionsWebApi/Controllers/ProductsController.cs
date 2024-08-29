@@ -37,7 +37,7 @@ namespace ComputerStorageSolutions.Controllers
             return Ok(result);
         }
 
-        [HttpGet]
+        /*[HttpGet]
         [Authorize]
         [Route("Categories")]
         public async Task<IActionResult> GetCategories(CategoryList categoryList)
@@ -46,7 +46,7 @@ namespace ComputerStorageSolutions.Controllers
                 .Where(p => p.CategoryId == (int)categoryList && p.Status == "Available")
                 .ToListAsync();
             return Ok(result);
-        }
+        }*/
 
         [HttpDelete("DeleteProducts")]
         [Authorize(Policy = SecurityPolicy.Admin)]

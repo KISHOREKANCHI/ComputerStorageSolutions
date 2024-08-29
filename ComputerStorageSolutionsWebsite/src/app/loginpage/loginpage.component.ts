@@ -9,7 +9,7 @@ import { CookieManagerService } from 'src/app/Services/cookie-manager.service';
   styleUrls: ['./loginpage.component.css']
 })
 export class LoginpageComponent {
-  
+
   email:string ="";
   passwordHash:string="";
   UserDetails:any|null =null;
@@ -26,10 +26,8 @@ export class LoginpageComponent {
     };
     this.userDetailsService.GetUserDetails(loginData).subscribe({
       next: (response : any) => {
-        console.log("Data fetched successfully", response);
         this.Token = response;
         document.cookie = `token= ${btoa(this.Token.token)}; Secure;SameSite=Strict; Priority=High; path=/`
-        this.cdr.detectChanges();
         this.router.navigate(['products'])
         const expiry = 1;
         this.manager.checkToken(expiry);

@@ -1,4 +1,3 @@
-
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container">
     <!-- Categories Dropdown -->
@@ -7,10 +6,11 @@
         Categories
       </button>
       <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
-        <li><a class="dropdown-item" href="#">SSD</a></li>
-        <li><a class="dropdown-item" href="#">HDD</a></li>
-        <li><a class="dropdown-item" href="#">Flash Drive</a></li>
-        <li><a class="dropdown-item" href="#">Memory Card</a></li>
+        <li><a class="dropdown-item" href="#" (click)="filterByCategory(null)">All</a></li>
+        <li><a class="dropdown-item" href="#" (click)="filterByCategory(1)">SSD</a></li>
+        <li><a class="dropdown-item" href="#" (click)="filterByCategory(2)">HDD</a></li>
+        <li><a class="dropdown-item" href="#" (click)="filterByCategory(3)">Flash Drive</a></li>
+        <li><a class="dropdown-item" href="#" (click)="filterByCategory(4)">Memory Card</a></li>
       </ul>
     </div>
 
@@ -26,27 +26,24 @@
         <button class="btn btn-secondary dropdown-toggle" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
           <span class="user-profile">🙎🏻</span> User Profile
         </button>
-        <ul class="dropdown-menu" aria-labelledby="userMenuButton">
-          <!-- <li><a class="dropdown-item" href="#">Profile</a></li>
-          <li><a class="dropdown-item" href="#">Settings</a></li>
-          <li><hr class="dropdown-divider"></li> -->
+        <ul class="dropdown-menu" aria-labelledby="userMenuButton" (click)="logout(); $event.preventDefault();">
           <li><a class="dropdown-item" href="#"><i class="fa fa-sign-out" style="font-size:24px"></i> Logout</a></li>
         </ul>
       </div>
     </div>
   </div>
 </nav>
+
 <section style="background-color: #eee;">
   <div class="container py-5">
-    <div class="row justify-content-center mb-3" *ngFor="let product of ProductDetails">
+    <div class="row justify-content-center mb-3" *ngFor="let product of FilteredProducts">
       <div class="col-md-12 col-xl-10">
         <div class="card shadow-0 border rounded-3">
           <div class="card-body">
             <div class="row">
               <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
                 <div class="bg-image hover-zoom ripple rounded ripple-surface">
-                  <img [src]="product.imageUrl"
-                    class="w-100" />
+                  <img [src]="product.imageUrl" class="w-100" alt="Image" />
                   <a href="#!">
                     <div class="hover-overlay">
                       <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
@@ -64,8 +61,7 @@
                     <i class="fa fa-star"></i>
                   </div>
                 </div>
-                <!-- <p class="text-truncate"><u>Product Description:</u> {{ product.description }}</p> -->
-                <p class="text-truncate"> {{ product.description }}</p>
+                <p class="text-truncate">{{ product.description }}</p>
 
                 <!-- Hidden Containers for IDs -->
                 <div style="display: none;">

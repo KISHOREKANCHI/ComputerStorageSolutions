@@ -19,7 +19,10 @@ export class CookieManagerService {
     const Jwttoken = token.replace("token=", "");
     if (!Jwttoken){
       this.router.navigate(['login'])
-      localStorage.removeItem('token');
+      function expireCookie(name:string) {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+      }
+      expireCookie('token');
     }
     else{
       this.addTime();
@@ -27,7 +30,7 @@ export class CookieManagerService {
   }
 
   addTime(){
-    const expiry = 3000;
+    const expiry = 1;
     return this.checkToken(expiry);
   }
 }
