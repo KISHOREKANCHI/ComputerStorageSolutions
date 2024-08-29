@@ -1,3 +1,45 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <!-- Categories Dropdown -->
+    <div class="dropdown me-3">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="categoriesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        Categories
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+        <li><a class="dropdown-item" href="#">SSD</a></li>
+        <li><a class="dropdown-item" href="#">HDD</a></li>
+        <li><a class="dropdown-item" href="#">Flash Drive</a></li>
+        <li><a class="dropdown-item" href="#">Memory Card</a></li>
+      </ul>
+    </div>
+
+    <!-- Search Bar -->
+    <form class="d-flex mx-auto" role="search">
+      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+
+    <!-- User Details -->
+    <div class="d-flex align-items-center">
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="user-profile">🙎🏻</span> User Profile
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="userMenuButton">
+          <li><a class="dropdown-item " href="#" ><i class="fa fa-sign-out" style="font-size:20px"></i> Logout</a></li>
+          <!--  <li><a class="dropdown-item" href="#">Profile</a></li>
+          <li><a class="dropdown-item" href="#">Settings</a></li>
+          <li><hr class="dropdown-divider"></li> -->
+          
+            
+            
+          </ul>
+      
+      </div>
+    </div>
+  </div>
+</nav>
+
 
 <section style="background-color: #eee;">
     <div class="container py-5">
@@ -30,14 +72,14 @@
                   </div>
                   
                   
-                  <div class="mb-2 text-muted small">
+                  
                     <!-- Hidden Containers for IDs -->
                     <div style="display: none;">
                       <div id="productId" data-product-id="12345"></div>
                       <div id="categoryId" data-category-id="67890"></div>
                   </div>
              
-                  </div>
+                  
                   <p class="text-truncate " ><u>
                     Product Description:</u>
                     Affordable HDD with 500GB capacity</p>
