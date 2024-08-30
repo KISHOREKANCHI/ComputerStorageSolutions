@@ -8,12 +8,14 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProductpageComponent } from './productpage/productpage.component';
+import { SignuppageComponent } from './signuppage/signuppage.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginpageComponent,
-    ProductpageComponent
+    ProductpageComponent,
+    SignuppageComponent
   ],
   imports: [
     BrowserModule,

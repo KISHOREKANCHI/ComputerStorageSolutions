@@ -1,0 +1,30 @@
+/* Style for gradient backgrounds */
+.gradient {
+    background:  #eee; /* Light gray background */
+  }
+ 
+  
+  /* Style for the Register button */
+  .btn-success.btn-block.btn-lg.gradient-custom-4 {
+    border: 2px solid black; /* Black border */
+    background-color: white; /* White background */
+    color: white; /* White text */
+    font-weight: bold; /* Bold text */
+  }
+  
+  .btn-success.btn-block.btn-lg.gradient-custom-4:hover {
+    background-color: black; /* Black background on hover */
+    color: white; /* White text on hover */
+  }
+  
+  /* Style for all text */
+  h2, .form-label, .form-check-label, .btn, .text-muted, p {
+    font-weight: solid; /* Make all text bold */
+  }
+  
+  /* Style for the register button on hover */
+  .btn-success.btn-block.btn-lg.gradient-custom-4:hover {
+    background-color: white; /* Change background on hover */
+    color: white; /* Ensure text remains white on hover */
+  }
+  
