@@ -9,14 +9,21 @@ export class UserDetailsService {
 
   constructor(private http: HttpClient) { }
 
-  private Endpoint = "http://localhost:5037/api/Login"
+  private Endpoint = "http://localhost:5037/api/"
 
   GetUserDetails(credentials: any) : Observable<any>{
    // const headers = new HttpHeaders({'Content-Type':'application/json'}
-    return this.http.post<any>(this.Endpoint,credentials).pipe(
+    return this.http.post<any>(this.Endpoint+"Login",credentials).pipe(
       catchError(this.handleError)
     );
   }
+
+  RegisterDetails(credentials: any) : Observable<any>{
+    // const headers = new HttpHeaders({'Content-Type':'application/json'}
+     return this.http.post<any>(this.Endpoint+"SignUp",credentials).pipe(
+       catchError(this.handleError)
+     );
+   }
 
   private handleError(error: HttpErrorResponse) {
     console.error('An error occurred:', error.error);

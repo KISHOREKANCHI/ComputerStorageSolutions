@@ -1,35 +1,36 @@
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
-    <div class="col-md-6">
-      <div class="card bg-transparent border-0">
-        <div class="card-body">
-          <form (ngSubmit)="Login()">
-            <div class="form-group mb-4">
-              <label for="exampleInputEmail1" class="form-label">Email address</label>
-              <input type="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Enter email">
-            </div>
-            <div class="form-group mb-4">
-              <label for="exampleInputPassword1" class="form-label">Password</label>
-              <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Enter password">
-            </div>
-            <div class="form-check mb-4">
-              <input type="checkbox" class="form-check-input" id="exampleCheck1">
-              <label class="form-check-label" for="exampleCheck1">Remember me</label>
-            </div>
-            <button type="submit" class="btn btn-primary btn-lg w-100">Submit</button>
-            <br/>
-          
-            <div class="text-center">
-            <div class="form-check mb-4">
-              <label class="form-check-label" for="exampleCheck1">
-              <p>Not a member? </p>
-            </label>
-            
-            <button type="submit" class="btn btn-primary1 " (click)="SignUpRedirect()">Register</button>
+<section class="vh-100 bg-image gradient d-flex align-items-center">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+        <div class="card shadow-lg" style="border-radius: 15px;">
+          <div class="card-body p-4">
+            <h2 class="text-uppercase text-center mb-4">Login</h2>
+
+            <form (ngSubmit)="Login()">
+              <div class="form-outline mb-4">
+                <input type="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="">
+                <label class="form-label" for="exampleInputEmail1">Email address</label>
+              </div>
+
+              <div class="form-outline mb-4">
+                <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="">
+                <label class="form-label" for="exampleInputPassword1">Password</label>
+              </div>
+
+              <div class="form-check d-flex justify-content-center mb-4">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1" (change)="RememberMe($event)">
+                <label class="form-check-label" for="exampleCheck1">Remember me</label>
+              </div>
+
+              <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-dark btn-block btn-lg gradient-custom-4 text-body">Submit</button>
+              </div>
+
+              <p class="text-center text-muted mt-4 mb-0">Not a member? <a href="#!" class="fw-bold text-body" (click)="SignUpRedirect()"><u>Register here</u></a></p>
+            </form>
           </div>
-        </div>
-          </form>
         </div>
       </div>
     </div>
   </div>
-  
+</section>

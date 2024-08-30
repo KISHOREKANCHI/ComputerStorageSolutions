@@ -18,7 +18,7 @@ html, body {
 
 .form-outline {
   position: relative;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem; /* Increased margin for more space */
 }
 
 .form-outline input {
@@ -43,9 +43,9 @@ html, body {
   border-radius: 0.25rem;
 }
 
-.gradient-custom-4 {
-  background-color: #28a745; /* Green background */
-  color: #fff;
+.btn-dark {
+  color: #fff; /* White text */
+  background-color: #eee; /* gray background */
 }
 
 .text-body {

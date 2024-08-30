@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signuppage',
@@ -7,4 +8,11 @@ import { Component } from '@angular/core';
 })
 export class SignuppageComponent {
 
+constructor(private router:Router){}
+
+  LoginRedirect(){
+    this.router.navigate(['login'])
+  }
+
+  CreateAccount(){}
 }

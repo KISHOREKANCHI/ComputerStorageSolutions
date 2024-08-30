@@ -1,4 +1,4 @@
-import { Component , ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { UserDetailsService } from 'src/app/Services/user-details.service';
 import { Router } from '@angular/router';
 import { CookieManagerService } from 'src/app/Services/cookie-manager.service';
@@ -10,26 +10,34 @@ import { CookieManagerService } from 'src/app/Services/cookie-manager.service';
 })
 export class LoginpageComponent {
 
-  email:string ="";
-  passwordHash:string="";
-  UserDetails:any|null =null;
-  Token:any|null =null;
+  email: string = "";
+  passwordHash: string = "";
+  UserDetails: any | null = null;
+  Token: any | null = null;
+  priority: string = "low";
 
-  constructor(private userDetailsService: UserDetailsService, private cdr: ChangeDetectorRef,private router:Router,private manager : CookieManagerService) {}
+  constructor(
+    private userDetailsService: UserDetailsService,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private manager: CookieManagerService
+  ) {}
+
+  RememberMe(event: any) {
+    this.priority = event.target.checked ? "high" : "low";
+  }
 
   Login() {
     const loginData = {
-      // email: this.email,
-      // passwordHash: this.passwordHash
-      email:"test@gmail.com",
-      Password:"Test@123"
+      email: "test@gmail.com",
+      Password: "Test@123"
     };
     this.userDetailsService.GetUserDetails(loginData).subscribe({
-      next: (response : any) => {
+      next: (response: any) => {
         this.Token = response;
         console.log("clicked");
-        document.cookie = `token= ${btoa(this.Token.token)}; Secure;SameSite=Strict; Priority=High; path=/`
-        this.router.navigate(['products'])
+        document.cookie = `token=${btoa(this.Token.token)}; Secure;SameSite=Strict; Priority=${this.priority}; path=/`;
+        this.router.navigate(['products']);
         const expiry = 1;
         this.manager.checkToken(expiry);
       },
@@ -39,7 +47,7 @@ export class LoginpageComponent {
     });
   }
 
-  SignUpRedirect(){
-    this.router.navigate(['signup'])
+  SignUpRedirect() {
+    this.router.navigate(['signup']);
   }
 }

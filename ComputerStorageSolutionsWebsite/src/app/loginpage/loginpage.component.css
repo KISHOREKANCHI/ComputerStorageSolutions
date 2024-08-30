@@ -1,42 +1,59 @@
 html, body {
     height: 100%;
     margin: 0;
-}
-
-.container {
-    background: linear-gradient(to right,  #eee, #eee);
-    padding: 20px;
-}
-
-.card {
-    background-color: transparent; /* Keep the card background transparent */
-    box-shadow: none; /* Remove default shadow */
-    border-radius: 8px; /* Rounded corners */
-}
-
-.form-control {
-    background-color: transparent; /* Transparent input to show gradient */
-    color: black;
-    border: 1px solid black;
-}
-
-.form-control::placeholder {
-    color: black;
-}
-
-.form-label {
-    font-weight: bold;
-    color: black;
-}
-.form-check-label{
-    color: black;
-}
-
-.btn-primary {
-    background-color: rgb(92, 93, 94);
-    border: none;
-}
-.btn-primary1 {
-    background-color: rgb(245, 246, 247);
-    border: none;
-}
+    background-color: #eee;
+  }
+  
+  .gradient {
+    background-color: #eee; /* Light gray background */
+  }
+  
+  .card {
+    border-radius: 15px;
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .form-outline {
+    position: relative;
+    margin-bottom: 1.5rem; /* Increased margin for more space */
+  }
+  
+  .form-outline input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+  }
+  
+  .form-outline label {
+    position: absolute;
+    top: -0.5rem;
+    left: 0.75rem;
+    background: #fff;
+    padding: 0 0.25rem;
+    color: #495057;
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+  }
+  
+  .btn-dark {
+    background-color: #eee; /* gray background */
+    color: #fff; /* White text */
+  }
+  
+  .text-body {
+    color: #495057;
+  }
+  
+  .text-body:hover {
+    color: #212529;
+    text-decoration: underline;
+  }
+  
