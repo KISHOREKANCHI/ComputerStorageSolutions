@@ -1,0 +1,73 @@
+/* Ensure the entire page has a consistent gray background */
+body, html {
+    height: 100%;
+    margin: 0;
+    background-color: #eee; /* Light gray background */
+}
+
+section.h-100 {
+    height: 100%;
+    background-color: #eee; /* Light gray background */
+}
+
+/* Style for the "Proceed to Pay" button */
+.btn-warning.btn-block.btn-lg {
+    border: 2px solid black; /* Black border */
+    background-color: white; /* White background */
+    color: black; /* Black text */
+    font-weight: bold; /* Bold text */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
+}
+
+.btn-warning.btn-block.btn-lg:hover {
+    background-color: black; /* Black background on hover */
+    color: white; /* White text on hover */
+}
+
+/* Style for the product title and description */
+.lead.fw-normal {
+    font-weight: bold; /* Make product title bold */
+}
+
+.text-muted {
+    font-weight: bold; /* Make all muted text bold */
+}
+
+/* Style for the cart item price */
+h5.mb-0 {
+    font-weight: bold; /* Make the price bold */
+}
+
+/* Style for the trash icon (delete button) */
+.text-danger {
+    color: #dc3545; /* Keep the delete icon red */
+    font-weight: bold; /* Make it bold */
+}
+
+/* Additional styling for buttons in the quantity selector */
+.btn-link {
+    color: black; /* Ensure buttons are visible and black */
+    font-weight: bold; /* Make the buttons bold */
+    transition: color 0.3s; /* Smooth transition for hover effects */
+}
+
+.btn-link:hover {
+    color: #555; /* Darker color on hover */
+}
+/* Ensure the input field centers text */
+input[type=number] {
+    text-align: center;
+    font-size: large;
+  }
+  
+  /* Optional: Adjust button size and spacing if needed */
+  .btn-link {
+    padding: 0.5rem;
+    font-size: 1.2rem;
+  }
+  
+  /* Optional: Adjust button size to match input height */
+  .btn-link i {
+    font-size: 1.5rem;
+  }
+  
