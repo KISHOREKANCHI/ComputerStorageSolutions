@@ -11,6 +11,7 @@ import { ProductpageComponent } from './productpage/productpage.component';
 import { SignuppageComponent } from './signuppage/signuppage.component';
 import { CartpageComponent } from './cartpage/cartpage.component';
 import { OrderspageComponent } from './orderspage/orderspage.component';
+import { BuyNowPageComponent } from './buy-now-page/buy-now-page.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { OrderspageComponent } from './orderspage/orderspage.component';
     ProductpageComponent,
     SignuppageComponent,
     CartpageComponent,
-    OrderspageComponent
+    OrderspageComponent,
+    BuyNowPageComponent
   ],
   imports: [
     BrowserModule,

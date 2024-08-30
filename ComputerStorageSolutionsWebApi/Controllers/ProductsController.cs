@@ -11,13 +11,11 @@ namespace ComputerStorageSolutions.Controllers
     {
         private readonly DataBaseConnect Database;
         private readonly ILogger<ProductsController> Logger;
-        private readonly ITokenService tokenService;
 
-        public ProductsController(DataBaseConnect _Database, ILogger<ProductsController> _Logger, ITokenService _tokenService)
+        public ProductsController(DataBaseConnect _Database, ILogger<ProductsController> _Logger)
         {
             Database = _Database;
             Logger = _Logger;
-            tokenService = _tokenService;
         }
 
         public enum CategoryList
@@ -33,20 +31,22 @@ namespace ComputerStorageSolutions.Controllers
         [Authorize]
         public async Task<IActionResult> GetProducts()
         {
-            var result = await Database.Products.ToListAsync();
+            var result = await Database.Products
+                .Where(p => p.StockQuantity >0 && p.Status == "Available")
+                .ToListAsync();
             return Ok(result);
         }
 
-        /*[HttpGet]
-        [Authorize]
-        [Route("Categories")]
-        public async Task<IActionResult> GetCategories(CategoryList categoryList)
+        [HttpGet]
+        /*[Authorize]*/
+        [Route("Id")]
+        public async Task<IActionResult> GetProductById(Guid Id)
         {
             var result = await Database.Products
-                .Where(p => p.CategoryId == (int)categoryList && p.Status == "Available")
+                .Where(p => p.ProductId == Id && p.Status == "Available" && p.StockQuantity > 0)
                 .ToListAsync();
             return Ok(result);
-        }*/
+        }
 
         [HttpDelete("DeleteProducts")]
         [Authorize(Policy = SecurityPolicy.Admin)]

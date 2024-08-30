@@ -1,0 +1,56 @@
+<div class="container py-5">
+    <div class="row">
+      <div class="col-md-12 col-xl-10">
+        <div class="card shadow-0 border rounded-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
+                <img [src]="product?.imageUrl" class="w-100" alt="{{ product?.productName }}" />
+              </div>
+              <div class="col-md-6 col-lg-6 col-xl-6">
+                <h5>{{ product?.productName }}</h5>
+                <p class="text-truncate">{{ product?.description }}</p>
+                <h4 class="mb-1 me-1">${{ product?.price }}</h4>
+                <h6 class="text-success">Free shipping</h6>
+              </div>
+              <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
+                <div class="d-flex flex-column mt-4">
+                  <!-- <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-sm" type="button">
+                    Add to Cart
+                  </button> -->
+                  <!-- <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary btn-sm mt-2" type="button">
+                    Buy Now
+                  </button> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Billing Address Form -->
+        <div class="mt-4">
+          <h5>Billing Address</h5>
+          <form (ngSubmit)="OrderProduct()">
+            <div class="mb-3">
+              <label for="name" class="form-label">Name</label>
+              <input type="text" class="form-control" id="name" [(ngModel)]="Address.name" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label for="address" class="form-label">Address</label>
+              <input type="text" class="form-control" id="address" [(ngModel)]="Address.address" name="address" required>
+            </div>
+            <div class="mb-3">
+              <label for="city" class="form-label">City</label>
+              <input type="text" class="form-control" id="city" [(ngModel)]="Address.city" name="city" required>
+            </div>
+            <div class="mb-3">
+              <label for="zip" class="form-label">Zip Code</label>
+              <input type="text" class="form-control" id="zip" [(ngModel)]="Address.zip" name="zip" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  

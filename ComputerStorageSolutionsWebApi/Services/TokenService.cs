@@ -3,48 +3,20 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
-public interface ITokenService
+public interface IJwtService
 {
-    bool ValidateToken(string token);
+    string GetUserIdFromToken(string token);
 }
 
-public class TokenService : ITokenService
+public class TokenService : IJwtService
 {
-    private readonly IConfiguration _configuration;
-
-    public TokenService(IConfiguration configuration)
+    public string GetUserIdFromToken(string token)
     {
-        _configuration = configuration;
-    }
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = (handler.ReadToken(token) as JwtSecurityToken)!;
 
-    public bool ValidateToken(string token)
-    {
-        if (string.IsNullOrEmpty(token))
-        {
-            return false;
-        }
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
-
-        try
-        {
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = _configuration["Jwt:Issuer"],
-                ValidAudience = _configuration["Jwt:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(key)
-            }, out SecurityToken validatedToken);
-
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
+        // Extract userId from the claims
+        var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "UserId")!;
+        return userIdClaim.Value; // Return userId if exists
     }
 }

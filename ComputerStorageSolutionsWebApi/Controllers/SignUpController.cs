@@ -99,7 +99,7 @@ namespace ComputerStorageSolutions.Controllers
 
                         Logger.LogInformation($"User {input.Username} created successfully with email {input.Email}.");
                     }
-                    return Ok("Created Successfully");
+                    return Ok(new { message = "Created Successfully" });
                 }
             }
             catch (Exception ex)

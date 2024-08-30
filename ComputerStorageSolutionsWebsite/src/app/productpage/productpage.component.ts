@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiServiceService } from '../Services/api-service.service';
 import { CookieManagerService } from '../Services/cookie-manager.service';
-import { Router, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-productpage',
@@ -10,7 +10,7 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class ProductpageComponent implements OnInit {
 
-  constructor(private ApiService:ApiServiceService, private manager:CookieManagerService, private router : Router){}
+  constructor(private apiService: ApiServiceService, private manager: CookieManagerService, private router: Router) {}
 
   ProductDetails: any[] = [];
   FilteredProducts: any[] = [];
@@ -24,7 +24,7 @@ export class ProductpageComponent implements OnInit {
   }
 
   loadProducts(): void {
-    this.ApiService.GetProducts().subscribe({
+    this.apiService.getProducts().subscribe({
       next: (response: any) => {
         this.ProductDetails = response;
         this.FilteredProducts = this.ProductDetails;
@@ -41,11 +41,15 @@ export class ProductpageComponent implements OnInit {
     }
   }
 
-  logout(){
-    this.router.navigate(['login'])
-    function expireCookie(name:string) {
+  logout() {
+    this.router.navigate(['login']);
+    function expireCookie(name: string) {
       document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
     }
     expireCookie('token');
+  }
+
+  navigateToProductDetails(productId: string): void {
+    this.router.navigate(['PurchaseProduct', productId]);
   }
 }

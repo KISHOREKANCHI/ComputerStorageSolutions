@@ -22,8 +22,8 @@ namespace ComputerStorageSolutions.Controllers
 
         // GET: api/Cart/{userId}
         [HttpGet("GetCart")]
-/*        [Authorize]
-*/        public async Task<ActionResult> GetCart(Guid userId)
+        /*[Authorize]*/
+        public async Task<ActionResult> GetCart(Guid userId)
         {
             Console.WriteLine(userId);
             var cartItems = await (from cart in Database.Carts
@@ -41,8 +41,8 @@ namespace ComputerStorageSolutions.Controllers
 
         // POST: api/Cart/{userId}
         [HttpPost("AddToCart")]
-/*        [Authorize]
-*/        public async Task<ActionResult> AddItemToCart(Guid userId, [FromBody] Guid productId)
+        /*[Authorize]*/
+        public async Task<ActionResult> AddItemToCart(Guid userId, [FromBody] Guid productId)
         {
             // Check if the product already exists in the cart
             var existingCartItem = await Database.Carts
@@ -74,8 +74,8 @@ namespace ComputerStorageSolutions.Controllers
         }
         // PUT: api/Cart/{userId}/items/{productId}
         [HttpPut("UpdateCart")]
-/*        [Authorize]
-*/        public async Task<ActionResult> UpdateCartItem(Guid userId, Guid productId, [FromBody] int quantity)
+        /*[Authorize]*/
+        public async Task<ActionResult> UpdateCartItem(Guid userId, Guid productId, [FromBody] int quantity)
         {
             // Validate quantity
             if (quantity <= 0)
@@ -117,8 +117,8 @@ namespace ComputerStorageSolutions.Controllers
 
         // DELETE: api/Cart/{userId}/items/{productId}
         [HttpDelete("RemoveItemFromCart")]
-/*        [Authorize]
-*/        public async Task<ActionResult> RemoveItemFromCart(Guid userId, Guid productId)
+        /*[Authorize]*/
+        public async Task<ActionResult> RemoveItemFromCart(Guid userId, Guid productId)
         {
             var cartItem = await Database.Carts
                 .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == productId);
@@ -138,8 +138,8 @@ namespace ComputerStorageSolutions.Controllers
 
         // DELETE: api/Cart/{userId}
         [HttpDelete("DeleteCart")]
-/*        [Authorize]
-*/        public async Task<ActionResult> ClearCart(Guid userId)
+        /*[Authorize]*/
+        public async Task<ActionResult> ClearCart(Guid userId)
         {
             var cartItems = await Database.Carts
                 .Where(c => c.UserId == userId)

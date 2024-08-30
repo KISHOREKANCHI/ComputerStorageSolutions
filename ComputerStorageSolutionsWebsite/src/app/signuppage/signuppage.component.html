@@ -4,41 +4,81 @@
       <div class="col-12 col-md-9 col-lg-7 col-xl-6">
         <div class="card shadow-lg" style="border-radius: 15px;">
           <div class="card-body p-4">
-            <h2 class=" text-center mb-4">Create an account</h2>
+            <h2 class="text-center mb-4">Create an account</h2>
 
             <form>
-              <div class="form-outline mb-3">
-                <input type="text" id="form3Example1cg" class="form-control form-control-lg" />
+              <div class="form-outline mb-3 position-relative">
+                <input type="text" id="form3Example1cg" class="form-control form-control-lg" [(ngModel)]="Username" name="username" (input)="validateUsername()" />
                 <label class="form-label" for="form3Example1cg">Your Name</label>
+                <div *ngIf="UsernameError" class="alert alert-danger text-center mb-3">
+                  {{ UsernameError }}
+                </div>
               </div>
 
-              <div class="form-outline mb-3">
-                <input type="email" id="form3Example3cg" class="form-control form-control-lg" />
+              <div class="form-outline mb-3 position-relative">
+                <input type="email" id="form3Example3cg" class="form-control form-control-lg" [(ngModel)]="Email" name="email" (input)="validateEmail()" />
                 <label class="form-label" for="form3Example3cg">Your Email</label>
+                <div *ngIf="EmailError" class="alert alert-danger text-center mb-3">
+                  {{ EmailError }}
+                </div>
               </div>
 
-              <div class="form-outline mb-3">
-                <input type="password" id="form3Example4cg" class="form-control form-control-lg" />
+              <div class="form-outline mb-3 position-relative">
+                <input 
+                  [type]="ShowPassword ? 'text' : 'password'" 
+                  id="form3Example4cg" 
+                  class="form-control form-control-lg" 
+                  [(ngModel)]="Password" 
+                  name="password"
+                  (input)="validatePassword()"
+                />
                 <label class="form-label" for="form3Example4cg">Password</label>
+                <i class="toggle-password position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;" (click)="toggleShowPassword()">
+                  {{ ShowPassword ? '🙈' : '👁️' }}
+                </i>
+                <div *ngIf="PasswordError" class="alert alert-danger text-center mb-3">
+                  {{ PasswordError }}
+                </div>
               </div>
 
-              <div class="form-outline mb-3">
-                <input type="password" id="form3Example4cdg" class="form-control form-control-lg" />
-                <label class="form-label" for="form3Example4cdg">Repeat your password</label>
+              <div class="form-outline mb-3 position-relative">
+                <input 
+                  [type]="ShowConfirmPassword ? 'text' : 'password'" 
+                  id="form3Example4cdg" 
+                  class="form-control form-control-lg" 
+                  [(ngModel)]="ConfirmPassword" 
+                  name="confirmPassword"
+                  (input)="validateConfirmPassword()"
+                />
+                <label class="form-label" for="form3Example4cdg">Confirm Password</label>
+                <i class="toggle-password position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;" (click)="toggleShowConfirmPassword()">
+                  {{ ShowConfirmPassword ? '🙈' : '👁️' }}
+                </i>
+                <div *ngIf="ConfirmPasswordError" class="alert alert-danger text-center mb-3">
+                  {{ ConfirmPasswordError }}
+                </div>
               </div>
 
               <div class="form-check d-flex justify-content-center mb-4">
-                <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3cg" />
+                <input class="form-check-input me-2" type="checkbox" [(ngModel)]="TermsAccepted" name="terms" (change)="handleCheckboxChange()" />
                 <label class="form-check-label" for="form2Example3cg">
                   I agree to all statements in <a href="#!" class="text-body"><u>Terms of service</u></a>
                 </label>
+              </div>
+
+              <div *ngIf="RegistrationMessage" class="alert alert-info text-center mb-3">
+                {{ RegistrationMessage }}
               </div>
 
               <div class="d-flex justify-content-center">
                 <button type="button" class="btn btn-dark btn-block btn-lg gradient-custom-4 text-body" (click)="CreateAccount()">Register</button>
               </div>
 
-              <p class="text-center text-muted mt-4 mb-0">Already have an account? <a href="#!" class="fw-bold text-body" (click)="LoginRedirect()"><u>Login here</u></a></p>
+              <p class="text-center text-muted mt-4 mb-0">Already have an account? 
+                <a href="#!" class="fw-bold text-body" (click)="LoginRedirect()">
+                  <u>Login here</u>
+                </a>
+              </p>
             </form>
           </div>
         </div>

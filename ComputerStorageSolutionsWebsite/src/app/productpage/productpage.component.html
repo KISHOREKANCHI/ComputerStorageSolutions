@@ -75,10 +75,10 @@
                 </div>
                 <h6 class="text-success">Free shipping</h6>
                 <div class="d-flex flex-column mt-4">
-                  <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-sm" type="button">
+                  <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-sm" type="button" [routerLink]="['Cart']">
                     Add to Cart
                   </button>
-                  <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary btn-sm mt-2" type="button">
+                  <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary btn-sm mt-2" type="button" (click)="navigateToProductDetails(product.productId)">
                     Buy Now
                   </button>
                 </div>
