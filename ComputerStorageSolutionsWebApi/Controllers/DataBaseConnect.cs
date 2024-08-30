@@ -20,8 +20,7 @@ namespace ComputerStorageSolutions.Controllers
         public DbSet<OrderDetailsModel> OrderDetails { get; set; }
         
         public DbSet<InvoicesModel> Invoices { get; set; }
-
         
-        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartModel> Carts { get; set; }
     }
 }

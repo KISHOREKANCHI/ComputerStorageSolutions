@@ -7,7 +7,6 @@ namespace ComputerStorageSolutions.Models
     public class UserModel
     {
         [Key]
-        /*[DatabaseGenerated(DatabaseGeneratedOption.Identity)]*/
         public Guid UserId { get; set; }
 
         [Required]

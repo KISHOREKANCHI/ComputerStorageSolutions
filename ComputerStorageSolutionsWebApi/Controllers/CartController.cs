@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,12 +21,14 @@ namespace ComputerStorageSolutions.Controllers
         }
 
         // GET: api/Cart/{userId}
-        [HttpGet("{userId}")]
-        public async Task<ActionResult<IEnumerable<Cart>>> GetCart(int userId)
+        [HttpGet("GetCart")]
+/*        [Authorize]
+*/        public async Task<ActionResult> GetCart(Guid userId)
         {
+            Console.WriteLine(userId);
             var cartItems = await (from cart in Database.Carts
                                    where cart.UserId == userId
-                                   select new { cart.ProductId, cart.Quantity }).ToListAsync()
+                                   select new { cart.ProductId, cart.Quantity }).ToListAsync();
 
             if (cartItems.Count == 0)
             {
@@ -37,57 +40,85 @@ namespace ComputerStorageSolutions.Controllers
         }
 
         // POST: api/Cart/{userId}
-        [HttpPost("{userId}")]
-        public async Task<ActionResult> AddItemToCart(int userId, [FromBody] Cart cartItem)
+        [HttpPost("AddToCart")]
+/*        [Authorize]
+*/        public async Task<ActionResult> AddItemToCart(Guid userId, [FromBody] Guid productId)
         {
-            // Check if the item already exists in the cart
+            // Check if the product already exists in the cart
             var existingCartItem = await Database.Carts
-                .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == cartItem.ProductId);
+                .FirstOrDefaultAsync(item => item.UserId == userId && item.ProductId == productId);
 
             if (existingCartItem != null)
             {
-                // Update the quantity and total price
-                existingCartItem.Quantity += cartItem.Quantity;
-                // Assuming `UnitPrice` is not in the single table, if so, you may need additional logic to update `TotalPrice`
+                // If the item already exists, increment the quantity by 1
+                existingCartItem.Quantity += 1;
             }
             else
             {
-                // Add new cart item
-                cartItem.UserId = userId;
-                Database.Carts.Add(cartItem);
+                // Add a new item to the cart with a default quantity of 1
+                var newCartItem = new CartModel
+                {
+                    UserId = userId,
+                    ProductId = productId,
+                    Quantity = 1
+                };
+
+                Database.Carts.Add(newCartItem);
             }
 
+            // Save changes to the database
             await Database.SaveChangesAsync();
             Logger.LogInformation("Item added to cart for user ID: {UserId}", userId);
 
-            return Ok();
+            return Ok("Item added to cart.");
         }
-
         // PUT: api/Cart/{userId}/items/{productId}
-        [HttpPut("{userId}/items/{productId}")]
-        public async Task<ActionResult> UpdateCartItem(int userId, int productId, [FromBody] CartItem updatedItem)
+        [HttpPut("UpdateCart")]
+/*        [Authorize]
+*/        public async Task<ActionResult> UpdateCartItem(Guid userId, Guid productId, [FromBody] int quantity)
         {
+            // Validate quantity
+            if (quantity <= 0)
+            {
+                Logger.LogWarning("Invalid quantity received for product ID: {ProductId} and user ID: {UserId}", productId, userId);
+                return BadRequest("Quantity cannot be less than 0.");
+            }
+
             var existingCartItem = await Database.Carts
                 .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == productId);
 
             if (existingCartItem == null)
             {
-                Logger.LogInformation("Item not found in cart for product ID: {ProductId}", productId);
+                Logger.LogInformation("Item not found in cart for product ID: {ProductId} and user ID: {UserId}", productId, userId);
                 return NotFound("Item not found in cart.");
             }
 
-            existingCartItem.Quantity = updatedItem.Quantity;
-            // Update `TotalPrice` if needed
-
-            await Database.SaveChangesAsync();
-            Logger.LogInformation("Item updated in cart for user ID: {UserId}", userId);
-
-            return Ok();
+            else 
+            { 
+                // Update the quantity, limiting it to a maximum of 10
+                if (quantity > 10)
+                {
+                    quantity = 10;
+                    Logger.LogInformation("Item quantity updated to the maximum limit of 10 for product ID: {ProductId} and user ID: {UserId}", productId, userId);
+                    existingCartItem.Quantity = quantity;
+                    await Database.SaveChangesAsync();
+                    return Ok("Quantity updated to the maximum limit of 10.");
+                }
+                else
+                {
+                    existingCartItem.Quantity = quantity;
+                    await Database.SaveChangesAsync();
+                    Logger.LogInformation("Item quantity updated to {Quantity} in cart for product ID: {ProductId} and user ID: {UserId}", quantity, productId, userId);
+                    return Ok("Cart item updated successfully.");
+                }
+            }
         }
 
+
         // DELETE: api/Cart/{userId}/items/{productId}
-        [HttpDelete("{userId}/items/{productId}")]
-        public async Task<ActionResult> RemoveItemFromCart(int userId, int productId)
+        [HttpDelete("RemoveItemFromCart")]
+/*        [Authorize]
+*/        public async Task<ActionResult> RemoveItemFromCart(Guid userId, Guid productId)
         {
             var cartItem = await Database.Carts
                 .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == productId);
@@ -106,8 +137,9 @@ namespace ComputerStorageSolutions.Controllers
         }
 
         // DELETE: api/Cart/{userId}
-        [HttpDelete("{userId}")]
-        public async Task<ActionResult> ClearCart(int userId)
+        [HttpDelete("DeleteCart")]
+/*        [Authorize]
+*/        public async Task<ActionResult> ClearCart(Guid userId)
         {
             var cartItems = await Database.Carts
                 .Where(c => c.UserId == userId)
