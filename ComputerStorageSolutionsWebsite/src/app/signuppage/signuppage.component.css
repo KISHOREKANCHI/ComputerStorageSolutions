@@ -1,30 +1,58 @@
-/* Style for gradient backgrounds */
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: #eee;
+}
+
 .gradient {
-    background:  #eee; /* Light gray background */
-  }
- 
-  
-  /* Style for the Register button */
-  .btn-success.btn-block.btn-lg.gradient-custom-4 {
-    border: 2px solid black; /* Black border */
-    background-color: white; /* White background */
-    color: white; /* White text */
-    font-weight: bold; /* Bold text */
-  }
-  
-  .btn-success.btn-block.btn-lg.gradient-custom-4:hover {
-    background-color: black; /* Black background on hover */
-    color: white; /* White text on hover */
-  }
-  
-  /* Style for all text */
-  h2, .form-label, .form-check-label, .btn, .text-muted, p {
-    font-weight: solid; /* Make all text bold */
-  }
-  
-  /* Style for the register button on hover */
-  .btn-success.btn-block.btn-lg.gradient-custom-4:hover {
-    background-color: white; /* Change background on hover */
-    color: white; /* Ensure text remains white on hover */
-  }
-  
+  background-color: #eee; /* Light gray background */
+}
+
+.card {
+  border-radius: 15px;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.form-outline {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.form-outline input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+}
+
+.form-outline label {
+  position: absolute;
+  top: -0.5rem;
+  left: 0.75rem;
+  background: #fff;
+  padding: 0 0.25rem;
+  color: #495057;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 0.25rem;
+}
+
+.gradient-custom-4 {
+  background-color: #28a745; /* Green background */
+  color: #fff;
+}
+
+.text-body {
+  color: #495057;
+}
+
+.text-body:hover {
+  color: #212529;
+  text-decoration: underline;
+}

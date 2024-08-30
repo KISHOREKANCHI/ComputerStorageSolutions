@@ -38,4 +38,8 @@ export class LoginpageComponent {
       }
     });
   }
+
+  SignUpRedirect(){
+    this.router.navigate(['signup'])
+  }
 }
