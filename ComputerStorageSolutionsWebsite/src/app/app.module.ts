@@ -10,6 +10,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProductpageComponent } from './productpage/productpage.component';
 import { SignuppageComponent } from './signuppage/signuppage.component';
 import { CartpageComponent } from './cartpage/cartpage.component';
+import { OrderspageComponent } from './orderspage/orderspage.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { CartpageComponent } from './cartpage/cartpage.component';
     LoginpageComponent,
     ProductpageComponent,
     SignuppageComponent,
-    CartpageComponent
+    CartpageComponent,
+    OrderspageComponent
   ],
   imports: [
     BrowserModule,

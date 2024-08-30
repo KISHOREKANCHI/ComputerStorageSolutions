@@ -1,0 +1,16 @@
+.gradient-custom {
+    background: #eee;
+}
+
+/* Style for order date */
+.order-date {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Ensure buttons and text are properly aligned */
+.btn-outline-primary {
+    margin-top: 5px; /* Optional: add space if needed */
+}
