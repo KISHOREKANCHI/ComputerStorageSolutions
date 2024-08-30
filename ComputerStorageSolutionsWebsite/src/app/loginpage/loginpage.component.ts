@@ -21,12 +21,13 @@ export class LoginpageComponent {
     const loginData = {
       // email: this.email,
       // passwordHash: this.passwordHash
-      email:"Test@gamil.com",
+      email:"test@gmail.com",
       Password:"Test@123"
     };
     this.userDetailsService.GetUserDetails(loginData).subscribe({
       next: (response : any) => {
         this.Token = response;
+        console.log("clicked");
         document.cookie = `token= ${btoa(this.Token.token)}; Secure;SameSite=Strict; Priority=High; path=/`
         this.router.navigate(['products'])
         const expiry = 1;
