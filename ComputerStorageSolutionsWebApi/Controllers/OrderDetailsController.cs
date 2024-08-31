@@ -25,15 +25,12 @@ namespace ComputerStorageSolutions.Controllers
         {
             try
             {
-                var token = Request.Headers["Authorization"].ToString();
-                token = token.Substring("Bearer ".Length).Trim();
-
-                Guid userId = Guid.Parse(JwtService.GetUserIdFromToken(token)); // Use Parse to convert string to Guid
+                var userId = GetUserIdFromToken();
 
                 // Retrieve the orders for the specified user asynchronously
                 var orders = await Database.Orders
                                             .Where(order => order.UserId == userId)
-                                            .ToListAsync(); // Use ToListAsync()
+                                            .ToListAsync();
 
                 if (orders != null && orders.Count > 0)
                 {
@@ -60,11 +57,12 @@ namespace ComputerStorageSolutions.Controllers
                 return BadRequest("Product orders list cannot be null or empty.");
             }
 
-            var token = Request.Headers["Authorization"].ToString();
-            token = token.Substring("Bearer ".Length).Trim();
+            var userId = GetUserIdFromToken();
 
-            // Retrieve the user's ID from the JWT token
-            Guid userId = Guid.Parse(JwtService.GetUserIdFromToken(token));
+            if (userId == Guid.Empty)
+            {
+                return Unauthorized("Invalid token.");
+            }
 
             // Convert the list of ProductOrder to get product IDs
             var productGuids = orderRequest.ProductOrders.Select(po => po.ProductId).ToList();
@@ -128,6 +126,22 @@ namespace ComputerStorageSolutions.Controllers
             return Ok("Order placed successfully.");
         }
 
+        // Private method to extract the UserId from the JWT token
+        private Guid GetUserIdFromToken()
+        {
+            try
+            {
+                var token = Request.Headers["Authorization"].ToString();
+                token = token.Substring("Bearer ".Length).Trim();
+
+                return Guid.Parse(JwtService.GetUserIdFromToken(token)); // Use Parse to convert string to Guid
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to extract UserId from token.");
+                return Guid.Empty; // Return an empty GUID if there is an error
+            }
+        }
 
         public class ProductOrder
         {
@@ -140,6 +154,5 @@ namespace ComputerStorageSolutions.Controllers
             public List<ProductOrder> ProductOrders { get; set; }
             public string ShippingAddress { get; set; }
         }
-
     }
 }

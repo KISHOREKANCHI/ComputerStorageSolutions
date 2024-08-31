@@ -20,11 +20,16 @@
       <button class="btn btn-outline-success" type="submit">Search</button>
     </form>
 
+    <!-- Go to Cart Button -->
+    <button class="btn btn-outline-primary me-3" type="button" [routerLink]="['/products/Cart']" >
+      Go to Cart
+    </button>
+
     <!-- User Details -->
     <div class="d-flex align-items-center">
       <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-          <span class="user-profile">🙎🏻</span> User Profile
+          <span class="user-profile">🙎🏻</span> {{Username}}
         </button>
         <ul class="dropdown-menu" aria-labelledby="userMenuButton" (click)="logout(); $event.preventDefault();">
           <li><a class="dropdown-item" href="#"><i class="fa fa-sign-out" style="font-size:24px"></i> Logout</a></li>
@@ -33,6 +38,8 @@
     </div>
   </div>
 </nav>
+
+<div id="popupMessage" class="popup-message" *ngIf="popupVisible">{{ popupText }}</div>
 
 <section style="background-color: #eee;">
   <div class="container py-5">
@@ -75,9 +82,15 @@
                 </div>
                 <h6 class="text-success">Free shipping</h6>
                 <div class="d-flex flex-column mt-4">
-                  <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-sm" type="button" [routerLink]="['Cart']">
-                    Add to Cart
-                  </button>
+                  <button 
+                    data-mdb-button-init 
+                    data-mdb-ripple-init 
+                    class="btn btn-primary btn-sm" 
+                    type="button" 
+                    (click)="toggleCart(product.categoryId,product.description,product.imageUrl,product.price,product.productId,product.productName)">
+                    {{ isInCart(product.productId) ? 'Delete from Cart' : 'Add to Cart' }}
+                </button>
+
                   <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary btn-sm mt-2" type="button" (click)="navigateToProductDetails(product.productId)">
                     Buy Now
                   </button>

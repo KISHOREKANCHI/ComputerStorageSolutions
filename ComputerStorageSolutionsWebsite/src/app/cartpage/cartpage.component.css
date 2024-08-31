@@ -2,21 +2,35 @@
 body, html {
     height: 100%;
     margin: 0;
-    background-color: #eee; /* Light gray background */
+    background-color: #f0f0f0; /* Slightly lighter gray background */
 }
 
 section.h-100 {
     height: 100%;
-    background-color: #eee; /* Light gray background */
+    background-color: #f0f0f0; /* Slightly lighter gray background */
 }
 
-/* Style for the "Proceed to Pay" button */
+/* Card styling */
+.card {
+    border-radius: 10px; /* Rounded corners */
+    transition: transform 0.2s, box-shadow 0.2s; /* Smooth transition for hover effects */
+    margin: 20px; /* Space around the card */
+}
+
+.card:hover {
+    transform: scale(1.05); /* Slightly enlarge card on hover */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2); /* Add shadow effect on hover */
+}
+
+/* Style for the "Place Order" button */
 .btn-warning.btn-block.btn-lg {
-    border: 2px solid black; /* Black border */
-    background-color: white; /* White background */
+    border: 2px solid #ffcc00; /* Golden border */
+    background-color: #ffcc00; /* Golden background */
     color: black; /* Black text */
     font-weight: bold; /* Bold text */
     transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
+    padding: 1rem; /* Increased padding for better button size */
+    font-size: 1.2rem; /* Slightly larger font size */
 }
 
 .btn-warning.btn-block.btn-lg:hover {
@@ -25,49 +39,36 @@ section.h-100 {
 }
 
 /* Style for the product title and description */
-.lead.fw-normal {
+.card-title {
     font-weight: bold; /* Make product title bold */
+    margin-bottom: 0.5rem; /* Spacing below the title */
 }
 
-.text-muted {
-    font-weight: bold; /* Make all muted text bold */
-}
-
-/* Style for the cart item price */
-h5.mb-0 {
-    font-weight: bold; /* Make the price bold */
+.card-text {
+    color: #555; /* Muted color for description */
+    margin-bottom: 1.5rem; /* Space below the description */
 }
 
 /* Style for the trash icon (delete button) */
 .text-danger {
     color: #dc3545; /* Keep the delete icon red */
     font-weight: bold; /* Make it bold */
-}
-
-/* Additional styling for buttons in the quantity selector */
-.btn-link {
-    color: black; /* Ensure buttons are visible and black */
-    font-weight: bold; /* Make the buttons bold */
+    cursor: pointer; /* Change cursor to pointer */
     transition: color 0.3s; /* Smooth transition for hover effects */
 }
 
-.btn-link:hover {
-    color: #555; /* Darker color on hover */
+.text-danger:hover {
+    color: darkred; /* Darker red on hover */
 }
-/* Ensure the input field centers text */
-input[type=number] {
-    text-align: center;
-    font-size: large;
-  }
-  
-  /* Optional: Adjust button size and spacing if needed */
-  .btn-link {
-    padding: 0.5rem;
-    font-size: 1.2rem;
-  }
-  
-  /* Optional: Adjust button size to match input height */
-  .btn-link i {
-    font-size: 1.5rem;
-  }
-  
+
+/* Styling for responsive adjustments */
+@media (max-width: 768px) {
+    .btn-warning.btn-block.btn-lg {
+        font-size: 1rem; /* Smaller font size on smaller screens */
+        padding: 0.5rem; /* Smaller padding */
+    }
+
+    .card {
+        margin-bottom: 1rem; /* Add space between cards on smaller screens */
+    }
+}

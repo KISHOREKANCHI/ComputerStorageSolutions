@@ -62,6 +62,7 @@ namespace ComputerStorageSolutions.Controllers
                         new Claim(JwtRegisteredClaimNames.Sub, Configuration["Jwt:Subject"] ?? string.Empty),
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim("UserId", result[0].User.UserId.ToString()),
+                        new Claim("UserName", result[0].User.Username),
                         new Claim("Email", result[0].User.Email),
                         new Claim(ClaimTypes.Role, result[0].Role)
                     };
