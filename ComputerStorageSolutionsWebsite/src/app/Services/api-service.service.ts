@@ -38,7 +38,6 @@ export class ApiServiceService {
       productOrders: productOrders,
       shippingAddress: shippingAddress
     };
-    console.log("bodyyyyyyyyyyyyyyy",body);
     return this.http.post(`${this.orderApi}/OrderProduct`,body, { headers:this.headers });
   }
 }

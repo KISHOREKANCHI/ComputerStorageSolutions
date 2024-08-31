@@ -20,9 +20,8 @@ namespace ComputerStorageSolutions.Controllers
             Logger = _Logger;
         }
 
-        // GET: api/Cart/{userId}
         [HttpGet("GetCart")]
-        /*[Authorize]*/
+        [Authorize]
         public async Task<ActionResult> GetCart(Guid userId)
         {
             Console.WriteLine(userId);

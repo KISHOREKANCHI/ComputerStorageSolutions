@@ -27,6 +27,10 @@ export class ProductpageComponent implements OnInit {
     this.loadProducts();
   }
 
+  GoToCart(){
+    this.router.navigate(['Cart'])
+  }
+
   loadProducts(): void {
     const token = (document.cookie.split(';')[0]);
     const Jwttoken = jwtDecode<any>(atob(token.replace("token=", "")));
@@ -85,6 +89,7 @@ export class ProductpageComponent implements OnInit {
     }
 
     localStorage.setItem('cart', JSON.stringify(cart));
+    console.log("added to cart",cart)
   }
 
   showPopup(message: string): void {
@@ -93,6 +98,6 @@ export class ProductpageComponent implements OnInit {
 
     setTimeout(() => {
       this.popupVisible = false;
-    }, 2000);
+    }, 1000);
   }
 }

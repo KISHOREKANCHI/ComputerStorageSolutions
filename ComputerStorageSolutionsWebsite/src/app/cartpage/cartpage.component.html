@@ -1,50 +1,51 @@
 <section class="h-100">
-    <div class="container h-100 py-5">
-      <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-10">
-  
-          <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="fw-normal mb-0">Shopping Cart</h3>
-            
-          </div>
-  
-          <div class="card rounded-3 mb-4" *ngFor="let items of cartItems">
-            <div class="card-body p-4">
-              <div class="row d-flex justify-content-between align-items-center">
-                <div class="col-md-2 col-lg-2 col-xl-2">
-                  <img
-                    [src]="items.imageUrl"
-                    class="img-fluid rounded-3" alt="Image">
-                </div>
-                <div class="col-md-3 col-lg-3 col-xl-3">
-                  <p class="lead fw-normal mb-2">{{items.productName}}</p>
-                  <p><span class="text-muted"></span>{{items.description}}
-                </div>
-                <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                
-                  <input id="form1" min="0" name="quantity" value="1" type="number"
-                    class="form-control form-control-sm" (input)="onQuantityChange($event)" />
-                </div>
-                <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                  <h5 class="mb-0">{{Quantity}} X ${{items.price}}</h5>
-                </div>
-                <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                  <a href="#!" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
-                </div>
+  <div class="container h-100 py-5">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-10">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h3 class="fw-normal mb-0">Shopping Cart</h3>
+        </div>
+
+        <div *ngIf="isCartEmpty()" class="alert alert-info text-center">
+          Your cart is empty. Please add items to your cart.
+        </div>
+
+        <div class="card rounded-3 mb-4" *ngFor="let items of cartItems">
+          <div class="card-body p-4">
+            <div class="row d-flex justify-content-between align-items-center">
+              <div class="col-md-2 col-lg-2 col-xl-2">
+                <img
+                  [src]="items.imageUrl"
+                  class="img-fluid rounded-3" alt="Image">
+              </div>
+              <div class="col-md-3 col-lg-3 col-xl-3">
+                <p class="lead fw-normal mb-2">{{ items.productName }}</p>
+                <p><span class="text-muted"></span>{{ items.description }}</p>
+              </div>
+              <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                <input id="form1" min="0" name="quantity" [(ngModel)]="items.Quantity" type="number"
+                  class="form-control form-control-sm" (input)="onQuantityChange($event, items)" />
+              </div>
+              <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                <h5 class="mb-0">{{ items.Quantity }} X ${{ items.price }}</h5>
+              </div>
+              <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                <a href="#!" (click)="removeFromCart(items.ProductId)" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
               </div>
             </div>
           </div>
-  
-          <div class="card shadow-sm">
-            <div class="card-body text-center">
-                <h5 class="card-title">Complete Your Order</h5>
-                <p class="card-text">Click the button below to finalize your purchase.</p>
-                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-warning btn-block btn-lg">Place Order</button>
-            </div>
         </div>
-        
-  
+
+        <div *ngIf="!isCartEmpty()" class="card shadow-sm">
+          <div class="card-body text-center">
+            <h5 class="card-title">Total Amount: ${{ getTotalAmount() }}</h5>
+            <p class="card-text">Click the button below to finalize your purchase.</p>
+            <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-warning btn-block btn-lg" (click)="placeOrder()">Place Order</button>
+          </div>
         </div>
+
       </div>
     </div>
-  </section>
+  </div>
+</section>

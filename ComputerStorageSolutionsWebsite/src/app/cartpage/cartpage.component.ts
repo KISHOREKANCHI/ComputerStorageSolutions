@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CartpageComponent implements OnInit {
   cartItems: any[] = [];
-  Quantity:number=1;
+  Quantity: number = 1;
 
   ngOnInit(): void {
     this.loadCart();
@@ -15,7 +15,6 @@ export class CartpageComponent implements OnInit {
 
   loadCart(): void {
     this.cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
-    console.log("get cart items",this.cartItems);
     this.cartItems.forEach(item => item.checked = false); // Initialize checked property
   }
 
@@ -27,8 +26,11 @@ export class CartpageComponent implements OnInit {
   }
 
   removeFromCart(productId: string): void {
-    this.cartItems = this.cartItems.filter(item => item.productId !== productId);
-    this.saveCart();
+    const index = this.cartItems.findIndex(item => item.ProductId === productId);
+    if (index !== -1) {
+      this.cartItems.splice(index, 1); // Remove the item at the found index
+      this.saveCart(); // Save the updated cart to localStorage
+    }
   }
 
   saveCart(): void {
@@ -37,13 +39,23 @@ export class CartpageComponent implements OnInit {
 
   placeOrder(): void {
     const itemsToOrder = this.cartItems.filter(item => item.checked);
+    // Implement order placement logic here
   }
 
-  onQuantityChange(event: Event): void {
+  onQuantityChange(event: Event, item: any): void {
     const inputElement = event.target as HTMLInputElement;
     const quantity = Number(inputElement.value);
-    this.Quantity=quantity;
-  }  
+    if (quantity >= 0) {
+      item.quantity = quantity;
+      this.saveCart();
+    }
+  }
 
-  
+  getTotalAmount(): number {
+    return this.cartItems.reduce((total, item) => total + (item.Quantity * item.price), 0);
+  }
+
+  isCartEmpty(): boolean {
+    return this.cartItems.length === 0;
+  }
 }
