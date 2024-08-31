@@ -1,0 +1,20 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <!-- User Details -->
+      <div class="d-flex align-items-center">
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="user-profile">🙎🏻</span> {{ Username }}
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="userMenuButton" (click)="logout(); $event.preventDefault();">
+            <li><a class="dropdown-item" routerLink="login"><i class="fa fa-sign-in" style="font-size:24px"></i> Login</a></li>
+            <li><a class="dropdown-item" routerLink="signup"><i class="fa fa-user-plus" style="font-size:24px"></i> Signup</a></li>
+            <li><a class="dropdown-item" routerLink="products"><i class="fa fa-user-plus" style="font-size:24px"></i> Signup</a></li>
+            <li><a class="dropdown-item" routerLink="Orders"><i class="fa fa-list" style="font-size:24px"></i> Orders</a></li>
+            <li><a class="dropdown-item" routerLink="Cart"><i class="fa fa-shopping-cart" style="font-size:24px"></i> Cart</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+  

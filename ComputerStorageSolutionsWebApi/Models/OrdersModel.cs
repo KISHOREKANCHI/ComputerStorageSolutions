@@ -27,5 +27,8 @@ namespace ComputerStorageSolutions.Models
 
         [JsonIgnore]
         public virtual UserModel? Users { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<OrderDetailsModel>? OrderDetails { get; set; } = new List<OrderDetailsModel>();
     }
 }

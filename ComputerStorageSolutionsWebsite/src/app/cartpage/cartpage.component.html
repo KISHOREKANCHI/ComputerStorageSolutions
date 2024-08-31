@@ -2,9 +2,11 @@
   <div class="container h-100 py-5">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-10">
-
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h3 class="fw-normal mb-0">Shopping Cart</h3>
+          <button type="button" class="btn btn-secondary" (click)="toggleSelectAll()">
+            {{ allSelected() ? 'Unselect All' : 'Select All' }}
+          </button>
         </div>
 
         <div *ngIf="isCartEmpty()" class="alert alert-info text-center">
@@ -15,36 +17,63 @@
           <div class="card-body p-4">
             <div class="row d-flex justify-content-between align-items-center">
               <div class="col-md-2 col-lg-2 col-xl-2">
-                <img
-                  [src]="items.imageUrl"
-                  class="img-fluid rounded-3" alt="Image">
+                <img [src]="items.imageUrl" class="img-fluid rounded-3" alt="Image">
               </div>
               <div class="col-md-3 col-lg-3 col-xl-3">
                 <p class="lead fw-normal mb-2">{{ items.productName }}</p>
                 <p><span class="text-muted"></span>{{ items.description }}</p>
               </div>
-              <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+              <div class="col-md-2 col-lg-2 col-xl-2 d-flex">
                 <input id="form1" min="0" max="10" name="quantity" [(ngModel)]="items.Quantity" type="number"
                   class="form-control form-control-sm" (input)="onQuantityChange($event, items)" />
               </div>
-              <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+              <div class="col-md-2 col-lg-2 col-xl-2">
                 <h5 class="mb-0">{{ items.Quantity }} X ${{ items.price }}</h5>
               </div>
+              <div class="col-md-2 col-lg-2 col-xl-2 text-center">
+                <button type="button" [ngClass]="{'btn-selected': items.checked, 'btn-unselected': !items.checked}" 
+                  (click)="toggleSelection(items)">
+                  {{ items.checked ? 'Selected' : 'Select' }}
+                </button>
+              </div>
               <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                <a href="#!" (click)="removeFromCart(items.ProductId)" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
+                <a href="#!" (click)="removeFromCart(items.ProductId)" class="text-danger">
+                  <i class="fas fa-trash fa-lg"></i>
+                </a>
               </div>
             </div>
           </div>
         </div>
 
-        <div *ngIf="!isCartEmpty()" class="card shadow-sm">
-          <div class="card-body text-center">
-            <h5 class="card-title">Total Amount: ${{ getTotalAmount() }}</h5>
-            <p class="card-text">Click the button below to finalize your purchase.</p>
-            <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-warning btn-block btn-lg" (click)="placeOrder()">Place Order</button>
+        <form (ngSubmit)="placeOrder($event)">
+          <div class="mt-4">
+            <h5>Billing Address</h5>
+            <div class="mb-3">
+              <label for="name" class="form-label">Name</label>
+              <input type="text" class="form-control" id="name" [(ngModel)]="Address.name" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label for="address" class="form-label">Address</label>
+              <input type="text" class="form-control" id="address" [(ngModel)]="Address.address" name="address" required>
+            </div>
+            <div class="mb-3">
+              <label for="city" class="form-label">City</label>
+              <input type="text" class="form-control" id="city" [(ngModel)]="Address.city" name="city" required>
+            </div>
+            <div class="mb-3">
+              <label for="zip" class="form-label">Zip Code</label>
+              <input type="text" class="form-control" id="zip" [(ngModel)]="Address.zip" name="zip" required>
+            </div>
+        
+            <div *ngIf="!isCartEmpty()" class="card shadow-sm">
+              <div class="card-body text-center">
+                <h5 class="card-title">Total Amount: ${{ getTotalAmount()}}</h5>
+                <p class="card-text">Click the button below to finalize your purchase.</p>
+                <button type="submit" class="btn btn-warning btn-block btn-lg">Place Order</button>
+              </div>
+            </div>
           </div>
-        </div>
-
+        </form>        
       </div>
     </div>
   </div>

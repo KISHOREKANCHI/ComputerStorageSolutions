@@ -87,7 +87,7 @@
                     data-mdb-ripple-init 
                     class="btn btn-primary btn-sm" 
                     type="button" 
-                    (click)="toggleCart(product.categoryId,product.description,product.imageUrl,product.price,product.productId,product.productName)">
+                    (click)="toggleCart(product.categoryId,product.description,product.imageUrl,product.price,product.productId,product.productName,product.stockQuantity)">
                     {{ isInCart(product.productId) ? 'Delete from Cart' : 'Add to Cart' }}
                 </button>
 

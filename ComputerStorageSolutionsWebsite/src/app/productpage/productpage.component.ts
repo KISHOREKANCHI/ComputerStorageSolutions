@@ -39,7 +39,6 @@ export class ProductpageComponent implements OnInit {
     this.apiService.getProducts().subscribe({
       next: (response: any) => {
         this.ProductDetails = response;
-        console.log(this.ProductDetails)
         this.FilteredProducts = this.ProductDetails;
       }
     });
@@ -70,7 +69,7 @@ export class ProductpageComponent implements OnInit {
     return cart.some((item: any) => item.ProductId === productId);
   }
 
-  toggleCart(categoryId:string,description:string,imageUrl:string,price:number,productId:string,productName:string): void {
+  toggleCart(categoryId:string,description:string,imageUrl:string,price:number,productId:string,productName:string,stockQuantity:number): void {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     const productIndex = cart.findIndex((item: any) => item.ProductId === productId);
 
@@ -84,12 +83,12 @@ export class ProductpageComponent implements OnInit {
                   imageUrl:imageUrl,
                   price:price,
                   productName:productName,
-                  Quantity: 1 });
+                  Quantity: 1,
+                  stockQuantity:stockQuantity });
       this.showPopup('Product added to cart!');
     }
 
     localStorage.setItem('cart', JSON.stringify(cart));
-    console.log("added to cart",cart)
   }
 
   showPopup(message: string): void {

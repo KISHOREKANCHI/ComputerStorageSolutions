@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ApiServiceService } from '../Services/api-service.service';
+import { CookieManagerService } from '../Services/cookie-manager.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cartpage',
@@ -8,8 +11,18 @@ import { Component, OnInit } from '@angular/core';
 export class CartpageComponent implements OnInit {
   cartItems: any[] = [];
   Quantity: number = 1;
-  popupText: string ="";
+  popupText: string = "";
   popupVisible: boolean = false;
+  selectAll: boolean = false; 
+  Address = {
+    name: '',
+    address: '',
+    city: '',
+    zip: ''
+  };
+  shippingAddress: string ='';
+
+  constructor(private apiService:ApiServiceService,private manager:CookieManagerService,private route:Router){}
 
   ngOnInit(): void {
     this.loadCart();
@@ -18,6 +31,7 @@ export class CartpageComponent implements OnInit {
   loadCart(): void {
     this.cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
     this.cartItems.forEach(item => item.checked = false); // Initialize checked property
+    console.log(this.cartItems);
   }
 
   updateQuantity(item: any, change: number): void {
@@ -39,28 +53,78 @@ export class CartpageComponent implements OnInit {
     localStorage.setItem('cart', JSON.stringify(this.cartItems));
   }
 
-  placeOrder(): void {
+  placeOrder(event: Event): void {
+    event.preventDefault(); // Prevent default form submission
+  
+    // Create the shipping address string
+    this.shippingAddress = `${this.Address.name}, ${this.Address.address}, ${this.Address.city}, ${this.Address.zip}`;
+  
+    // Filter items that are checked for the order
     const itemsToOrder = this.cartItems.filter(item => item.checked);
-    // Implement order placement logic here
+    
+    // Ensure at least one item is selected for ordering
+    if (itemsToOrder.length === 0) {
+      this.showPopup("Please select at least one item to place an order.");
+      return;
+    }
+    if ((this.Address.name || this.Address.address || this.Address.city || this.Address.zip)=== ''){
+      this.showPopup("Field/s cannot be empty in Billing Address");
+      return;
+    }
+  
+    interface ProductOrder {
+      productId: string; // Use the correct type for ProductId (string, number, etc.)
+      quantity: number;  // Ensure quantity is a number
+    }
+    // Prepare the order details according to the API format
+    const orderDetails: ProductOrder[] = itemsToOrder.map(item => ({
+      productId: item.ProductId,  // Ensure this is the correct property for ProductId
+      quantity: item.Quantity      // Ensure this is the correct property for quantity
+    })); 
+
+    this.apiService.placeOrder(orderDetails, this.shippingAddress).subscribe({
+      next: (response) => {
+        this.showPopup(`${response}`);
+        // Handle successful order placement (e.g., navigate to another page, show success message)
+      },
+      error: (error) => {
+        this.showPopup(`${error}`);
+        // Handle error (e.g., show error message)
+      }
+    });
+    this.route.navigate(['Orders']);
   }
+  
+  
 
   onQuantityChange(event: Event, item: any): void {
     const inputElement = event.target as HTMLInputElement;
-    const quantity = Number(inputElement.value);
-    if (quantity > 0 && quantity<10) {
-      item.quantity = quantity;
-      this.saveCart();
-    }else if(quantity>=10){
-      this.showPopup("Max quantity is 10");
-    }else{
-      this.removeFromCart(item.ProductId);
+    const quantityStr = inputElement.value;
+
+    // Only convert to a number if the input is not empty
+    if (quantityStr !== '') {
+      const quantity = Number(quantityStr);
+
+      if (quantity <= 0) {
+          this.removeFromCart(item.ProductId);
+      }else if (quantity > 0 && quantity < 10) {
+        if (quantity > item.stockQuantity) {
+          this.showPopup(`Available quantity is ${item.stockQuantity}`);
+        }
+        item.quantity = quantity; // Update item quantity
+        this.saveCart();
+      }else {
+        this.showPopup("Max quantity is 10");
+      }
     }
   }
 
-  getTotalAmount(): number {
-    return this.cartItems.reduce((total, item) => total + (item.Quantity * item.price), 0);
-  }
 
+  getTotalAmount(): number {
+    return this.cartItems
+      .filter(item => item.checked) // Filter for checked items
+      .reduce((total, item) => total + (item.Quantity * item.price), 0); // Calculate total
+  }
   isCartEmpty(): boolean {
     return this.cartItems.length === 0;
   }
@@ -72,5 +136,18 @@ export class CartpageComponent implements OnInit {
     setTimeout(() => {
       this.popupVisible = false;
     }, 3000);
+  }
+
+  toggleSelection(item: any): void {
+  item.checked = !item.checked;
+  }
+
+  toggleSelectAll(): void {
+    const allChecked = this.cartItems.every(item => item.checked);
+    this.cartItems.forEach(item => item.checked = !allChecked); // Toggle check/uncheck
+  }
+
+  allSelected(): boolean {
+    return this.cartItems.every(item => item.checked);
   }
 }

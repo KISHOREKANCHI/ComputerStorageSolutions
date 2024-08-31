@@ -41,8 +41,7 @@ export class BuyNowPageComponent implements OnInit {
   OrderProduct() {
     if (this.Address.name && this.Address.address && this.Address.city && this.Address.zip) {
       this.shippingAddress = `${this.Address.name}, ${this.Address.address}, ${this.Address.city}, ${this.Address.zip}`;
-      console.log('Concatenated Address:', this.shippingAddress);
-
+      
       // Create the product order list
       const productOrders = [
         {

@@ -12,6 +12,7 @@ import { SignuppageComponent } from './signuppage/signuppage.component';
 import { CartpageComponent } from './cartpage/cartpage.component';
 import { OrderspageComponent } from './orderspage/orderspage.component';
 import { BuyNowPageComponent } from './buy-now-page/buy-now-page.component';
+import { NavBarComponent } from './nav-bar/nav-bar.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { BuyNowPageComponent } from './buy-now-page/buy-now-page.component';
     SignuppageComponent,
     CartpageComponent,
     OrderspageComponent,
-    BuyNowPageComponent
+    BuyNowPageComponent,
+    NavBarComponent
   ],
   imports: [
     BrowserModule,
