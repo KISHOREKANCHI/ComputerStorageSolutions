@@ -1,43 +1,64 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container">
-    <!-- Categories Dropdown -->
-    <div class="dropdown me-3">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="categoriesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-        Categories
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
-        <li><a class="dropdown-item" href="#" (click)="filterByCategory(null)">All</a></li>
-        <li><a class="dropdown-item" href="#" (click)="filterByCategory(1)">SSD</a></li>
-        <li><a class="dropdown-item" href="#" (click)="filterByCategory(2)">HDD</a></li>
-        <li><a class="dropdown-item" href="#" (click)="filterByCategory(3)">Flash Drive</a></li>
-        <li><a class="dropdown-item" href="#" (click)="filterByCategory(4)">Memory Card</a></li>
-      </ul>
-    </div>
+  <div class="container-fluid">
+    <!-- Navbar Brand -->
+    <a class="navbar-brand" [routerLink]="['/products']" routerLinkActive="active">ComputerStorageSolutions</a>
 
-    <!-- Search Bar -->
-    <form class="d-flex mx-auto" role="search">
-      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success" type="submit">Search</button>
-    </form>
-
-    <!-- Go to Cart Button -->
-    <button class="btn btn-outline-primary me-3" type="button" (click)="GoToCart()" >
-      Go to Cart
-    </button>
-
-    <!-- User Details -->
-    <div class="d-flex align-items-center">
-      <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-          <span class="user-profile">🙎🏻</span> {{Username}}
+    <!-- Middle Content (Categories Dropdown & Search Bar) -->
+    <div class="d-flex flex-grow-1 justify-content-center align-items-center">
+      <!-- Categories Dropdown -->
+      <div class="dropdown me-3">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="categoriesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          Categories
         </button>
-        <ul class="dropdown-menu" aria-labelledby="userMenuButton" (click)="logout(); $event.preventDefault();">
-          <li><a class="dropdown-item" href="#"><i class="fa fa-sign-out" style="font-size:24px"></i> Logout</a></li>
+        <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+          <li><a class="dropdown-item" href="#" (click)="filterByCategory(null)">All</a></li>
+          <li><a class="dropdown-item" href="#" (click)="filterByCategory(1)">SSD</a></li>
+          <li><a class="dropdown-item" href="#" (click)="filterByCategory(2)">HDD</a></li>
+          <li><a class="dropdown-item" href="#" (click)="filterByCategory(3)">Flash Drive</a></li>
+          <li><a class="dropdown-item" href="#" (click)="filterByCategory(4)">Memory Card</a></li>
+
         </ul>
       </div>
+
+      <!-- Search Bar -->
+      <form class="d-flex mx-auto" role="search" (ngSubmit)="searchProducts()">
+        <input [(ngModel)]="searchTerm" name="searchTerm" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+    </div>
+
+    <!-- Navbar Links -->
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link nav-btn" [routerLink]="['/login']">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-btn" [routerLink]="['/signup']">Signup</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-btn" [routerLink]="['/products']">Products</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-btn" [routerLink]="['/Orders']">My Orders</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-btn" [routerLink]="['/Cart']">Cart</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle nav-btn" href="#" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            🙎🏻 {{ Username }}
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="userMenuButton">
+            <li><a class="dropdown-item" href="#" (click)="logout(); $event.preventDefault();"><i class="fa fa-sign-out"></i> Logout</a></li>
+          </ul>
+        </li>
+      </ul>
     </div>
   </div>
 </nav>
+
+
 
 <div id="popupMessage" class="popup-message" *ngIf="popupVisible">{{ popupText }}</div>
 

@@ -1,0 +1,39 @@
+/* Navbar styling */
+.navbar {
+    padding: 0.5rem 1rem;
+    color: #495057; /* Default text color for the navbar */
+}
+
+.navbar-nav .nav-link {
+    color: #41474d; /* Set default text color for nav links */
+}
+
+/* Hover effect for navigation links */
+.navbar-nav .nav-link:hover {
+    color: white; /* Change text color to white on hover */
+}
+
+.navbar-nav {
+    flex-direction: row;
+}
+
+.navbar .form-control {
+    width: 400px; /* Increase the width of the search bar */
+}
+
+.nav-item.dropdown .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+/* Navbar button styles */
+.nav-btn {
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Hover effect for navigation buttons */
+.nav-btn:hover {
+    background-color: #007bff;
+    color: white; /* Change text color to white on hover */
+    border-radius: 5px;
+}

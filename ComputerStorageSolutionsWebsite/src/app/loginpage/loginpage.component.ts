@@ -11,14 +11,15 @@ import { CookieManagerService } from 'src/app/Services/cookie-manager.service';
 export class LoginpageComponent {
 
   email: string = "";
-  passwordHash: string = "";
+  password: string = "";
   UserDetails: any | null = null;
   Token: any | null = null;
   priority: string = "low";
+  rememberMeChecked: boolean = true;
+  ShowPassword: boolean=false;
 
   constructor(
     private userDetailsService: UserDetailsService,
-    private cdr: ChangeDetectorRef,
     private router: Router,
     private manager: CookieManagerService
   ) {}
@@ -29,13 +30,12 @@ export class LoginpageComponent {
 
   Login() {
     const loginData = {
-      email: "test@gmail.com",
-      Password: "Test@123"
+      email: this.email,
+      Password: this.password
     };
     this.userDetailsService.GetUserDetails(loginData).subscribe({
       next: (response: any) => {
         this.Token = response;
-        console.log("clicked");
         document.cookie = `token=${btoa(this.Token.token)}; Secure;SameSite=Strict; Priority=${this.priority}; path=/`;
         this.router.navigate(['products']);
         const expiry = 1;
@@ -49,5 +49,9 @@ export class LoginpageComponent {
 
   SignUpRedirect() {
     this.router.navigate(['signup']);
+  }
+
+  toggleShowPassword() {
+    this.ShowPassword = !this.ShowPassword;
   }
 }

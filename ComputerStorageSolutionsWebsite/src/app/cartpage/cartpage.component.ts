@@ -26,6 +26,8 @@ export class CartpageComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCart();
+    const expiry = 1;
+    this.manager.checkToken(expiry);
   }
 
   loadCart(): void {

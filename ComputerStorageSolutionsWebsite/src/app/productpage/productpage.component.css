@@ -1,16 +1,11 @@
 /* Navbar styling */
 .navbar {
   padding: 0.5rem 1rem;
+  color: #495057; /* Default text color for the navbar */
 }
 
 .navbar-nav {
   flex-direction: row;
-}
-
-.form-inline {
-  flex: 1;
-  margin-left: 2rem; /* Adjust space from categories dropdown */
-  margin-right: 2rem; /* Adjust space from user details */
 }
 
 .navbar .form-control {
@@ -22,39 +17,15 @@
   left: auto;
 }
 
-/* Center the search bar */
-.form-inline {
-  margin-left: auto;
-  margin-right: auto;
+.navbar-nav .nav-link {
+  color: #41474d; /* Set default text color for nav links */
 }
 
-/* User profile emoji styling */
-.user-profile {
-  color: #faf6f6; /* White color */
+/* Hover effect for navigation links */
+.navbar-nav .nav-link:hover {
+  color: white; /* Change text color to white on hover */
 }
 
-/* Adjustments for smaller screens */
-@media (max-width: 767.98px) {
-  .navbar-nav {
-      text-align: center;
-      margin-bottom: 0;
-  }
-
-  .navbar-nav .nav-link {
-      padding-left: 0;
-      padding-right: 0;
-  }
-
-  .form-inline {
-      margin-top: 0.5rem;
-      margin-left: 0;
-      margin-right: 0;
-  }
-
-  .navbar .form-control {
-      width: 100%; /* Full width on smaller screens */
-  }
-}
 
 .popup-message {
   position: fixed;
@@ -69,4 +40,43 @@
   z-index: 1000;
   opacity: 0.9;
   font-size: 14px;
+}
+
+
+/* Navbar button styles */
+.nav-btn {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Hover effect for navigation buttons */
+.nav-btn:hover {
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+}
+
+/* Categories dropdown button style */
+#categoriesDropdown {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Hover effect for categories dropdown */
+#categoriesDropdown:hover {
+  background-color: #6c757d;
+  color: white;
+}
+
+/* Search button style */
+.btn-outline-success {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Hover effect for search button */
+.btn-outline-success:hover {
+  background-color: #28a745;
+  color: white;
+}
+
+.form-control {
+  width: 500px; /* Example width for the search input */
 }

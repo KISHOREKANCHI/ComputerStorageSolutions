@@ -1,10 +1,4 @@
-html, body {
-    height: 100%;
-    margin: 0;
-    background-color: #eee;
-  }
-  
-  .gradient {
+.gradient {
     background-color: #eee; /* Light gray background */
   }
   
@@ -24,7 +18,7 @@ html, body {
   .form-outline input {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid #ced4da;
+    border: 1px solid #8f9194;
     border-radius: 0.25rem;
   }
   
@@ -43,10 +37,6 @@ html, body {
     border-radius: 0.25rem;
   }
   
-  .btn-dark {
-    background-color: #eee; /* gray background */
-    color: #fff; /* White text */
-  }
   
   .text-body {
     color: #495057;
@@ -56,4 +46,35 @@ html, body {
     color: #212529;
     text-decoration: underline;
   }
+
+  .btn-submit {
+    background-color: #007bff; /* Solid blue background */
+    color: #fff; /* White text */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 20px; /* Padding for better sizing */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transition for effects */
+    text-decoration: none;
+}
+
+.btn-submit:hover {
+    background-color:#0075f2; /* Darker blue on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+    text-decoration: none;
+}
+
+.btn-submit:focus {
+    outline: none; /* Remove focus outline */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a subtle shadow effect */
+}
+
+.form-check-input{
+  border:1.35px solid black;
+}
+
+.form-check-label {
+  margin-left: 0.5rem; /* Adds a gap between the checkbox and label */
+}
+
+
   

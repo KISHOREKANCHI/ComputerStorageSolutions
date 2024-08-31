@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
+import { ApiServiceService } from '../Services/api-service.service';
+import { CookieManagerService } from '../Services/cookie-manager.service';
+
 
 @Component({
   selector: 'app-nav-bar',
@@ -9,8 +12,11 @@ import { jwtDecode } from 'jwt-decode';
 })
 export class NavBarComponent {
   Username: any;
+  ProductDetails: any;
+  FilteredProducts: any;
+  product:any
   
-  constructor(private router:Router){}
+  constructor(private router:Router,private manager:CookieManagerService){}
 
   logout(): void {
     this.router.navigate(['login']);
@@ -21,8 +27,13 @@ export class NavBarComponent {
   }
 
   ngOnInit(){
+    const expiry = 1;
+    this.manager.checkToken(expiry);
     const token = (document.cookie.split(';')[0]);
-    const Jwttoken = jwtDecode<any>(atob(token.replace("token=", "")));
-    this.Username = Jwttoken.UserName;
+    if(token){
+      const Jwttoken = jwtDecode<any>(atob(token.replace("token=", "")));
+      this.Username = Jwttoken.UserName;
+    }
+    
   }
 }

@@ -97,13 +97,15 @@ export class SignuppageComponent {
 
     this.userDetailsService.RegisterDetails(SignupData).subscribe({
       next: (response: any) => {
-        this.RegistrationMessage = 'Registration successful! Redirecting to login...';
+        console.log(response);
+        this.RegistrationMessage = response.message+' Redirecting to login...';
         setTimeout(() => {
           this.router.navigate(['login']);
         }, 2000); // Redirect after 2 seconds
       },
       error: (error: any) => {
-        this.RegistrationMessage = 'Registration failed. Please try again.';
+        console.log(error);
+        this.RegistrationMessage = error.message+'Registration failed. Please try again.';
       }
     });
   }

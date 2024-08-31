@@ -1,13 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable , catchError, of, throwError} from 'rxjs';
+import { CookieManagerService } from './cookie-manager.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserDetailsService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private manager:CookieManagerService) { }
+
+  ngOninit(){
+    const expiry = 1;
+    this.manager.checkToken(expiry);
+  }
 
   private Endpoint = "http://localhost:5037/api/"
 

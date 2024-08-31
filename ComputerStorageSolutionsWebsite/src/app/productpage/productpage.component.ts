@@ -18,6 +18,7 @@ export class ProductpageComponent implements OnInit {
   categoryId: number | null = null;
   popupVisible: boolean = false;
   popupText: string = '';
+  searchTerm: string = '';
 
   constructor(private apiService: ApiServiceService, private manager: CookieManagerService, private router: Router) {}
 
@@ -44,7 +45,7 @@ export class ProductpageComponent implements OnInit {
     });
   }
 
-  filterByCategory(categoryId: number | null): void {
+  public filterByCategory(categoryId: number | null): void {
     if (categoryId === null) {
       this.FilteredProducts = this.ProductDetails;
     } else {
@@ -99,4 +100,15 @@ export class ProductpageComponent implements OnInit {
       this.popupVisible = false;
     }, 1000);
   }
+
+  searchProducts(): void {
+    if (this.searchTerm) {
+      this.FilteredProducts = this.ProductDetails.filter(product =>
+        product.productName.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    } else {
+      this.FilteredProducts = this.ProductDetails; // Show all products if search term is empty
+    }
+  }
+  
 }

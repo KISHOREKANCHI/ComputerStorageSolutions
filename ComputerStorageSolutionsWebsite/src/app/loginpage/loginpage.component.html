@@ -6,26 +6,50 @@
           <div class="card-body p-4">
             <h2 class="text-center mb-4">Login</h2>
 
-            <form (ngSubmit)="Login()">
+            <form (ngSubmit)="Login()" #loginForm="ngForm">
               <div class="form-outline mb-4">
-                <input type="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="">
+                <input 
+                  type="email" 
+                  class="form-control form-control-lg" 
+                  id="exampleInputEmail1" 
+                  placeholder="" 
+                  [(ngModel)]="email" 
+                  name="email" 
+                  required>
                 <label class="form-label" for="exampleInputEmail1">Email address</label>
               </div>
 
               <div class="form-outline mb-4">
-                <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="">
+                <input 
+                  [type]="ShowPassword ? 'text' : 'password'" 
+                  class="form-control form-control-lg" 
+                  id="exampleInputPassword1" 
+                  placeholder="" 
+                  [(ngModel)]="password" 
+                  name="password" 
+                  required>
+                  <i class="toggle-password position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;" (click)="toggleShowPassword()">
+                    {{ ShowPassword ? '🙈' : '👁️' }}
+                  </i>
                 <label class="form-label" for="exampleInputPassword1">Password</label>
               </div>
 
               <div class="form-check d-flex justify-content-center mb-4">
-                <input type="checkbox" class="form-check-input" id="exampleCheck1" (change)="RememberMe($event)">
+                <input 
+                  type="checkbox" 
+                  class="form-check-input" 
+                  id="exampleCheck1" 
+                  [(ngModel)]="rememberMeChecked" 
+                  name="rememberMe" 
+                  (change)="RememberMe($event)" 
+                  checked>
                 <label class="form-check-label" for="exampleCheck1">Remember me</label>
               </div>
 
               <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-dark btn-block btn-lg gradient-custom-4 text-body">Submit</button>
+                <button type="submit" class="btn btn-submit btn-block btn-lg text-body">Submit</button>
               </div>
-
+  
               <p class="text-center text-muted mt-4 mb-0">Not a member? <a href="#!" class="fw-bold text-body" (click)="SignUpRedirect()"><u>Register here</u></a></p>
             </form>
           </div>

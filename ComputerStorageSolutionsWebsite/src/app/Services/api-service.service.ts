@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { CookieManagerService } from './cookie-manager.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class ApiServiceService {
 
   headers:HttpHeaders;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,private manager:CookieManagerService) {
     const token = (document.cookie.split(';')[0]);
     const Jwttoken = atob(token.replace("token=", ""));
     const headers = new HttpHeaders({
@@ -19,6 +20,11 @@ export class ApiServiceService {
       'Authorization': `Bearer ${Jwttoken}`
     });
     this.headers=headers
+  }
+
+  ngOnInt(){
+    const expiry = 1;
+    this.manager.checkToken(expiry);
   }
 
   getProducts(): Observable<any> {

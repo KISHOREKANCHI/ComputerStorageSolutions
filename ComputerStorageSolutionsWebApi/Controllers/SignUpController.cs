@@ -31,17 +31,17 @@ namespace ComputerStorageSolutions.Controllers
                 if (string.IsNullOrEmpty(input.Username))
                 {
                     Logger.LogWarning("Attempt to register with empty username.");
-                    return BadRequest("Username cannot be empty");
+                    return Ok(new { success = false, message = "Username cannot be empty" });
                 }
                 else if (string.IsNullOrEmpty(input.Password))
                 {
                     Logger.LogWarning("Attempt to register with empty password.");
-                    return BadRequest("Password cannot be empty");
+                    return Ok(new { success = false, message = "Password cannot be empty" });
                 }
                 else if (string.IsNullOrEmpty(input.Email))
                 {
                     Logger.LogWarning("Attempt to register with empty email.");
-                    return BadRequest("Email cannot be empty");
+                    return Ok(new { success = false, message = "Email cannot be empty" });
                 }
 
                 var username = Regex.Match(input.Username, regexUsername);
@@ -51,17 +51,29 @@ namespace ComputerStorageSolutions.Controllers
                 if (!username.Success)
                 {
                     Logger.LogWarning($"Invalid username format: {input.Username}");
-                    return BadRequest("Username must start with a letter and contain only alphanumeric characters, with at least 3 characters.");
+                    return Ok(new
+                    {
+                        success = false,
+                        message = "Username must start with a letter and contain only alphanumeric characters, with at least 3 characters."
+                    });
                 }
                 else if (!password.Success)
                 {
                     Logger.LogWarning($"Invalid password format for user: {input.Username}");
-                    return BadRequest("Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.");
+                    return Ok(new
+                    {
+                        success = false,
+                        message = "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."
+                    });
                 }
                 else if (!email.Success)
                 {
                     Logger.LogWarning($"Invalid email format: {input.Email}");
-                    return BadRequest("Please enter a valid email address.");
+                    return Ok(new
+                    {
+                        success = false,
+                        message = "Please enter a valid email address."
+                    });
                 }
                 else
                 {
@@ -77,7 +89,7 @@ namespace ComputerStorageSolutions.Controllers
                     if (CheckEmail.Count > 0)
                     {
                         Logger.LogWarning($"Duplicate email registration attempt: {input.Email}");
-                        return Ok("Email must be unique");
+                        return Ok(new { success = false, message = "Email must be unique" });
                     }
 
                     // Hash the password using SHA-512
@@ -99,7 +111,7 @@ namespace ComputerStorageSolutions.Controllers
 
                         Logger.LogInformation($"User {input.Username} created successfully with email {input.Email}.");
                     }
-                    return Ok(new { message = "Created Successfully" });
+                    return Ok(new { success = true, message = "Registration successful!" });
                 }
             }
             catch (Exception ex)
