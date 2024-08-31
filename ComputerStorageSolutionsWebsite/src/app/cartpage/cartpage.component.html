@@ -24,7 +24,7 @@
                 <p><span class="text-muted"></span>{{ items.description }}</p>
               </div>
               <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                <input id="form1" min="0" name="quantity" [(ngModel)]="items.Quantity" type="number"
+                <input id="form1" min="0" max="10" name="quantity" [(ngModel)]="items.Quantity" type="number"
                   class="form-control form-control-sm" (input)="onQuantityChange($event, items)" />
               </div>
               <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
@@ -49,3 +49,5 @@
     </div>
   </div>
 </section>
+
+<div id="popupMessage" class="popup-message" *ngIf="popupVisible">{{ popupText }}</div>

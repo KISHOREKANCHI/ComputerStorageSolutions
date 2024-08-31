@@ -8,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
 export class CartpageComponent implements OnInit {
   cartItems: any[] = [];
   Quantity: number = 1;
+  popupText: string ="";
+  popupVisible: boolean = false;
 
   ngOnInit(): void {
     this.loadCart();
@@ -45,9 +47,13 @@ export class CartpageComponent implements OnInit {
   onQuantityChange(event: Event, item: any): void {
     const inputElement = event.target as HTMLInputElement;
     const quantity = Number(inputElement.value);
-    if (quantity >= 0) {
+    if (quantity > 0 && quantity<10) {
       item.quantity = quantity;
       this.saveCart();
+    }else if(quantity>=10){
+      this.showPopup("Max quantity is 10");
+    }else{
+      this.removeFromCart(item.ProductId);
     }
   }
 
@@ -57,5 +63,14 @@ export class CartpageComponent implements OnInit {
 
   isCartEmpty(): boolean {
     return this.cartItems.length === 0;
+  }
+
+  showPopup(message: string): void {
+    this.popupText = message;
+    this.popupVisible = true;
+
+    setTimeout(() => {
+      this.popupVisible = false;
+    }, 3000);
   }
 }
