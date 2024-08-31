@@ -1,4 +1,5 @@
 using ComputerStorageSolutions.Controllers;
+using ComputerStorageSolutions.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -29,6 +30,8 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
     };
 });
+builder.Services.AddSingleton<IJwtCreationService, JwtCreationService>();
+
 
 // Configure authorization policies
 builder.Services.AddAuthorization(options =>

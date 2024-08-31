@@ -21,10 +21,12 @@
       </div>
 
       <!-- Search Bar -->
-      <form class="d-flex mx-auto" role="search" (ngSubmit)="searchProducts()">
-        <input [(ngModel)]="searchTerm" name="searchTerm" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-    </form>
+      <form class="d-flex mx-auto" role="search">
+        <input [(ngModel)]="searchTerm" name="searchTerm" class="form-control me-2" 
+               type="search" placeholder="Search" aria-label="Search" 
+               (input)="searchProducts()">
+        <button class="btn btn-outline-success" type="button" (click)="searchProducts()">Search</button>
+      </form>
     </div>
 
     <!-- Navbar Links -->

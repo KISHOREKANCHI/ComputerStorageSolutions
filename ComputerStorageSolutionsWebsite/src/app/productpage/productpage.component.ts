@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ApiServiceService } from '../Services/api-service.service';
 import { CookieManagerService } from '../Services/cookie-manager.service';
 import { Router } from '@angular/router';
@@ -20,7 +20,7 @@ export class ProductpageComponent implements OnInit {
   popupText: string = '';
   searchTerm: string = '';
 
-  constructor(private apiService: ApiServiceService, private manager: CookieManagerService, private router: Router) {}
+  constructor(private apiService: ApiServiceService, private manager: CookieManagerService, private router: Router,private cdRef: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     const expiry = 1;
@@ -107,8 +107,10 @@ export class ProductpageComponent implements OnInit {
         product.productName.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
     } else {
-      this.FilteredProducts = this.ProductDetails; // Show all products if search term is empty
+      this.FilteredProducts = this.ProductDetails;  // Reset to show all products if searchTerm is empty
     }
+
+    this.cdRef.detectChanges();  // Trigger change detection manually
   }
   
 }

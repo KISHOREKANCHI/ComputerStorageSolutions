@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+﻿using ComputerStorageSolutions.Services;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace ComputerStorageSolutions.Controllers
 {
@@ -11,15 +9,15 @@ namespace ComputerStorageSolutions.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly DataBaseConnect Database;
-        private readonly IConfiguration Configuration;
-        private readonly ILogger<LoginController> Logger;
+        private readonly DataBaseConnect _database;
+        private readonly IJwtCreationService _jwtCreationService;
+        private readonly ILogger<LoginController> _logger;
 
-        public LoginController(DataBaseConnect _Database, IConfiguration _Configuration, ILogger<LoginController> _Logger)
+        public LoginController(DataBaseConnect database, IJwtCreationService jwtCreationService, ILogger<LoginController> logger)
         {
-            Database = _Database;
-            Configuration = _Configuration;
-            Logger = _Logger;
+            _database = database;
+            _jwtCreationService = jwtCreationService;
+            _logger = logger;
         }
 
         [HttpPost(Name = "VerifyUser")]
@@ -29,12 +27,12 @@ namespace ComputerStorageSolutions.Controllers
             {
                 if (string.IsNullOrEmpty(input.Email))
                 {
-                    Logger.LogWarning("Login attempt with empty email.");
+                    _logger.LogWarning("Login attempt with empty email.");
                     return BadRequest("Email cannot be empty");
                 }
                 if (string.IsNullOrEmpty(input.Password))
                 {
-                    Logger.LogWarning("Login attempt with empty password for email: {Email}", input.Email);
+                    _logger.LogWarning("Login attempt with empty password for email: {Email}", input.Email);
                     return BadRequest("Password cannot be empty");
                 }
 
@@ -46,8 +44,8 @@ namespace ComputerStorageSolutions.Controllers
                     hashedPassword = Convert.ToBase64String(hashedPasswordBytes);
                 }
 
-                var result = (from user in Database.Users
-                              join role in Database.Roles on user.RoleId equals role.RoleId
+                var result = (from user in _database.Users
+                              join role in _database.Roles on user.RoleId equals role.RoleId
                               where user.Email == input.Email && user.PasswordHash == hashedPassword
                               select new
                               {
@@ -57,44 +55,28 @@ namespace ComputerStorageSolutions.Controllers
 
                 if (result.Count != 0)
                 {
-                    var claims = new[]
-                    {
-                        new Claim(JwtRegisteredClaimNames.Sub, Configuration["Jwt:Subject"] ?? string.Empty),
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                        new Claim("UserId", result[0].User.UserId.ToString()),
-                        new Claim("UserName", result[0].User.Username),
-                        new Claim("Email", result[0].User.Email),
-                        new Claim(ClaimTypes.Role, result[0].Role)
-                    };
-
-                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"] ?? string.Empty));
-                    var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
-
-                    var token = new JwtSecurityToken(
-                        Configuration["Jwt:Issuer"],
-                        Configuration["Jwt:Audience"],
-                        claims,
-                        expires: DateTime.UtcNow.AddMinutes(60),
-                        signingCredentials: signIn
+                    string token = _jwtCreationService.CreateToken(
+                        result[0].User.UserId.ToString(),
+                        result[0].User.Username,
+                        result[0].User.Email,
+                        result[0].Role
                     );
 
-                    string tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
-
-                    Logger.LogInformation("User {Email} logged in successfully at {Time}.", input.Email, DateTime.UtcNow);
+                    _logger.LogInformation("User {Email} logged in successfully at {Time}.", input.Email, DateTime.UtcNow);
 
                     return Ok(new
                     {
-                        Token = tokenValue,
+                        Token = token,
                         UserName = result[0].User.Username
                     });
                 }
 
-                Logger.LogWarning("Failed login attempt for email: {Email} at {Time}.", input.Email, DateTime.UtcNow);
+                _logger.LogWarning("Failed login attempt for email: {Email} at {Time}.", input.Email, DateTime.UtcNow);
                 return BadRequest("Email or password does not exist");
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "An error occurred during login attempt for email: {Email} at {Time}.", input.Email, DateTime.UtcNow);
+                _logger.LogError(ex, "An error occurred during login attempt for email: {Email} at {Time}.", input.Email, DateTime.UtcNow);
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
