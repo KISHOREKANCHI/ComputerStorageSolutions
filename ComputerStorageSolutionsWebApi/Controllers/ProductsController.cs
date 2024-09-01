@@ -29,12 +29,24 @@ namespace ComputerStorageSolutions.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetProducts()
+        public async Task<IActionResult> GetProducts([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
         {
-            var result = await Database.Products
-                .Where(p => p.StockQuantity >0 && p.Status == "Available")
-                .ToListAsync();
+            var skipResults = (pageNumber - 1) * pageSize;
+
+            var result = Database.Products
+                .Where(p => p.StockQuantity > 0 && p.Status == "Available").AsQueryable();
+            result = result.Skip(skipResults ?? 0).Take(pageSize ?? 5);
+            await result.ToListAsync();
             return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("count")]
+        [Authorize]
+        public async Task<IActionResult> GetProductsCount()
+        {
+            var count = await Database.Products.CountAsync();
+            return Ok(count);
         }
 
         [HttpGet]
