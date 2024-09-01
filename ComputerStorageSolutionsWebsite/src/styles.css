@@ -1,1 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
+.pagination .page-item.active .page-link {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}

@@ -7,11 +7,10 @@ import { jwtDecode } from 'jwt-decode';
 @Component({
   selector: 'app-productpage',
   templateUrl: './productpage.component.html',
-  styleUrls: ['./productpage.component.css']
+  styleUrls: ['./productpage.component.css'],
 })
 export class ProductpageComponent implements OnInit {
-
-  Username: string = "";
+  Username: string = '';
   ProductDetails: any[] = [];
   FilteredProducts: any[] = [];
   productId: string | null = null;
@@ -19,8 +18,17 @@ export class ProductpageComponent implements OnInit {
   popupVisible: boolean = false;
   popupText: string = '';
   searchTerm: string = '';
+  productsCount: number = 0;
+  pageNumber: number = 1;
+  pageSize: number = 5;
+  paginationList: number[] = [];
 
-  constructor(private apiService: ApiServiceService, private manager: CookieManagerService, private router: Router,private cdRef: ChangeDetectorRef) {}
+  constructor(
+    private apiService: ApiServiceService,
+    private manager: CookieManagerService,
+    private router: Router,
+    private cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     const expiry = 1;
@@ -28,20 +36,63 @@ export class ProductpageComponent implements OnInit {
     this.loadProducts();
   }
 
-  GoToCart(){
-    this.router.navigate(['Cart'])
+  GoToCart() {
+    this.router.navigate(['Cart']);
   }
 
   loadProducts(): void {
-    const token = (document.cookie.split(';')[0]);
-    const Jwttoken = jwtDecode<any>(atob(token.replace("token=", "")));
+    const token = document.cookie.split(';')[0];
+    const Jwttoken = jwtDecode<any>(atob(token.replace('token=', '')));
     this.Username = Jwttoken.UserName;
 
-    this.apiService.getProducts().subscribe({
+    this.apiService.getProductCount().subscribe({
+      next: (res) => {
+        this.productsCount = res;
+        this.paginationList = new Array(Math.ceil(res / this.pageSize));
+      },
+    });
+
+    this.apiService.getProducts(this.pageNumber, this.pageSize).subscribe({
       next: (response: any) => {
         this.ProductDetails = response;
         this.FilteredProducts = this.ProductDetails;
-      }
+      },
+    });
+  }
+
+  getPage(pageNumber: number) {
+    this.pageNumber = pageNumber;
+    this.apiService.getProducts(pageNumber, this.pageSize).subscribe({
+      next: (response: any) => {
+        this.ProductDetails = response;
+        this.FilteredProducts = this.ProductDetails;
+      },
+    });
+  }
+
+  getPreviousPage() {
+    if (this.pageNumber - 1 < 1) {
+      return;
+    }
+    this.pageNumber -= 1;
+    this.apiService.getProducts(this.pageNumber, this.pageSize).subscribe({
+      next: (response: any) => {
+        this.ProductDetails = response;
+        this.FilteredProducts = this.ProductDetails;
+      },
+    });
+  }
+
+  getNextPage() {
+    if (this.pageNumber + 1 > this.paginationList.length) {
+      return;
+    }
+    this.pageNumber += 1;
+    this.apiService.getProducts(this.pageNumber, this.pageSize).subscribe({
+      next: (response: any) => {
+        this.ProductDetails = response;
+        this.FilteredProducts = this.ProductDetails;
+      },
     });
   }
 
@@ -49,7 +100,9 @@ export class ProductpageComponent implements OnInit {
     if (categoryId === null) {
       this.FilteredProducts = this.ProductDetails;
     } else {
-      this.FilteredProducts = this.ProductDetails.filter(product => product.categoryId === categoryId);
+      this.FilteredProducts = this.ProductDetails.filter(
+        (product) => product.categoryId === categoryId
+      );
     }
   }
 
@@ -70,22 +123,34 @@ export class ProductpageComponent implements OnInit {
     return cart.some((item: any) => item.ProductId === productId);
   }
 
-  toggleCart(categoryId:string,description:string,imageUrl:string,price:number,productId:string,productName:string,stockQuantity:number): void {
+  toggleCart(
+    categoryId: string,
+    description: string,
+    imageUrl: string,
+    price: number,
+    productId: string,
+    productName: string,
+    stockQuantity: number
+  ): void {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const productIndex = cart.findIndex((item: any) => item.ProductId === productId);
+    const productIndex = cart.findIndex(
+      (item: any) => item.ProductId === productId
+    );
 
     if (productIndex > -1) {
       cart.splice(productIndex, 1);
       this.showPopup('Product removed from cart!');
     } else {
-      cart.push({ ProductId: productId, 
-                  categoryId:categoryId,
-                  description:description,
-                  imageUrl:imageUrl,
-                  price:price,
-                  productName:productName,
-                  Quantity: 1,
-                  stockQuantity:stockQuantity });
+      cart.push({
+        ProductId: productId,
+        categoryId: categoryId,
+        description: description,
+        imageUrl: imageUrl,
+        price: price,
+        productName: productName,
+        Quantity: 1,
+        stockQuantity: stockQuantity,
+      });
       this.showPopup('Product added to cart!');
     }
 
@@ -103,14 +168,15 @@ export class ProductpageComponent implements OnInit {
 
   searchProducts(): void {
     if (this.searchTerm) {
-      this.FilteredProducts = this.ProductDetails.filter(product =>
-        product.productName.toLowerCase().includes(this.searchTerm.toLowerCase())
+      this.FilteredProducts = this.ProductDetails.filter((product) =>
+        product.productName
+          .toLowerCase()
+          .includes(this.searchTerm.toLowerCase())
       );
     } else {
-      this.FilteredProducts = this.ProductDetails;  // Reset to show all products if searchTerm is empty
+      this.FilteredProducts = this.ProductDetails; // Reset to show all products if searchTerm is empty
     }
 
-    this.cdRef.detectChanges();  // Trigger change detection manually
+    this.cdRef.detectChanges(); // Trigger change detection manually
   }
-  
 }

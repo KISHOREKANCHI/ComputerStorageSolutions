@@ -1,31 +1,73 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
     <!-- Navbar Brand -->
-    <a class="navbar-brand" [routerLink]="['/products']" routerLinkActive="active">ComputerStorageSolutions</a>
+    <a
+      class="navbar-brand"
+      [routerLink]="['/products']"
+      routerLinkActive="active"
+      >ComputerStorageSolutions</a
+    >
 
     <!-- Middle Content (Categories Dropdown & Search Bar) -->
     <div class="d-flex flex-grow-1 justify-content-center align-items-center">
       <!-- Categories Dropdown -->
       <div class="dropdown me-3">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="categoriesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <button
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          id="categoriesDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
           Categories
         </button>
         <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
-          <li><a class="dropdown-item" href="#" (click)="filterByCategory(null)">All</a></li>
-          <li><a class="dropdown-item" href="#" (click)="filterByCategory(1)">SSD</a></li>
-          <li><a class="dropdown-item" href="#" (click)="filterByCategory(2)">HDD</a></li>
-          <li><a class="dropdown-item" href="#" (click)="filterByCategory(3)">Flash Drive</a></li>
-          <li><a class="dropdown-item" href="#" (click)="filterByCategory(4)">Memory Card</a></li>
-
+          <li>
+            <a class="dropdown-item" href="#" (click)="filterByCategory(null)"
+              >All</a
+            >
+          </li>
+          <li>
+            <a class="dropdown-item" href="#" (click)="filterByCategory(1)"
+              >SSD</a
+            >
+          </li>
+          <li>
+            <a class="dropdown-item" href="#" (click)="filterByCategory(2)"
+              >HDD</a
+            >
+          </li>
+          <li>
+            <a class="dropdown-item" href="#" (click)="filterByCategory(3)"
+              >Flash Drive</a
+            >
+          </li>
+          <li>
+            <a class="dropdown-item" href="#" (click)="filterByCategory(4)"
+              >Memory Card</a
+            >
+          </li>
         </ul>
       </div>
 
       <!-- Search Bar -->
       <form class="d-flex mx-auto" role="search">
-        <input [(ngModel)]="searchTerm" name="searchTerm" class="form-control me-2" 
-               type="search" placeholder="Search" aria-label="Search" 
-               (input)="searchProducts()">
-        <button class="btn btn-outline-success" type="button" (click)="searchProducts()">Search</button>
+        <input
+          [(ngModel)]="searchTerm"
+          name="searchTerm"
+          class="form-control me-2"
+          type="search"
+          placeholder="Search"
+          aria-label="Search"
+          (input)="searchProducts()"
+        />
+        <button
+          class="btn btn-outline-success"
+          type="button"
+          (click)="searchProducts()"
+        >
+          Search
+        </button>
       </form>
     </div>
 
@@ -48,11 +90,24 @@
           <a class="nav-link nav-btn" [routerLink]="['/Cart']">Cart</a>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle nav-btn" href="#" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          <a
+            class="nav-link dropdown-toggle nav-btn"
+            href="#"
+            id="userMenuButton"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
             🙎🏻 {{ Username }}
           </a>
           <ul class="dropdown-menu" aria-labelledby="userMenuButton">
-            <li><a class="dropdown-item" href="#" (click)="logout(); $event.preventDefault();"><i class="fa fa-sign-out"></i> Logout</a></li>
+            <li>
+              <a
+                class="dropdown-item"
+                href="#"
+                (click)="logout(); $event.preventDefault()"
+                ><i class="fa fa-sign-out"></i> Logout</a
+              >
+            </li>
           </ul>
         </li>
       </ul>
@@ -60,13 +115,16 @@
   </div>
 </nav>
 
+<div id="popupMessage" class="popup-message" *ngIf="popupVisible">
+  {{ popupText }}
+</div>
 
-
-<div id="popupMessage" class="popup-message" *ngIf="popupVisible">{{ popupText }}</div>
-
-<section style="background-color: #eee;">
+<section style="background-color: #eee">
   <div class="container py-5">
-    <div class="row justify-content-center mb-3" *ngFor="let product of FilteredProducts">
+    <div
+      class="row justify-content-center mb-3"
+      *ngFor="let product of FilteredProducts"
+    >
       <div class="col-md-12 col-xl-10">
         <div class="card shadow-0 border rounded-3">
           <div class="card-body">
@@ -76,7 +134,10 @@
                   <img [src]="product.imageUrl" class="w-100" alt="Image" />
                   <a href="#!">
                     <div class="hover-overlay">
-                      <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
+                      <div
+                        class="mask"
+                        style="background-color: rgba(253, 253, 253, 0.15)"
+                      ></div>
                     </div>
                   </a>
                 </div>
@@ -94,27 +155,56 @@
                 <p class="text-truncate">{{ product.description }}</p>
 
                 <!-- Hidden Containers for IDs -->
-                <div style="display: none;">
-                  <div id="productId" [attr.data-product-id]="product.productId"></div>
-                  <div id="categoryId" [attr.data-category-id]="product.categoryId"></div>
+                <div style="display: none">
+                  <div
+                    id="productId"
+                    [attr.data-product-id]="product.productId"
+                  ></div>
+                  <div
+                    id="categoryId"
+                    [attr.data-category-id]="product.categoryId"
+                  ></div>
                 </div>
               </div>
-              <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
+              <div
+                class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start"
+              >
                 <div class="d-flex flex-row align-items-center mb-1">
                   <h4 class="mb-1 me-1">${{ product.price }}</h4>
                 </div>
                 <h6 class="text-success">Free shipping</h6>
                 <div class="d-flex flex-column mt-4">
-                  <button 
-                    data-mdb-button-init 
-                    data-mdb-ripple-init 
-                    class="btn btn-primary btn-sm" 
-                    type="button" 
-                    (click)="toggleCart(product.categoryId,product.description,product.imageUrl,product.price,product.productId,product.productName,product.stockQuantity)">
-                    {{ isInCart(product.productId) ? 'Delete from Cart' : 'Add to Cart' }}
-                </button>
+                  <button
+                    data-mdb-button-init
+                    data-mdb-ripple-init
+                    class="btn btn-primary btn-sm"
+                    type="button"
+                    (click)="
+                      toggleCart(
+                        product.categoryId,
+                        product.description,
+                        product.imageUrl,
+                        product.price,
+                        product.productId,
+                        product.productName,
+                        product.stockQuantity
+                      )
+                    "
+                  >
+                    {{
+                      isInCart(product.productId)
+                        ? "Delete from Cart"
+                        : "Add to Cart"
+                    }}
+                  </button>
 
-                  <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary btn-sm mt-2" type="button" (click)="navigateToProductDetails(product.productId)">
+                  <button
+                    data-mdb-button-init
+                    data-mdb-ripple-init
+                    class="btn btn-outline-primary btn-sm mt-2"
+                    type="button"
+                    (click)="navigateToProductDetails(product.productId)"
+                  >
                     Buy Now
                   </button>
                 </div>
@@ -126,3 +216,27 @@
     </div>
   </div>
 </section>
+
+<div class="d-flex justify-content-center">
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      <li class="page-item">
+        <a class="page-link" (click)="getPreviousPage()" aria-label="Previous">
+          <span aria-hidden="true">&larr;</span>
+        </a>
+      </li>
+      <li
+        class="page-item"
+        *ngFor="let item of paginationList; let index = index"
+        [ngClass]="index + 1 == pageNumber ? 'active' : 'disable'"
+      >
+        <a class="page-link" (click)="getPage(index + 1)">{{ index + 1 }}</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" (click)="getNextPage()" aria-label="Next">
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
