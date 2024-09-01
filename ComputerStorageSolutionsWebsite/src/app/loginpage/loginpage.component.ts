@@ -36,7 +36,8 @@ export class LoginpageComponent {
     this.userDetailsService.GetUserDetails(loginData).subscribe({
       next: (response: any) => {
         this.Token = response;
-        document.cookie = `token=${btoa(this.Token.token)}; Secure;SameSite=Strict; Priority=${this.priority}; path=/`;
+        const exp =JSON.parse(this.Token[1].split('.')[1]).exp
+        document.cookie = `token=${btoa(this.Token.token)};expires=${exp}; Secure;SameSite=Strict; Priority=${this.priority}; path=/`;
         this.router.navigate(['products']);
         const expiry = 1;
         this.manager.checkToken(expiry);
