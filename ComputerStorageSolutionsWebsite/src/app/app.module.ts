@@ -13,6 +13,7 @@ import { CartpageComponent } from './cartpage/cartpage.component';
 import { OrderspageComponent } from './orderspage/orderspage.component';
 import { BuyNowPageComponent } from './buy-now-page/buy-now-page.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
+import { NgOptimizedImage } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { NavBarComponent } from './nav-bar/nav-bar.component';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    NgbModule
+    NgbModule,
+    NgOptimizedImage
   ],
   providers: [],
   bootstrap: [AppComponent]

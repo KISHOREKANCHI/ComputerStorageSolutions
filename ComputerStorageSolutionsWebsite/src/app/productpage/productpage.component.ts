@@ -56,6 +56,7 @@ export class ProductpageComponent implements OnInit {
       next: (response: any) => {
         this.ProductDetails = response;
         this.FilteredProducts = this.ProductDetails;
+        console.log(this.ProductDetails);
       },
     });
   }
