@@ -15,7 +15,7 @@ namespace ComputerStorageSolutions.Services
             _configuration = configuration;
         }
 
-        public string CreateToken(string userId, string userName, string email, string role)
+        public string CreateToken(string userId, string userName, string email, Guid role)
         {
             var claims = new[]
             {
@@ -24,7 +24,7 @@ namespace ComputerStorageSolutions.Services
                 new Claim("UserId", userId),
                 new Claim("UserName", userName),
                 new Claim("Email", email),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(ClaimTypes.Role, role.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? string.Empty));

@@ -59,7 +59,7 @@ namespace ComputerStorageSolutions.Controllers
                         result[0].User.UserId.ToString(),
                         result[0].User.Username,
                         result[0].User.Email,
-                        result[0].Role
+                        result[0].User.RoleId
                     );
 
                     _logger.LogInformation("User {Email} logged in successfully at {Time}.", input.Email, DateTime.UtcNow);

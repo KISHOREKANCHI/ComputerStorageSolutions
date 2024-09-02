@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import {  Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
-import { ApiServiceService } from '../Services/api-service.service';
 import { CookieManagerService } from '../Services/cookie-manager.service';
 
 
@@ -14,7 +13,9 @@ export class NavBarComponent {
   Username: any;
   ProductDetails: any;
   FilteredProducts: any;
-  product:any
+  product:any;
+  Role:string ='';
+  role:string ='9dfb14d0-0311-417c-a93f-abd781aabde2'
   
   constructor(private router:Router,private manager:CookieManagerService){}
 
@@ -33,7 +34,16 @@ export class NavBarComponent {
     if(token){
       const Jwttoken = jwtDecode<any>(atob(token.replace("token=", "")));
       this.Username = Jwttoken.UserName;
+      this.Role=Jwttoken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
     }
     
+  }
+
+  AddProduct(){
+    this.router.navigate(['AddProduct']);
+  }
+
+  ModifyProduct(){
+    this.router.navigate(['ModifyProduct'])
   }
 }

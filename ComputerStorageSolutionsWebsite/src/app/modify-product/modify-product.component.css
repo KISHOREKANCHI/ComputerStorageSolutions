@@ -1,0 +1,105 @@
+.form-outline {
+    position: relative;
+    margin-bottom: 1.5rem; /* Increased margin for more space */
+}
+
+.form-outline input,
+.form-outline textarea,
+.form-outline select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #8f9194;
+    border-radius: 0.25rem;
+}
+
+.form-outline label {
+    position: absolute;
+    top: -0.5rem;
+    left: 0.75rem;
+    background: #fff;
+    padding: 0 0.25rem;
+    color: #495057;
+}
+
+/* Navbar styling */
+.navbar {
+    padding: 0.5rem 1rem;
+    color: #495057; /* Default text color for the navbar */
+  }
+  
+  .navbar-nav {
+    flex-direction: row;
+  }
+  
+  .navbar .form-control {
+    width: 300px; /* Increase the width of the search bar */
+  }
+  
+  .nav-item.dropdown .dropdown-menu {
+    right: 0;
+    left: auto;
+  }
+  
+  .navbar-nav .nav-link {
+    color: #41474d; /* Set default text color for nav links */
+  }
+  
+  /* Hover effect for navigation links */
+  .navbar-nav .nav-link:hover {
+    color: white; /* Change text color to white on hover */
+  }
+  
+  
+  .popup-message {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    opacity: 0.9;
+    font-size: 14px;
+  }
+  
+  
+  /* Navbar button styles */
+  .nav-btn {
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  /* Hover effect for navigation buttons */
+  .nav-btn:hover {
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+  }
+  
+  /* Categories dropdown button style */
+  #categoriesDropdown {
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  /* Hover effect for categories dropdown */
+  #categoriesDropdown:hover {
+    background-color: #6c757d;
+    color: white;
+  }
+  
+  /* Search button style */
+  .btn-outline-success {
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  /* Hover effect for search button */
+  .btn-outline-success:hover {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  
+
+

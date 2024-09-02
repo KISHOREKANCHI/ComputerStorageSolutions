@@ -1,0 +1,245 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <!-- Navbar Brand -->
+    <a
+      class="navbar-brand"
+      [routerLink]="['/products']"
+      routerLinkActive="active"
+      >ComputerStorageSolutions</a
+    >
+
+    <!-- Middle Content (Categories Dropdown & Search Bar) -->
+    <div class="d-flex flex-grow-1 justify-content-center align-items-center">
+      <!-- Categories Dropdown -->
+      <div class="dropdown me-3">
+        <button
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          id="categoriesDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          Categories
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+          <li>
+            <a class="dropdown-item" href="#" (click)="filterByCategory(null)"
+              >All</a
+            >
+          </li>
+          <li>
+            <a class="dropdown-item" href="#" (click)="filterByCategory(1)"
+              >SSD</a
+            >
+          </li>
+          <li>
+            <a class="dropdown-item" href="#" (click)="filterByCategory(2)"
+              >HDD</a
+            >
+          </li>
+          <li>
+            <a class="dropdown-item" href="#" (click)="filterByCategory(3)"
+              >Flash Drive</a
+            >
+          </li>
+          <li>
+            <a class="dropdown-item" href="#" (click)="filterByCategory(4)"
+              >Memory Card</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <!-- Search Bar -->
+      <form class="d-flex mx-auto" role="search">
+        <input
+          [(ngModel)]="searchTerm"
+          name="searchTerm"
+          class="form-control me-2"
+          type="search"
+          placeholder="Search"
+          aria-label="Search"
+          (input)="searchProducts()"
+        />
+        <button
+          class="btn btn-outline-success"
+          type="button"
+          (click)="searchProducts()"
+        >
+          Search
+        </button>
+      </form>
+    </div>
+
+    <!-- Navbar Links -->
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link nav-btn" [routerLink]="['/login']">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-btn" [routerLink]="['/signup']">Signup</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-btn" [routerLink]="['/products']">Products</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-btn" [routerLink]="['/Orders']">Orders</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-btn" [routerLink]="['/Cart']">Cart</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle nav-btn"
+            href="#"
+            id="userMenuButton"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            🙎🏻 {{ Username }}
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="userMenuButton">
+            <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="AddProduct(); $event.preventDefault();"><i class="fa fa-plus"></i> Add Product</a></li>
+            <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="ModifyProduct(); $event.preventDefault();"><i class="fa fa-pencil-alt" ></i> Modify Product</a></li>
+            <li><a class="dropdown-item" href="#" (click)="logout(); $event.preventDefault();"><i class="fa fa-sign-out"></i> Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+
+<section style="background-color: #eee">
+  <div class="container py-5">
+    <div class="row justify-content-center mb-3" *ngFor="let product of FilteredProducts; let i = index">
+      <div class="col-md-12 col-xl-10">
+        <div class="card shadow-0 border rounded-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
+                <!-- Image Upload Section -->
+                <div
+                  class="bg-image hover-zoom ripple rounded ripple-surface position-relative"
+                  (mouseenter)="handleMouseEnter(i)"
+                  (mouseleave)="handleMouseLeave(i)"
+                  style="width: 100%; height: 100%; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center;"
+                >
+                  <img
+                    *ngIf="!showUploadOptions[i] && product.imageUrl"
+                    [src]="product.imageUrl"
+                    class="w-100"
+                    alt="Image"
+                  />
+                  <div
+                    class="upload-overlay d-flex align-items-center justify-content-center position-absolute w-100 h-100"
+                    *ngIf="showUploadOptions[i]"
+                    style="background-color: #ccc;"
+                  >
+                    <button
+                      class="btn btn-primary"
+                      (click)="uploadImage(product.productId)"
+                    >
+                      Upload Image
+                    </button>
+                  </div>
+                  <div *ngIf="!product.imageUrl && !showUploadOptions[i]" class="text-center">
+                    <div style="font-size: 50px; color: #7c7a7a;">+</div>
+                    <div style="color: #7c7a7a;">Product Image</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-6 col-xl-6">
+                <!-- Editable Fields with Labels -->
+                <div class="form-outline mb-4">
+                  <input
+                    type="text"
+                    class="form-control mb-2"
+                    placeholder="Product Name Here"
+                    [(ngModel)]="product.productName"
+                    name="productName"
+                    required
+                  />
+                  <label class="form-label" for="productName">Product Name</label>
+                </div>
+
+                <div class="form-outline mb-4">
+                  <textarea
+                    class="form-control mb-2"
+                    placeholder="Description Here"
+                    [(ngModel)]="product.description"
+                    name="description"
+                    required
+                  ></textarea>
+                  <label class="form-label" for="description">Description</label>
+                </div>
+
+                <div class="form-outline mb-4">
+                  <input
+                    type="number"
+                    class="form-control mb-2"
+                    placeholder="Price Here"
+                    [(ngModel)]="product.price"
+                    name="price"
+                    required
+                  />
+                  <label class="form-label" for="price">Price</label>
+                </div>
+
+                <!-- Category Dropdown -->
+                <div class="form-outline mb-4">
+                  <select class="form-select" [(ngModel)]="product.categoryId" name="categoryId" required>
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="1">SSD</option>
+                    <option value="2">HDD</option>
+                    <option value="3">Flash Drive</option>
+                    <option value="4">Memory Card</option>
+                  </select>
+                  <label class="form-label" for="categoryId">Category</label>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
+                <!-- Set Stock Quantity -->
+                <div class="form-outline mb-4">
+                  <input
+                    type="number"
+                    class="form-control mb-2"
+                    placeholder="Set Stock Quantity"
+                    [(ngModel)]="product.stockQuantity"
+                    name="stockQuantity"
+                    required
+                  />
+                  <label class="form-label" for="stockQuantity">Stock Quantity</label>
+                </div>
+
+                <!-- Set Status -->
+                <div class="form-outline mb-4">
+                  <select class="form-select" [(ngModel)]="product.status">
+                    <option value="Available">Available</option>
+                    <option value="Not Available">Not Available</option>
+                  </select>
+                  <label class="form-label" for="status">Status</label>
+                </div>
+              </div>
+            </div>
+            <!-- Add Product Button -->
+            <div class="text-center mt-4">
+              <button class="btn btn-success" (click)="addProduct()">
+                Modify Product
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div id="popupMessage" class="popup-message" *ngIf="popupVisible">
+  {{ popupText }}
+</div>
+
+  
