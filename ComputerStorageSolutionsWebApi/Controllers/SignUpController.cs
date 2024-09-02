@@ -102,7 +102,7 @@ namespace ComputerStorageSolutions.Controllers
                         {
                             Username = input.Username,
                             PasswordHash = hashedPassword,
-                            Email = input.Email,
+                            Email = input.Email.ToLower(),
                             RoleId = Customer,
                             CreatedDate = DateTime.Now,
                             IsActive = true,
