@@ -9,7 +9,7 @@
 }
 
 .navbar .form-control {
-  width: 400px; /* Increase the width of the search bar */
+  width: 300px; /* Increase the width of the search bar */
 }
 
 .nav-item.dropdown .dropdown-menu {
@@ -77,6 +77,3 @@
   color: white;
 }
 
-.form-control {
-  width: 500px; /* Example width for the search input */
-}
