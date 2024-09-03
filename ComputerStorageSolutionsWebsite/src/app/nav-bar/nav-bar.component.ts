@@ -15,7 +15,7 @@ export class NavBarComponent {
   FilteredProducts: any;
   product:any;
   Role:string ='';
-  role:string ='9dfb14d0-0311-417c-a93f-abd781aabde2'
+  role:string ='9c06200d-5af1-4b14-bb74-9364b10977fe'
   
   constructor(private router:Router,private manager:CookieManagerService){}
 

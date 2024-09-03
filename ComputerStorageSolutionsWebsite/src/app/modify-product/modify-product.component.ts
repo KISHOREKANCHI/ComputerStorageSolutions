@@ -23,7 +23,7 @@ export class ModifyProductComponent {
   pageSize: number = 5;
   paginationList: number[] = [];
   Role: string ='';
-  role:string ='9dfb14d0-0311-417c-a93f-abd781aabde2'
+  role:string ='9c06200d-5af1-4b14-bb74-9364b10977fe'
   showUploadOption: boolean = false;
   showEditName: boolean = false;
   showEditDescription: boolean = false;
