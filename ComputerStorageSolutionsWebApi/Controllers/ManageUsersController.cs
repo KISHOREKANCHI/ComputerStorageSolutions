@@ -74,7 +74,6 @@ namespace ComputerStorageSolutions.Controllers
         }
 
 
-        // Delete a user
         [HttpDelete]
         public IActionResult DeleteUser(Guid id)
         {

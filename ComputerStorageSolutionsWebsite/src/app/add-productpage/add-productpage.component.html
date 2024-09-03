@@ -14,10 +14,8 @@
                   style="width: 100%; height: 100%; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center;"
                   >
                   <img
-                      *ngIf="!showUploadOption && product.imageUrl"
-                      [src]="product.imageUrl"
+                      *ngIf="!showUploadOption"
                       class="w-100"
-                      alt="Image"
                   />
                   <div
                       class="upload-overlay d-flex align-items-center justify-content-center position-absolute w-100 h-100"
@@ -27,18 +25,18 @@
                       <input
                         type="file"
                         accept="image/*"
-                        (change)="onFileChange($event)"
                         style="display: none;"
-                        #fileInput
+                        (change)="onFileChange($event,file.files)"
+                        #file
                       />
                       <button 
                       class="btn btn-primary"
-                      (click)="fileInput.click()"
+                      (click)="file.click()"
                       >
                       Upload Image
                       </button>
                   </div>
-                  <div *ngIf="!product.imageUrl && !showUploadOption" class="text-center">
+                  <div *ngIf="!showUploadOption" class="text-center">
                       <div style="font-size: 50px; color: #7c7a7a;">+</div>
                       <div style="color: #7c7a7a;">Product Image</div>
                   </div>

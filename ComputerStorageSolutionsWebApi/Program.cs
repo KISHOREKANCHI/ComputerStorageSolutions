@@ -1,6 +1,7 @@
 using ComputerStorageSolutions.Controllers;
 using ComputerStorageSolutions.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -50,6 +51,15 @@ builder.Services.AddCors(options =>
                           .AllowCredentials());
 });
 
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.ValueLengthLimit = int.MaxValue;
+    options.MultipartBoundaryLengthLimit = int.MaxValue;
+    options.MemoryBufferThreshold = int.MaxValue;
+}
+
+);
+
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddSingleton<IJwtService, TokenService>(); // Register TokenService
@@ -59,6 +69,7 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure middleware
+app.UseStaticFiles();
 app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 

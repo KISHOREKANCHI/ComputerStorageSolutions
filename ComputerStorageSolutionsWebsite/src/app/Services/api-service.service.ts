@@ -70,4 +70,11 @@ export class ApiServiceService {
       headers: this.headers,
     });
   }
+
+  AddProduct(formData: FormData): Observable<any>{
+    console.log("form data",formData);
+    return this.http.post(`${this.productApi}/AddProduct`, formData,{
+      headers:this.headers,
+    });
+  }
 }
