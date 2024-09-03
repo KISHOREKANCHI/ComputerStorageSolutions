@@ -12,35 +12,39 @@
                   (mouseenter)="showUploadOption = true"
                   (mouseleave)="showUploadOption = false"
                   style="width: 100%; height: 100%; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center;"
-                  >
+                >
                   <img
-                      *ngIf="!showUploadOption"
-                      class="w-100"
+                    *ngIf="uploadedImage; else defaultImage"
+                    [src]="uploadedImage"
+                    class="w-100"
+                    style="object-fit: cover; height: 100%;"
                   />
-                  <div
-                      class="upload-overlay d-flex align-items-center justify-content-center position-absolute w-100 h-100"
-                      *ngIf="showUploadOption"
-                      style="background-color: #ccc;"
-                  >
-                      <input
-                        type="file"
-                        accept="image/*"
-                        style="display: none;"
-                        (change)="onFileChange($event,file.files)"
-                        #file
-                      />
-                      <button 
-                      class="btn btn-primary"
-                      (click)="file.click()"
-                      >
-                      Upload Image
-                      </button>
-                  </div>
-                  <div *ngIf="!showUploadOption" class="text-center">
+                  <ng-template #defaultImage>
+                    <div *ngIf="!showUploadOption" class="text-center">
                       <div style="font-size: 50px; color: #7c7a7a;">+</div>
                       <div style="color: #7c7a7a;">Product Image</div>
+                    </div>
+                  </ng-template>
+                  <div
+                    class="upload-overlay d-flex align-items-center justify-content-center position-absolute w-100 h-100"
+                    *ngIf="showUploadOption"
+                    style="background-color: rgba(204, 204, 204, 0.8);"
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style="display: none;"
+                      (change)="onFileChange($event, file.files)"
+                      #file
+                    />
+                    <button 
+                      class="btn btn-primary"
+                      (click)="file.click()"
+                    >
+                      Upload Image
+                    </button>
                   </div>
-                  </div>
+                </div>
               </div>
 
               <div class="col-md-6 col-lg-6 col-xl-6">
@@ -88,6 +92,7 @@
                     class="form-select"
                     [(ngModel)]="product.status"
                   >
+                    <option value="" disabled selected>Select Status</option>
                     <option value="available">Available</option>
                     <option value="not-available">Not Available</option>
                   </select>
@@ -95,12 +100,22 @@
               </div>
             </div>
             <!-- Add Product Button -->
-            <div class="text-center mt-4">
+            <div class="d-flex justify-content-between mt-4">
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              </span>
               <button
                 class="btn btn-success"
                 (click)="addProduct()"
               >
                 Add Product
+              </button>
+              <button
+                class="btn btn-secondary"
+                (click)="resetForm()"
+              >
+                Reset Form
               </button>
             </div>
           </div>
