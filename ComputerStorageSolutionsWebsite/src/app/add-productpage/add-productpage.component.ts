@@ -41,4 +41,13 @@ export class AddProductpageComponent {
   addProduct(){
     this.showPopup(`${this.product.productName} added Successfully`)
   }
+
+  onFileChange(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append('image', file);
+      console.log(formData);
+    }
+  }
 }

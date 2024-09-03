@@ -1,110 +1,116 @@
 <section style="background-color: #eee">
-    <div class="container py-5">
-      <div class="row justify-content-center mb-3">
-        <div class="col-md-12 col-xl-10">
-          <div class="card shadow-0 border rounded-3">
-            <div class="card-body">
-              <div class="row">
-                <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
-                  <!-- Image Upload Section -->
-                  <div
-                    class="bg-image hover-zoom ripple rounded ripple-surface position-relative"
-                    (mouseenter)="showUploadOption = true"
-                    (mouseleave)="showUploadOption = false"
-                    style="width: 100%; height: 100%; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center;"
-                    >
-                    <img
-                        *ngIf="!showUploadOption && product.imageUrl"
-                        [src]="product.imageUrl"
-                        class="w-100"
-                        alt="Image"
-                    />
-                    <div
-                        class="upload-overlay d-flex align-items-center justify-content-center position-absolute w-100 h-100"
-                        *ngIf="showUploadOption"
-                        style="background-color: #ccc;"
-                    >
-                        <button
-                        class="btn btn-primary"
-                        (click)="uploadImage(product.productId)"
-                        >
-                        Upload Image
-                        </button>
-                    </div>
-                    <div *ngIf="!product.imageUrl && !showUploadOption" class="text-center">
-                        <div style="font-size: 50px; color: #7c7a7a;">+</div>
-                        <div style="color: #7c7a7a;">Product Image</div>
-                    </div>
-                    </div>
-                </div>
-  
-                <div class="col-md-6 col-lg-6 col-xl-6">
-                  <!-- Editable Fields -->
-                  <input
-                    type="text"
-                    class="form-control mb-2"
-                    placeholder="Product Name Here"
-                    [(ngModel)]="product.productName"
+  <div class="container py-5">
+    <div class="row justify-content-center mb-3">
+      <div class="col-md-12 col-xl-10">
+        <div class="card shadow-0 border rounded-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
+                <!-- Image Upload Section -->
+                <div
+                  class="bg-image hover-zoom ripple rounded ripple-surface position-relative"
+                  (mouseenter)="showUploadOption = true"
+                  (mouseleave)="showUploadOption = false"
+                  style="width: 100%; height: 100%; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center;"
+                  >
+                  <img
+                      *ngIf="!showUploadOption && product.imageUrl"
+                      [src]="product.imageUrl"
+                      class="w-100"
+                      alt="Image"
                   />
-                  <textarea
-                    class="form-control mb-2"
-                    placeholder="Description Here"
-                    [(ngModel)]="product.description"
-                  ></textarea>
+                  <div
+                      class="upload-overlay d-flex align-items-center justify-content-center position-absolute w-100 h-100"
+                      *ngIf="showUploadOption"
+                      style="background-color: #ccc;"
+                  >
+                      <input
+                        type="file"
+                        accept="image/*"
+                        (change)="onFileChange($event)"
+                        style="display: none;"
+                        #fileInput
+                      />
+                      <button 
+                      class="btn btn-primary"
+                      (click)="fileInput.click()"
+                      >
+                      Upload Image
+                      </button>
+                  </div>
+                  <div *ngIf="!product.imageUrl && !showUploadOption" class="text-center">
+                      <div style="font-size: 50px; color: #7c7a7a;">+</div>
+                      <div style="color: #7c7a7a;">Product Image</div>
+                  </div>
+                  </div>
+              </div>
+
+              <div class="col-md-6 col-lg-6 col-xl-6">
+                <!-- Editable Fields -->
+                <input
+                  type="text"
+                  class="form-control mb-2"
+                  placeholder="Product Name Here"
+                  [(ngModel)]="product.productName"
+                />
+                <textarea
+                  class="form-control mb-2"
+                  placeholder="Description Here"
+                  [(ngModel)]="product.description"
+                ></textarea>
+                <input
+                  type="number"
+                  class="form-control mb-2"
+                  placeholder="Price Here"
+                  [(ngModel)]="product.price"
+                />
+
+                <!-- Category Dropdown -->
+                <select class="form-select" [(ngModel)]="product.categoryId">
+                  <option value="" disabled selected>Select Category</option>
+                  <option value="1">SSD</option>
+                  <option value="2">HDD</option>
+                  <option value="3">Flash Drive</option>
+                  <option value="4">Memory Card</option>
+                </select>                  
+              </div>
+
+              <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
+                <!-- Set Stock Quantity -->
+                <div class="d-flex flex-column mt-4">
                   <input
                     type="number"
                     class="form-control mb-2"
-                    placeholder="Price Here"
-                    [(ngModel)]="product.price"
+                    placeholder="Set Stock Quantity"
+                    [(ngModel)]="product.stockQuantity"
                   />
-  
-                  <!-- Category Dropdown -->
-                  <select class="form-select" [(ngModel)]="product.categoryId">
-                    <option value="" disabled selected>Select Category</option>
-                    <option value="1">SSD</option>
-                    <option value="2">HDD</option>
-                    <option value="3">Flash Drive</option>
-                    <option value="4">Memory Card</option>
-                  </select>                  
-                </div>
-  
-                <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
-                  <!-- Set Stock Quantity -->
-                  <div class="d-flex flex-column mt-4">
-                    <input
-                      type="number"
-                      class="form-control mb-2"
-                      placeholder="Set Stock Quantity"
-                      [(ngModel)]="product.stockQuantity"
-                    />
-  
-                    <!-- Set Status -->
-                    <select
-                      class="form-select"
-                      [(ngModel)]="product.status"
-                    >
-                      <option value="available">Available</option>
-                      <option value="not-available">Not Available</option>
-                    </select>
-                  </div>
+
+                  <!-- Set Status -->
+                  <select
+                    class="form-select"
+                    [(ngModel)]="product.status"
+                  >
+                    <option value="available">Available</option>
+                    <option value="not-available">Not Available</option>
+                  </select>
                 </div>
               </div>
-              <!-- Add Product Button -->
-              <div class="text-center mt-4">
-                <button
-                  class="btn btn-success"
-                  (click)="addProduct()"
-                >
-                  Add Product
-                </button>
-              </div>
+            </div>
+            <!-- Add Product Button -->
+            <div class="text-center mt-4">
+              <button
+                class="btn btn-success"
+                (click)="addProduct()"
+              >
+                Add Product
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
-  <div id="popupMessage" class="popup-message" *ngIf="popupVisible">
-    {{ popupText }}
   </div>
-  
+</section>
+<div id="popupMessage" class="popup-message" *ngIf="popupVisible">
+  {{ popupText }}
+</div>
