@@ -43,6 +43,15 @@ namespace ComputerStorageSolutions.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetAllProducts")]
+        [Authorize(Policy = SecurityPolicy.Admin)]
+        public async Task<IActionResult> GetAllProducts()
+        {
+            var result = Database.Products;
+            await result.ToListAsync();
+            return Ok(result);
+        }
+
         [HttpGet]
         [Route("count")]
         [Authorize]

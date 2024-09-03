@@ -48,15 +48,7 @@ export class ModifyProductComponent {
     const Jwttoken = jwtDecode<any>(atob(token.replace('token=', '')));
     this.Username = Jwttoken.UserName;
     this.Role=Jwttoken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-
-    this.apiService.getProductCount().subscribe({
-      next: (res) => {
-        this.productsCount = res;
-        this.paginationList = new Array(Math.ceil(res / this.pageSize));
-      },
-    });
-
-    this.apiService.getProducts(this.pageNumber, this.pageSize).subscribe({
+    this.apiService.getAllProducts().subscribe({
       next: (response: any) => {
         this.ProductDetails = response;
         this.FilteredProducts = this.ProductDetails;

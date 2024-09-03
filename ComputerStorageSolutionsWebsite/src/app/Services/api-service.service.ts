@@ -43,6 +43,12 @@ export class ApiServiceService {
     });
   }
 
+  getAllProducts(): Observable<any> {
+    return this.http.get<any>(`${this.productApi}/GetAllProducts`, {
+      headers: this.headers,
+    });
+  }
+
   getProductCount(): Observable<number> {
     return this.http.get<number>(`${this.productApi}/count`, {
       headers: this.headers,
