@@ -46,4 +46,8 @@ export class NavBarComponent {
   ModifyProduct(){
     this.router.navigate(['ModifyProduct'])
   }
+
+  ManageUsers(){
+    this.router.navigate(['ManageUsers'])
+  }
 }

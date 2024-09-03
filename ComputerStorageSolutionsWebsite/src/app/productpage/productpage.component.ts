@@ -189,7 +189,11 @@ export class ProductpageComponent implements OnInit {
   }
 
   ModifyProduct() {  
-  this.router.navigate(['/ModifyProduct'])
+    this.router.navigate(['/ModifyProduct'])
+  }
+
+  ManageUsers(){
+    this.router.navigate(['ManageUsers'])
   }
   
 }

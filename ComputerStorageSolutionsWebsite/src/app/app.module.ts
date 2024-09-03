@@ -16,6 +16,7 @@ import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { NgOptimizedImage } from '@angular/common';
 import { AddProductpageComponent } from './add-productpage/add-productpage.component';
 import { ModifyProductComponent } from './modify-product/modify-product.component';
+import { ManageUsersComponent } from './manage-users/manage-users.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ModifyProductComponent } from './modify-product/modify-product.componen
     BuyNowPageComponent,
     NavBarComponent,
     AddProductpageComponent,
-    ModifyProductComponent
+    ModifyProductComponent,
+    ManageUsersComponent,
   ],
   imports: [
     BrowserModule,

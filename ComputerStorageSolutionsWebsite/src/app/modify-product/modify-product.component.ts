@@ -161,4 +161,8 @@ export class ModifyProductComponent {
   handleMouseLeave(index: number) {
     this.showUploadOptions[index] = false;
   }
+
+  ManageUsers(){
+    this.router.navigate(['ManageUsers'])
+  }
 }
