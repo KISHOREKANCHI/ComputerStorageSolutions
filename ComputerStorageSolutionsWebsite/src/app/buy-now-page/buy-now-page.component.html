@@ -5,7 +5,7 @@
           <div class="card-body">
             <div class="row">
               <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
-                <img [src]="product?.imageUrl" class="w-100" alt="{{ product?.productName }}" />
+                <img [src]="'http://localhost:5037' + product.imageUrl" class="w-100" alt="{{ product?.productName }}" />
               </div>
               <div class="col-md-6 col-lg-6 col-xl-6">
                 <h5>{{ product?.productName }}</h5>

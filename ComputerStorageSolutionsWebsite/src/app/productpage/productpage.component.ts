@@ -195,5 +195,9 @@ export class ProductpageComponent implements OnInit {
   ManageUsers(){
     this.router.navigate(['ManageUsers'])
   }
+
+  Statistics(){
+    this.router.navigate(['Statistics']);
+  }
   
 }

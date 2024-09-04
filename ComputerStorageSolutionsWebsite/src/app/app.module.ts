@@ -17,6 +17,8 @@ import { NgOptimizedImage } from '@angular/common';
 import { AddProductpageComponent } from './add-productpage/add-productpage.component';
 import { ModifyProductComponent } from './modify-product/modify-product.component';
 import { ManageUsersComponent } from './manage-users/manage-users.component';
+import { StatisticsComponent } from './statistics/statistics.component';
+
 
 @NgModule({
   declarations: [
@@ -31,6 +33,7 @@ import { ManageUsersComponent } from './manage-users/manage-users.component';
     AddProductpageComponent,
     ModifyProductComponent,
     ManageUsersComponent,
+    StatisticsComponent,
   ],
   imports: [
     BrowserModule,
@@ -38,7 +41,8 @@ import { ManageUsersComponent } from './manage-users/manage-users.component';
     FormsModule,
     HttpClientModule,
     NgbModule,
-    NgOptimizedImage
+    NgOptimizedImage,
+    
   ],
   providers: [],
   bootstrap: [AppComponent]

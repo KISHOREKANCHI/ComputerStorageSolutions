@@ -50,4 +50,8 @@ export class NavBarComponent {
   ManageUsers(){
     this.router.navigate(['ManageUsers'])
   }
+
+  Statistics(){
+    this.router.navigate(['Statistics']);
+  }
 }

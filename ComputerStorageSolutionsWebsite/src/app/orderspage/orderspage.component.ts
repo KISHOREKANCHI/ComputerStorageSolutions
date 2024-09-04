@@ -27,11 +27,9 @@ export class OrderspageComponent implements OnInit {
   getUserOrders(): void {
     this.apiService.getUserOrders().subscribe({
       next: (result: any) => {
-        this.orders = result;         // Assign the result to this.orders
-        console.log("orders", this.orders); // Log this.orders after assignment
+        this.orders = result;        
       },
       error: (error) => {
-        console.error('Error fetching orders:', error);
       }
     });
   }

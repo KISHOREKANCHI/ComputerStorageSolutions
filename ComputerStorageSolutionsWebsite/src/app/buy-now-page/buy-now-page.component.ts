@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiServiceService } from '../Services/api-service.service';
 import { CookieManagerService } from '../Services/cookie-manager.service';
 
@@ -19,8 +19,10 @@ export class BuyNowPageComponent implements OnInit {
     zip: ''
   };
   shippingAddress:string= '';
+  popupVisible: boolean = false;
+  popupText: string = '';
 
-  constructor(private route: ActivatedRoute, private apiService: ApiServiceService, private manager:CookieManagerService) { }
+  constructor(private route: ActivatedRoute, private apiService: ApiServiceService, private manager:CookieManagerService,private router:Router) { }
 
   ngOnInit(): void {
     const expiry = 1;
@@ -53,18 +55,27 @@ export class BuyNowPageComponent implements OnInit {
       // Call the placeOrder API with the productOrders list and shippingAddress
       this.apiService.placeOrder(productOrders, this.shippingAddress).subscribe({
         next: (response) => {
-          console.log('Order placed successfully:', response);
-          // Handle successful order placement (e.g., navigate to another page, show success message)
+          this.showPopup(response);
         },
         error: (error) => {
-          console.error('Error placing order:', error);
-          // Handle error (e.g., show error message)
+          this,this.showPopup(error);
         }
       });
+      setTimeout(()=>{
+        this.router.navigate(['Orders']);
+      },2000);
 
     } else {
-      console.log('Please fill in all fields.');
-      // Handle case where address fields are not filled in
+      this.showPopup('Please fill in all fields.');
     }
+  }
+
+  showPopup(message: string): void {
+    this.popupText = message;
+    this.popupVisible = true;
+
+    setTimeout(() => {
+      this.popupVisible = false;
+    }, 2000);
   }
 }
