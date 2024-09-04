@@ -131,7 +131,7 @@
                 >
                   <img
                     *ngIf="!showUploadOptions[i] && product.imageUrl"
-                    [src]="product.imageUrl"
+                    [src]="'http://localhost:5037' + product.imageUrl"
                     class="w-100"
                     alt="Image"
                   />

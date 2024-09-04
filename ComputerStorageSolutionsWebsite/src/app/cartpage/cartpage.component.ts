@@ -95,7 +95,7 @@ export class CartpageComponent implements OnInit {
       }
     });
     setTimeout(()=>{
-      this.route.navigate(['products']);
+      this.route.navigate(['Orders']);
     },2000);
   }
   
