@@ -78,8 +78,13 @@ export class ApiServiceService {
   }
 
   AddProduct(formData: FormData): Observable<any>{
-    console.log("form data",formData);
     return this.http.post(`${this.productApi}/AddProduct`, formData,{
+      headers:this.headers,
+    });
+  }
+
+  ModifyProduct(formData: FormData): Observable<any>{
+    return this.http.patch(`${this.productApi}/ModifyProduct`, formData,{
       headers:this.headers,
     });
   }

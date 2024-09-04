@@ -18,10 +18,6 @@ export class ModifyProductComponent {
   popupVisible: boolean = false;
   popupText: string = '';
   searchTerm: string = '';
-  productsCount: number = 0;
-  pageNumber: number = 1;
-  pageSize: number = 5;
-  paginationList: number[] = [];
   Role: string ='';
   role:string ='9c06200d-5af1-4b14-bb74-9364b10977fe'
   showUploadOption: boolean = false;
@@ -29,6 +25,9 @@ export class ModifyProductComponent {
   showEditDescription: boolean = false;
   showEditPrice: boolean = false;
   showUploadOptions: boolean[] = [];
+  selectedFile: File | null = null;
+  uploadedImage: (string | ArrayBuffer | null)[] = [];
+  OriginalProductDetails: any[] = [];
 
   constructor(
     private apiService: ApiServiceService,
@@ -52,40 +51,54 @@ export class ModifyProductComponent {
       next: (response: any) => {
         this.ProductDetails = response;
         this.FilteredProducts = this.ProductDetails;
-        console.log(this.ProductDetails);
+        this.OriginalProductDetails = this.ProductDetails.map(product => ({ ...product }));
+        this.showUploadOptions = new Array(this.ProductDetails.length).fill(false); // Initialize the upload options array
+        this.uploadedImage = new Array(this.ProductDetails.length).fill(null);
       },
     });
   }
 
-  getPage(pageNumber: number) {
-    this.pageNumber = pageNumber;
-    this.apiService.getProducts(pageNumber, this.pageSize).subscribe({
-      next: (response: any) => {
-        this.ProductDetails = response;
-        this.FilteredProducts = this.ProductDetails;
-      },
-    });
+  resetForm(index:number): void {
+    this.ProductDetails[index] = { ...this.OriginalProductDetails[index] }; // Reset the product to its original data
+    this.uploadedImage[index] = null; // Clear any uploaded images for this product
+    this.cdRef.detectChanges(); // Trigger change detection manually
   }
+  
+  UpdateProduct(ProductId:string){
+    const product = this.ProductDetails.find(p => p.productId === ProductId);
+    if (!product.productName || !product.description || 
+      product.price == null || product.categoryId || 
+      product.stockQuantity == null || product.status) {
+      const formData = new FormData();
+      formData.append('ProductId',ProductId);
+      formData.append('productName', product.productName);
+      formData.append('description', product.description);
+      formData.append('price', product.price.toString());
+      formData.append('categoryId', product.categoryId.toString());
+      formData.append('stockQuantity', product.stockQuantity.toString());
+      formData.append('status', product.status);
+      if (this.selectedFile) {
+          formData.append('image', this.selectedFile, this.selectedFile.name);
+      }
 
-  modifyField(field: string, productId: number) {
-      // Logic for modifying fields like name, description, price
-  }
+      // Convert the FormData object to an array of [key, value] pairs
+      // formData.forEach((value, key) => {
+      //     console.log(key,value)
+      // });
 
-  toggleCart(categoryId: number, description: string, imageUrl: string, price: number, productId: number, productName: string, stockQuantity: number) {
-      // Logic for toggling cart state
-  }
-
-  isInCart(productId: number): boolean {
-      // Logic to check if the product is in the cart
-      return false; // Replace with actual logic
-  }
-
-  navigateToProductDetails(productId: number) {
-      // Logic to navigate to product details
-  }
-
-  addProduct() {
-      // Logic for adding a product
+      this.apiService.ModifyProduct(formData).subscribe({
+        next: (response) => {
+          this.showPopup(response.message); 
+        },
+        error: err => {
+          console.log(err);
+          this.showPopup(err);
+        },
+      });
+    }
+    else{
+      this.showPopup("all fields are required")
+    }  
   }
 
   editField(field: string, product: any) {
@@ -98,12 +111,18 @@ export class ModifyProductComponent {
     }
   }
 
-  saveEdit() {
-
-  }
-
-  uploadImage(abc:any){
-
+  onFileChange(event: any,index:number,files:any):void{
+    if (event.target.files && event.target.files.length > 0) {
+      this.selectedFile = <File>files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        // Check if e.target is not null
+        if (e.target && e.target.result) {
+          this.uploadedImage[index] = e.target.result; // Set uploaded image to display
+        }
+      };
+      reader.readAsDataURL(this.selectedFile);
+    }
   }
 
   AddProduct(){
@@ -160,5 +179,14 @@ export class ModifyProductComponent {
 
   Statistics(){
     this.router.navigate(['Statistics']);
+  }
+
+  showPopup(message: string): void {
+    this.popupText = message;
+    this.popupVisible = true;
+
+    setTimeout(() => {
+      this.popupVisible = false;
+    }, 2000);
   }
 }

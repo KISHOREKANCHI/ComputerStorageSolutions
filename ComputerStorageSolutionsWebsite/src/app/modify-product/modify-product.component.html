@@ -129,20 +129,35 @@
                   (mouseleave)="handleMouseLeave(i)"
                   style="width: 100%; height: 100%; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center;"
                 >
-                  <img
+                <img
+                  *ngIf="uploadedImage[i]!=null; else defaultImage"
+                  [src]="uploadedImage[i]"
+                  class="w-100"
+                  style="object-fit: cover; height: 100%;"
+                />
+                  <ng-template #defaultImage>
+                    <img
                     *ngIf="!showUploadOptions[i] && product.imageUrl"
                     [src]="'http://localhost:5037' + product.imageUrl"
                     class="w-100"
                     alt="Image"
                   />
+                  </ng-template>
                   <div
                     class="upload-overlay d-flex align-items-center justify-content-center position-absolute w-100 h-100"
                     *ngIf="showUploadOptions[i]"
                     style="background-color: #ccc;"
                   >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style="display: none;"
+                      (change)="onFileChange($event, i,file.files)"
+                      #file
+                    />
                     <button
                       class="btn btn-primary"
-                      (click)="uploadImage(product.productId)"
+                      (click)="file.click()"
                     >
                       Upload Image
                     </button>
@@ -229,9 +244,22 @@
               </div>
             </div>
             <!-- Add Product Button -->
-            <div class="text-center mt-4">
-              <button class="btn btn-success" (click)="addProduct()">
+            <div class="d-flex justify-content-between mt-4">
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              </span>
+              <button
+                class="btn btn-success"
+                (click)="UpdateProduct(product.productId)"
+              >
                 Modify Product
+              </button>
+              <button
+                class="btn btn-secondary"
+                (click)="resetForm(i)"
+              >
+                Reset Form
               </button>
             </div>
           </div>
@@ -243,5 +271,3 @@
 <div id="popupMessage" class="popup-message" *ngIf="popupVisible">
   {{ popupText }}
 </div>
-
-  

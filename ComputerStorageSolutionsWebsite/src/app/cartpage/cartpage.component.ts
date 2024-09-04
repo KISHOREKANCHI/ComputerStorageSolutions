@@ -33,7 +33,6 @@ export class CartpageComponent implements OnInit {
   loadCart(): void {
     this.cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
     this.cartItems.forEach(item => item.checked = false); // Initialize checked property
-    console.log(this.cartItems);
   }
 
   updateQuantity(item: any, change: number): void {
