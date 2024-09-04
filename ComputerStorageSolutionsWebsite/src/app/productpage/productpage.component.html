@@ -103,7 +103,7 @@
             <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="AddProduct(); $event.preventDefault();"><i class="fa fa-plus"></i> Add Product</a></li>
             <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="ModifyProduct(); $event.preventDefault();"><i class="fa fa-pencil-alt" ></i> Modify Product</a></li>
             <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="ManageUsers(); $event.preventDefault();"><i class="fa-solid fa-users" ></i> Manage users</a></li>
-            <li *ngIf="Role === role"><a class="dropdown-item" href="#"><i class="fa fa-line-chart"></i> Statistics</a></li>
+            <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="Statistics(); $event.preventDefault();"><i class="fa fa-line-chart"></i> Statistics</a></li>
             <li><a class="dropdown-item" href="#" (click)="logout(); $event.preventDefault();"><i class="fa fa-sign-out"></i> Logout</a></li>
           </ul>
         </li>

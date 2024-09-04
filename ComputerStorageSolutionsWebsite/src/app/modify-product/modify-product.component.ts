@@ -157,4 +157,8 @@ export class ModifyProductComponent {
   ManageUsers(){
     this.router.navigate(['ManageUsers'])
   }
+
+  Statistics(){
+    this.router.navigate(['Statistics']);
+  }
 }
