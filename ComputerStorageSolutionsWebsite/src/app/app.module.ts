@@ -13,6 +13,10 @@ import { CartpageComponent } from './cartpage/cartpage.component';
 import { OrderspageComponent } from './orderspage/orderspage.component';
 import { BuyNowPageComponent } from './buy-now-page/buy-now-page.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
+import { NgOptimizedImage } from '@angular/common';
+import { AddProductpageComponent } from './add-productpage/add-productpage.component';
+import { ModifyProductComponent } from './modify-product/modify-product.component';
+import { ManageUsersComponent } from './manage-users/manage-users.component';
 
 @NgModule({
   declarations: [
@@ -23,14 +27,18 @@ import { NavBarComponent } from './nav-bar/nav-bar.component';
     CartpageComponent,
     OrderspageComponent,
     BuyNowPageComponent,
-    NavBarComponent
+    NavBarComponent,
+    AddProductpageComponent,
+    ModifyProductComponent,
+    ManageUsersComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    NgbModule
+    NgbModule,
+    NgOptimizedImage
   ],
   providers: [],
   bootstrap: [AppComponent]

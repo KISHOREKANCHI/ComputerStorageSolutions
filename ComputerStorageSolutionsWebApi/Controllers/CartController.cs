@@ -40,7 +40,7 @@ namespace ComputerStorageSolutions.Controllers
 
         // POST: api/Cart/{userId}
         [HttpPost("AddToCart")]
-        /*[Authorize]*/
+        [Authorize]
         public async Task<ActionResult> AddItemToCart(Guid userId, [FromBody] Guid productId)
         {
             // Check if the product already exists in the cart
@@ -73,7 +73,7 @@ namespace ComputerStorageSolutions.Controllers
         }
         // PUT: api/Cart/{userId}/items/{productId}
         [HttpPut("UpdateCart")]
-        /*[Authorize]*/
+        [Authorize]
         public async Task<ActionResult> UpdateCartItem(Guid userId, Guid productId, [FromBody] int quantity)
         {
             // Validate quantity
@@ -116,7 +116,7 @@ namespace ComputerStorageSolutions.Controllers
 
         // DELETE: api/Cart/{userId}/items/{productId}
         [HttpDelete("RemoveItemFromCart")]
-        /*[Authorize]*/
+        [Authorize]
         public async Task<ActionResult> RemoveItemFromCart(Guid userId, Guid productId)
         {
             var cartItem = await Database.Carts
@@ -137,7 +137,7 @@ namespace ComputerStorageSolutions.Controllers
 
         // DELETE: api/Cart/{userId}
         [HttpDelete("DeleteCart")]
-        /*[Authorize]*/
+        [Authorize]
         public async Task<ActionResult> ClearCart(Guid userId)
         {
             var cartItems = await Database.Carts

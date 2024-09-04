@@ -22,6 +22,8 @@ export class ProductpageComponent implements OnInit {
   pageNumber: number = 1;
   pageSize: number = 5;
   paginationList: number[] = [];
+  Role: string ='';
+  role:string ='9c06200d-5af1-4b14-bb74-9364b10977fe'
 
   constructor(
     private apiService: ApiServiceService,
@@ -44,6 +46,7 @@ export class ProductpageComponent implements OnInit {
     const token = document.cookie.split(';')[0];
     const Jwttoken = jwtDecode<any>(atob(token.replace('token=', '')));
     this.Username = Jwttoken.UserName;
+    this.Role=Jwttoken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
     this.apiService.getProductCount().subscribe({
       next: (res) => {
@@ -56,6 +59,7 @@ export class ProductpageComponent implements OnInit {
       next: (response: any) => {
         this.ProductDetails = response;
         this.FilteredProducts = this.ProductDetails;
+        console.log(this.ProductDetails);
       },
     });
   }
@@ -179,4 +183,17 @@ export class ProductpageComponent implements OnInit {
 
     this.cdRef.detectChanges(); // Trigger change detection manually
   }
+
+  AddProduct(){
+    this.router.navigate(['AddProduct']);
+  }
+
+  ModifyProduct() {  
+    this.router.navigate(['/ModifyProduct'])
+  }
+
+  ManageUsers(){
+    this.router.navigate(['ManageUsers'])
+  }
+  
 }

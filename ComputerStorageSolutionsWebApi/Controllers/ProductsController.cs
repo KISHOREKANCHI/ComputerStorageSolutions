@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Headers;
+using static ComputerStorageSolutions.Controllers.ProductsController;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ComputerStorageSolutions.Controllers
 {
@@ -36,6 +39,15 @@ namespace ComputerStorageSolutions.Controllers
             var result = Database.Products
                 .Where(p => p.StockQuantity > 0 && p.Status == "Available").AsQueryable();
             result = result.Skip(skipResults ?? 0).Take(pageSize ?? 5);
+            await result.ToListAsync();
+            return Ok(result);
+        }
+
+        [HttpGet("GetAllProducts")]
+        [Authorize(Policy = SecurityPolicy.Admin)]
+        public async Task<IActionResult> GetAllProducts()
+        {
+            var result = Database.Products;
             await result.ToListAsync();
             return Ok(result);
         }
@@ -80,12 +92,100 @@ namespace ComputerStorageSolutions.Controllers
 
         [Authorize(Policy = SecurityPolicy.Admin)]
         [HttpPost("AddProduct")]
-        public async Task<IActionResult> AddProduct([FromBody] ProductsModel product)
+        [DisableRequestSizeLimit]
+        public IActionResult AddProduct()
         {
-            await Database.Products.AddAsync(product);
-            await Database.SaveChangesAsync();
-            return Ok(await Database.Products.ToListAsync());
+            try
+            {
+                var file = Request.Form.Files[0];
+                var folderName = "wwwroot/Images/";
+                var PathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+                if (file.Length > 0)
+                {
+                    var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                    var fullPath = Path.Combine(PathToSave, fileName);
+                    var dbPath = Path.Combine(folderName, fileName);
+
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        file.CopyTo(stream);
+                    }
+
+                    // Get additional form data
+                    var productName = Request.Form["productName"];
+                    var description = Request.Form["description"];
+                    var price = decimal.Parse(Request.Form["price"]);
+                    var categoryId = int.Parse(Request.Form["categoryId"]);
+                    var stockQuantity = int.Parse(Request.Form["stockQuantity"]);
+                    var status = Request.Form["status"];
+
+                    // Create a new product model
+                    var newProduct = new ProductsModel
+                    {
+                        ProductName = productName,
+                        Description = description,
+                        Price = price,
+                        CategoryId = categoryId,
+                        StockQuantity = stockQuantity,
+                        Status = status,
+                        ImageUrl = $"/Images/{fileName}" // Save the relative path or URL
+                    };
+
+
+                    Database.Products.Add(newProduct);
+                    Database.SaveChanges(); // Save changes to the database
+                    
+
+                    return Ok(new { dbPath });
+                }
+                else
+                {
+                    return BadRequest("No file uploaded.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
         }
+
+
+        /*public async Task<IActionResult> AddProduct(
+    [FromForm] IFormFile image,
+    [FromForm] string productName,
+    [FromForm] string description,
+    [FromForm] decimal price,
+    [FromForm] int categoryId,
+    [FromForm] int stockQuantity,
+    [FromForm] string status)
+        {
+            if (image == null || image.Length == 0)
+            {
+                return BadRequest("Please upload an image.");
+            }
+            // Save the image to the server
+            var imagePath = Path.Combine("wwwroot/Images/", image.FileName);
+            using (var stream = new FileStream(imagePath, FileMode.Create))
+            {
+                await image.CopyToAsync(stream);
+            }
+
+            // Save the product to the database
+            await Database.Products.AddAsync(new ProductsModel
+            {
+                ProductName = productName,
+                Description = description,
+                Price = price,
+                CategoryId = categoryId,
+                StockQuantity = stockQuantity,
+                Status = status,
+                ImageUrl = $"/images/{image.FileName}" // Save the relative path or URL
+            });
+            await Database.SaveChangesAsync();
+
+            return Ok(await Database.Products.ToListAsync());
+        }*/
 
         [Authorize(Policy = SecurityPolicy.Admin)]
         [HttpPatch("ModifyProduct")]
@@ -109,5 +209,12 @@ namespace ComputerStorageSolutions.Controllers
             await Database.SaveChangesAsync();
             return Ok(await Database.Products.ToListAsync());
         }
+
+        public class ProductWithImageDto
+        {
+            public ProductsModel Product { get; set; }
+            public IFormFile ImageFile { get; set; }
+        }
+
     }
 }

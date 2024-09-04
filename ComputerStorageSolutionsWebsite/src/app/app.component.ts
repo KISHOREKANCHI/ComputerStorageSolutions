@@ -8,17 +8,19 @@ import { CookieManagerService } from 'src/app/Services/cookie-manager.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  isNotOnProductsPage: boolean=true;
+  showNavBar: boolean = true; // Renamed for clarity
 
-  constructor(private manager : CookieManagerService,private router:Router){}
+  constructor(private manager: CookieManagerService, private router: Router) {}
 
-  ngOnInit(){
+  ngOnInit() {
     const expiry = 1;
     this.manager.checkToken(expiry);
+    
+    // Listen for navigation events
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        // Check if the current URL is not '/products'
-        this.isNotOnProductsPage = this.router.url !== '/products';
+        // Show navbar only on specific routes
+        this.showNavBar = this.router.url !== '/products' && this.router.url !== '/ModifyProduct';
       }
     });
   }

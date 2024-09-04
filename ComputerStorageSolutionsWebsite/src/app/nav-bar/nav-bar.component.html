@@ -1,37 +1,39 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <!-- Navbar Brand -->
-      <a class="navbar-brand" [routerLink]="['/products']" routerLinkActive="active">ComputerStorageSolutions</a>
-  
-      <!-- Navbar Links -->
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link nav-btn" [routerLink]="['/login']">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link nav-btn" [routerLink]="['/signup']">Signup</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link nav-btn" [routerLink]="['/products']">Products</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link nav-btn" [routerLink]="['/Orders']">Orders</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link nav-btn" [routerLink]="['/Cart']">Cart</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle nav-btn" href="#" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-              🙎🏻 {{ Username }}
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="userMenuButton">
-              <li><a class="dropdown-item" href="#" (click)="logout(); $event.preventDefault();"><i class="fa fa-sign-out"></i> Logout</a></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+  <div class="container-fluid">
+    <!-- Navbar Brand -->
+    <a class="navbar-brand" [routerLink]="['/products']" routerLinkActive="active">ComputerStorageSolutions</a>
 
-  
+    <!-- Navbar Links -->
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link nav-btn" [routerLink]="['/login']">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-btn" [routerLink]="['/signup']">Signup</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-btn" [routerLink]="['/products']">Products</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-btn" [routerLink]="['/Orders']">Orders</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-btn" [routerLink]="['/Cart']">Cart</a>
+        </li>
+        <li class="nav-item dropdown" *ngIf="Username">
+          <a class="nav-link dropdown-toggle nav-btn" href="#" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            🙎🏻 {{ Username }}
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="userMenuButton">
+            <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="AddProduct(); $event.preventDefault();"><i class="fa fa-plus"></i> Add Product</a></li>
+            <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="ModifyProduct();$event.preventDefault();"><i class="fa fa-pencil-alt"></i> Modify Product</a></li>
+            <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="ManageUsers(); $event.preventDefault();"><i class="fa-solid fa-users" ></i> Manage users</a></li>
+            <li *ngIf="Role === role"><a class="dropdown-item" href="#"><i class="fa fa-line-chart"></i> Statistics</a></li>
+            <li><a class="dropdown-item" href="#" (click)="logout(); $event.preventDefault();"><i class="fa fa-sign-out"></i> Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
