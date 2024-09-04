@@ -15,7 +15,7 @@ export class LoginpageComponent {
   password: string = "";
   UserDetails: any | null = null;
   Token: any | null = null;
-  priority: string = "low";
+  priority: string = "high";
   rememberMeChecked: boolean = true;
   ShowPassword: boolean=false;
   token: any| null = null;

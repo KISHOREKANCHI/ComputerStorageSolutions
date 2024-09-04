@@ -94,7 +94,9 @@ export class CartpageComponent implements OnInit {
         // Handle error (e.g., show error message)
       }
     });
-    this.route.navigate(['Orders']);
+    setTimeout(()=>{
+      this.route.navigate(['products']);
+    },2000);
   }
   
   

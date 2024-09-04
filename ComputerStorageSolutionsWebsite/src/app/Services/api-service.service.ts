@@ -43,6 +43,12 @@ export class ApiServiceService {
     });
   }
 
+  getAllProducts(): Observable<any> {
+    return this.http.get<any>(`${this.productApi}/GetAllProducts`, {
+      headers: this.headers,
+    });
+  }
+
   getProductCount(): Observable<number> {
     return this.http.get<number>(`${this.productApi}/count`, {
       headers: this.headers,
@@ -68,6 +74,13 @@ export class ApiServiceService {
     };
     return this.http.post(`${this.orderApi}/OrderProduct`, body, {
       headers: this.headers,
+    });
+  }
+
+  AddProduct(formData: FormData): Observable<any>{
+    console.log("form data",formData);
+    return this.http.post(`${this.productApi}/AddProduct`, formData,{
+      headers:this.headers,
     });
   }
 }
