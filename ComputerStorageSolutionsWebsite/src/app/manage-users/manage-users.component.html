@@ -1,88 +1,89 @@
 <div class="container manage-users-container">
-    <h2 class="text-center my-4">Manage Users</h2>
-  
-    <table class="table table-bordered table-striped">
-      <thead class="table-dark">
-        <tr>
-          <th>User ID</th>
-          <th>Username</th>
-          <th>Email</th>
-          <th>Role</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of users">
-          <td>{{ user.id }}</td>
-          <td>{{ user.username }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.role }}</td>
-          <td class="action-buttons">
-            <button
-              *ngIf="user.role === 'User'"
-              class="btn btn-success btn-sm"
-              (click)="promoteToAdmin(user)"
-            >
-              Promote to Admin
-            </button>
-            <button
-              *ngIf="user.role === 'Admin'"
-              class="btn btn-warning btn-sm"
-              (click)="demoteToUser(user)"
-            >
-              Demote to User
-            </button>
-            <button
-              class="btn btn-danger btn-sm"
-              (click)="deleteUser(user)"
-            >
-              Delete
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  
-    <!-- Confirmation Popup -->
-    <div
-      class="modal fade"
-      id="confirmationModal"
-      tabindex="-1"
-      aria-labelledby="confirmationModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="confirmationModalLabel">Confirm Action</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            Are you sure you want to perform this action?
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              No
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              (click)="confirmAction()"
-            >
-              Yes
-            </button>
-          </div>
+  <h2 class="text-center my-4">Manage Users</h2>
+
+  <table class="table table-bordered table-striped">
+    <thead class="table-dark">
+      <tr>
+        <th>User ID</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.userId }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.role }}</td>
+        <td class="action-buttons">
+          <button
+            *ngIf="user.role === 'Customer'"
+            class="btn btn-success btn-sm"
+            (click)="promoteToAdmin(user.userId)"
+          >
+            Promote to Admin
+          </button>
+          <button
+            *ngIf="user.role === 'Admin'"
+            class="btn btn-warning btn-sm"
+            (click)="demoteToUser(user.userId)"
+          >
+            Demote to User
+          </button>
+          <button
+            class="btn btn-danger btn-sm"
+            (click)="deleteUser(user.userId)"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Confirmation Popup -->
+  <div
+    class="modal fade"
+    id="confirmationModal"
+    tabindex="-1"
+    aria-labelledby="confirmationModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmationModalLabel">Confirm Action</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to perform this action?
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            No
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="confirmAction()"
+          >
+            Yes
+          </button>
         </div>
       </div>
     </div>
   </div>
-  
+</div>
+
+<div id="popupMessage" class="popup-message" *ngIf="popupVisible">{{ popupText }}</div>
