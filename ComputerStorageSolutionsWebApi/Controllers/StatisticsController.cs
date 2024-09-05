@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ArtGalleryAPI.Controllers
+namespace ComputerStorageSolutions.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
