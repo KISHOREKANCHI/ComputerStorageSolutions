@@ -62,7 +62,7 @@ namespace ComputerStorageSolutions.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, "Internal server error");
             }
         }
 
@@ -92,7 +92,7 @@ namespace ComputerStorageSolutions.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error promoting user.");
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, $"Internal server error");
             }
         }
 
@@ -152,7 +152,7 @@ namespace ComputerStorageSolutions.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error demoting user.");
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, $"Internal server error");
             }
         }
 
@@ -194,7 +194,7 @@ namespace ComputerStorageSolutions.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting user.");
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, $"Internal server error");
             }
         }
 
@@ -234,7 +234,7 @@ namespace ComputerStorageSolutions.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error changing user status.");
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, $"Internal server error");
             }
         }
     }

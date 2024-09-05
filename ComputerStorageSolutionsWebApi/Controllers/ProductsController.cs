@@ -146,7 +146,7 @@ namespace ComputerStorageSolutions.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+                return StatusCode(500, $"Internal Server Error");
             }
         }
 
@@ -205,7 +205,7 @@ namespace ComputerStorageSolutions.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+                return StatusCode(500, $"Internal Server Error");
             }
         }
 
