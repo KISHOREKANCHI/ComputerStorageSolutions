@@ -125,31 +125,41 @@
                 <!-- Image Upload Section -->
                 <div
                   class="bg-image hover-zoom ripple rounded ripple-surface position-relative"
-                  (mouseenter)="handleMouseEnter(i)"
-                  (mouseleave)="handleMouseLeave(i)"
+                  (mouseenter)="showUploadOption = true"
+                  (mouseleave)="showUploadOption = false"
                   style="width: 100%; height: 100%; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center;"
                 >
                   <img
-                    *ngIf="!showUploadOptions[i] && product.imageUrl"
+                    *ngIf="uploadedImage; else defaultImage"
+                    [src]="uploadedImage"
+                    class="w-100"
+                    style="object-fit: cover; height: 100%;"
+                  />
+                  <ng-template #defaultImage>
+                    <img
                     [src]="'http://localhost:5037' + product.imageUrl"
                     class="w-100"
-                    alt="Image"
+                    style="object-fit: cover; height: 100%;"
                   />
+                  </ng-template>
                   <div
                     class="upload-overlay d-flex align-items-center justify-content-center position-absolute w-100 h-100"
-                    *ngIf="showUploadOptions[i]"
-                    style="background-color: #ccc;"
+                    *ngIf="showUploadOption"
+                    style="background-color: rgba(204, 204, 204, 0.8);"
                   >
-                    <button
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style="display: none;"
+                      (change)="onFileChange($event, file.files)"
+                      #file
+                    />
+                    <button 
                       class="btn btn-primary"
-                      (click)="uploadImage(product.productId)"
+                      (click)="file.click()"
                     >
                       Upload Image
                     </button>
-                  </div>
-                  <div *ngIf="!product.imageUrl && !showUploadOptions[i]" class="text-center">
-                    <div style="font-size: 50px; color: #7c7a7a;">+</div>
-                    <div style="color: #7c7a7a;">Product Image</div>
                   </div>
                 </div>
               </div>
@@ -230,7 +240,7 @@
             </div>
             <!-- Add Product Button -->
             <div class="text-center mt-4">
-              <button class="btn btn-success" (click)="addProduct()">
+              <button class="btn btn-success" (click)="UpdateProduct(product.ProductId)">
                 Modify Product
               </button>
             </div>
