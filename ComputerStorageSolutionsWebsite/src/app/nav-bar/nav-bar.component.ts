@@ -20,6 +20,7 @@ export class NavBarComponent {
   constructor(private router:Router,private manager:CookieManagerService){}
 
   logout(): void {
+    localStorage.clear();
     this.router.navigate(['login']);
     function expireCookie(name: string) {
       document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;

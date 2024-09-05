@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class StatisticsComponent implements OnInit {
 
-  private apiUrl = 'http://localhost:4200/Statistics'; // Replace with your actual API URL
+  private apiUrl = 'http://localhost:5037/api/Statistics'; // Replace with your actual API URL
 
   constructor(private http: HttpClient) {}
 
