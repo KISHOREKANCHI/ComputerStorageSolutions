@@ -8,6 +8,7 @@
         <th>Username</th>
         <th>Email</th>
         <th>Role</th>
+        <th>Status</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -17,6 +18,7 @@
         <td>{{ user.username }}</td>
         <td>{{ user.email }}</td>
         <td>{{ user.role }}</td>
+        <td>{{ user.isActive ? 'Active' : 'Inactive' }}</td>
         <td class="action-buttons">
           <button
             *ngIf="user.role === 'Customer'"
@@ -34,9 +36,9 @@
           </button>
           <button
             class="btn btn-danger btn-sm"
-            (click)="deleteUser(user.userId)"
+            (click)="toggleUserStatus(user.userId, user.isActive)"
           >
-            Delete
+            {{ user.isActive ? 'Deactivate' : 'Activate' }}
           </button>
         </td>
       </tr>

@@ -140,4 +140,13 @@ getOrderDetailsHighestSellingProduct(): Observable<any[]> {
 }
 
 // Add more methods as needed
+  toggleUserStatus(userId: string, isActive: boolean): Observable<any> {
+    const body={
+      userId:userId,
+      isActive:isActive
+    }
+    console.log("sent touserstatus",{userId,isActive});
+    return this.http.post(`${this.ModifyUserApi}/toggleStatus`, body, { headers: this.headers.set('Content-Type', 'application/json'),});
+  }
+  
 }

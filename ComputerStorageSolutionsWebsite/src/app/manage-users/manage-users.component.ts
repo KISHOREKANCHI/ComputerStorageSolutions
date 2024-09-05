@@ -12,9 +12,9 @@ export class ManageUsersComponent implements OnInit {
   users: any[] = [];
   selectedAction: string | null = null;
   selectedUserId: string | null = null;
+  selectedUserStatus: boolean = false; // Default to false
   popupText: string | undefined;
   popupVisible: boolean = false;
-  
 
   constructor(private apiService: ApiServiceService) {}
 
@@ -26,7 +26,7 @@ export class ManageUsersComponent implements OnInit {
     this.apiService.getUsers().subscribe({
       next: (data: any) => {
         this.users = data;
-        console.log("data",this.users)
+        console.log("data", this.users);
       },
       error: (error: any) => {
         this.showPopup('Error loading users');
@@ -47,9 +47,10 @@ export class ManageUsersComponent implements OnInit {
     this.openConfirmationModal();
   }
 
-  deleteUser(userId: string) {
-    this.selectedAction = 'Delete User';
+  toggleUserStatus(userId: string, isActive: boolean) {
+    this.selectedAction = isActive ? 'Deactivate User' : 'Activate User';
     this.selectedUserId = userId;
+    this.selectedUserStatus = !isActive;
     this.openConfirmationModal();
   }
 
@@ -78,15 +79,15 @@ export class ManageUsersComponent implements OnInit {
             console.error('Error demoting user', error); // Optional: Keep console log for debugging
           }
         });
-      } else if (this.selectedAction === 'Delete User') {
-        this.apiService.deleteUser(this.selectedUserId).subscribe({
+      } else if (this.selectedAction === 'Deactivate User' || this.selectedAction === 'Activate User') {
+        this.apiService.toggleUserStatus(this.selectedUserId, this.selectedUserStatus).subscribe({
           next: (response: any) => {
             this.loadUsers();
-            this.showPopup('User deleted successfully!');
+            this.showPopup(response);
           },
           error: (error: any) => {
-            this.showPopup('Error deleting user');
-            console.error('Error deleting user', error); // Optional: Keep console log for debugging
+            this.showPopup(`Error ${this.selectedUserStatus ? 'activating' : 'deactivating'} user`);
+            console.error(`Error ${this.selectedUserStatus ? 'activating' : 'deactivating'} user`, error); // Optional: Keep console log for debugging
           }
         });
       }
@@ -116,6 +117,7 @@ export class ManageUsersComponent implements OnInit {
     }
     this.selectedAction = null;
     this.selectedUserId = null;
+    this.selectedUserStatus = false; // Reset to default
   }
 
   showPopup(message: string): void {

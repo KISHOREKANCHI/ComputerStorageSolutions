@@ -53,6 +53,7 @@ namespace ComputerStorageSolutions.Controllers
                             user.UserId,
                             user.Username,
                             user.Email,
+                            user.IsActive,
                             Role = role.RoleName // Get the role name
                         })
                     .ToList();
@@ -106,15 +107,21 @@ namespace ComputerStorageSolutions.Controllers
             }
 
             // Check if the requester is an admin
-            var requester = _database.Users.FirstOrDefault(u => u.UserId == requesterId);
-            if (requester == null || requester.Role.RoleName != "Admin")
+            var requester = (from u in _database.Users
+                             join r in _database.Roles on u.RoleId equals r.RoleId
+                             where u.UserId == requesterId && r.RoleName == "Admin"
+                             select u).FirstOrDefault();
+            if (requester == null)
             {
                 return Forbid("Only admins can demote users.");
             }
 
             try
             {
-                var user = _database.Users.FirstOrDefault(u => u.UserId.ToString().ToLower() == User.UserId.ToString().ToLower());
+                var user = (from u in _database.Users
+                            join r in _database.Roles on u.RoleId equals r.RoleId
+                            where u.UserId.ToString().ToLower() == User.UserId.ToString().ToLower()
+                            select new { u, r.RoleName }).FirstOrDefault();
                 if (user == null)
                 {
                     return NotFound("User not found");
@@ -127,13 +134,17 @@ namespace ComputerStorageSolutions.Controllers
                 }
 
                 // Ensure there's more than one admin before demoting
-                var adminCount = _database.Users.Count(u => u.Role.RoleName == "Admin");
-                if (adminCount <= 1 && user.Role.RoleName == "Admin")
+                var adminCount = (from u in _database.Users
+                                  join r in _database.Roles on u.RoleId equals r.RoleId
+                                  where r.RoleName == "Admin"
+                                  select u).Count();
+                if (adminCount <= 1 && user.RoleName == "Admin")
                 {
                     return BadRequest("Cannot demote the last admin.");
                 }
 
-                user.RoleId = userRole.RoleId;
+                var userToUpdate = _database.Users.FirstOrDefault(u => u.UserId == user.u.UserId);
+                userToUpdate.RoleId = userRole.RoleId;
                 _database.SaveChanges();
 
                 return Ok("User demoted to User");
@@ -156,15 +167,20 @@ namespace ComputerStorageSolutions.Controllers
             }
 
             // Check if the requester is an admin
-            var requester = _database.Users.FirstOrDefault(u => u.UserId == requesterId);
-            if (requester == null || requester.Role.RoleName != "Admin")
+            var requester = (from u in _database.Users
+                             join r in _database.Roles on u.RoleId equals r.RoleId
+                             where u.UserId == requesterId && r.RoleName == "Admin"
+                             select u).FirstOrDefault();
+            if (requester == null)
             {
                 return Forbid("Only admins can delete users.");
             }
 
             try
             {
-                var user = _database.Users.FirstOrDefault(u => u.UserId.ToString().ToLower() == User.UserId.ToString().ToLower());
+                var user = (from u in _database.Users
+                            where u.UserId.ToString().ToLower() == User.UserId.ToString().ToLower()
+                            select u).FirstOrDefault();
                 if (user == null)
                 {
                     return NotFound("User not found");
@@ -181,10 +197,59 @@ namespace ComputerStorageSolutions.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [Authorize(Policy = SecurityPolicy.Admin)]
+        [HttpPost("toggleStatus")]
+        public IActionResult ToggleUserStatus([FromBody] UserStatusUpdateRequest request)
+        {
+            var requesterId = GetUserIdFromToken();
+            if (requesterId == Guid.Empty)
+            {
+                return Unauthorized("Invalid token.");
+            }
+
+            // Check if the requester is an admin
+            var requester = (from u in _database.Users
+                             join r in _database.Roles on u.RoleId equals r.RoleId
+                             where u.UserId == requesterId && r.RoleName == "Admin"
+                             select u).FirstOrDefault();
+            if (requester == null)
+            {
+                return Forbid("Only admins can change user status.");
+            }
+
+            try
+            {
+                var user = _database.Users.FirstOrDefault(u => u.UserId.ToString().ToLower() == request.UserId.ToString().ToLower());
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                user.IsActive = request.IsActive;
+                _database.SaveChanges();
+
+                return Ok($"User {(request.IsActive ? "activated" : "deactivated")} successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error changing user status.");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
+
+
 
     public class User
     {
         public Guid UserId { get; set; }
     }
+
+    public class UserStatusUpdateRequest
+    {
+        public Guid UserId { get; set; }
+        public bool IsActive { get; set; }
+    }
+
 }
