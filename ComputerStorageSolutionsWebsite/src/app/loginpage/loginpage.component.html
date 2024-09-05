@@ -7,7 +7,7 @@
             <h2 class="text-center mb-4">Login</h2>
 
             <form (ngSubmit)="Login()" #loginForm="ngForm">
-              <div class="form-outline mb-4">
+              <div class="form-outline mb-4 position-relative">
                 <input 
                   type="email" 
                   class="form-control form-control-lg" 
@@ -15,11 +15,15 @@
                   placeholder="" 
                   [(ngModel)]="email" 
                   name="email" 
+                  (input)="validateEmail()"
                   required>
                 <label class="form-label" for="exampleInputEmail1">Email address</label>
+                <div *ngIf="EmailError" class="alert alert-danger text-center mb-3">
+                  {{ EmailError }}
+                </div>
               </div>
 
-              <div class="form-outline mb-4">
+              <div class="form-outline mb-4 position-relative">
                 <input 
                   [type]="ShowPassword ? 'text' : 'password'" 
                   class="form-control form-control-lg" 
@@ -27,11 +31,15 @@
                   placeholder="" 
                   [(ngModel)]="password" 
                   name="password" 
+                  (input)="validatePassword()"
                   required>
-                  <i class="toggle-password position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;" (click)="toggleShowPassword()">
-                    {{ ShowPassword ? '🙈' : '👁️' }}
-                  </i>
                 <label class="form-label" for="exampleInputPassword1">Password</label>
+                <i class="toggle-password position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;" (click)="toggleShowPassword()">
+                  {{ ShowPassword ? '🙈' : '👁️' }}
+                </i>
+                <div *ngIf="PasswordError" class="alert alert-danger text-center mb-3">
+                  {{ PasswordError }}
+                </div>
               </div>
 
               <div class="form-check d-flex justify-content-center mb-4">
