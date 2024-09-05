@@ -1,0 +1,42 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  .container {
+    max-width: 600px;  /* Reduced maximum width */
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;  /* Reduced margin for the main title */
+    color: #333;
+  }
+  
+  .chart-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;  /* Reduced margin between cards */
+    padding: 10px;  /* Reduced padding */
+  }
+  
+  .chart-card h2 {
+    margin-bottom: 10px;  /* Reduced margin for headings */
+    color: #333;
+  }
+  
+  canvas {
+    width: 100% !important;  /* Ensures the chart takes full width of the card */
+    height: 200px;  /* Reduced height for the charts */
+    max-width: 100%;  /* Ensures responsiveness */
+  }
+  

@@ -1,20 +1,38 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <title>Chart.js example</title>
-  </head>
-  <body>
-    <div style="width: 800px;">
-      <canvas id="totalSalesChart"></canvas>
-      <canvas id="totalOrdersChart"></canvas>
-      <canvas id="ordersByCustomerChart"></canvas>
-      <canvas id="unitsSoldChart"></canvas>
-      <canvas id="popularProductChart"></canvas>
-      <canvas id="leastPopularProductChart"></canvas>
-    </div>
+<div class="container">
+  <h1>Statistics Dashboard</h1>
+  
+  <div class="chart-card">
+    <h2>Total Sales</h2>
+    <canvas id="totalSalesChart"></canvas>
+  </div>
 
-    <div id="inactiveCustomersList"></div>
-    <div id="customerProductsQuarterList"></div>
-    <div id="highestSellingProductList"></div>
-  </body>
-</html>
+  <div class="chart-card">
+    <h2>Inactive Customers</h2>
+    <canvas id="inactiveCustomersChart"></canvas>
+  </div>
+
+  <div class="chart-card">
+    <h2>Highest Selling Product</h2>
+    <canvas id="highestSellingProductChart"></canvas>
+  </div>
+
+  <div class="chart-card">
+    <h2>Customer Products in Quarter</h2>
+    <canvas id="customerProductsInQuarterChart"></canvas>
+  </div>
+
+  <div class="chart-card">
+    <h2>Least Popular Product</h2>
+    <canvas id="leastPopularProductChart"></canvas>
+  </div>
+
+  <div class="chart-card">
+    <h2>Units Sold in Price Range</h2>
+    <canvas id="unitsSoldInPriceRangeChart"></canvas>
+  </div>
+
+  <div class="chart-card">
+    <h2>Most Popular Product</h2>
+    <canvas id="mostPopularProductChart"></canvas>
+  </div>
+</div>
