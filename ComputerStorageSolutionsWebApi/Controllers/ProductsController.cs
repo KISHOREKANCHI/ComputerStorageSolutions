@@ -23,7 +23,6 @@ namespace ComputerStorageSolutions.Controllers
 
         public enum CategoryList
         {
-
             SSD = 1,
             HDD = 2,
             FlashDrives = 3,
@@ -34,60 +33,115 @@ namespace ComputerStorageSolutions.Controllers
         [Authorize]
         public async Task<IActionResult> GetProducts([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
         {
-            var skipResults = (pageNumber - 1) * pageSize;
+            try
+            {
+                if (pageNumber <= 0 || pageSize <= 0)
+                {
+                    return BadRequest("Page number and page size must be greater than zero.");
+                }
 
-            var result = Database.Products
-                .Where(p => p.StockQuantity > 0 && p.Status == "Available").AsQueryable();
-            result = result.Skip(skipResults ?? 0).Take(pageSize ?? 5);
-            await result.ToListAsync();
-            return Ok(result);
+                var skipResults = (pageNumber - 1) * pageSize;
+                var result = Database.Products
+                    .Where(p => p.StockQuantity > 0 && p.Status == "Available")
+                    .Skip(skipResults ?? 0)
+                    .Take(pageSize ?? 5)
+                    .AsQueryable();
+
+                var productList = await result.ToListAsync();
+
+                return Ok(productList);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Internal server Error fetching products.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
         [HttpGet("GetAllProducts")]
         [Authorize(Policy = SecurityPolicy.Admin)]
         public async Task<IActionResult> GetAllProducts()
         {
-            var result = Database.Products;
-            await result.ToListAsync();
-            return Ok(result);
+            try
+            {
+                var result = await Database.Products.ToListAsync();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Internal server Error fetching all products.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
-        [HttpGet]
-        [Route("count")]
+        [HttpGet("count")]
         [Authorize]
         public async Task<IActionResult> GetProductsCount()
         {
-            var count = await Database.Products.CountAsync();
-            return Ok(count);
+            try
+            {
+                var count = await Database.Products.CountAsync();
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Internal server Error fetching product count.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
-        [HttpGet]
-        /*[Authorize]*/
-        [Route("Id")]
+        [HttpGet("{Id}")]
         public async Task<IActionResult> GetProductById(Guid Id)
         {
-            var result = await Database.Products
-                .Where(p => p.ProductId == Id && p.Status == "Available" && p.StockQuantity > 0)
-                .ToListAsync();
-            return Ok(result);
+            try
+            {
+                var result = await Database.Products
+                    .Where(p => p.ProductId == Id && p.Status == "Available" && p.StockQuantity > 0)
+                    .ToListAsync();
+
+                if (!result.Any())
+                {
+                    return NotFound("Product not found.");
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, $"Internal server Error fetching product with ID {Id}.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
         [HttpDelete("DeleteProducts")]
         [Authorize(Policy = SecurityPolicy.Admin)]
         public async Task<IActionResult> DeleteProduct(Guid guid)
         {
-            var products = await Database.Products
-                .Where(p => p.ProductId == guid)
-                .ToListAsync();
-
-            foreach (var item in products)
+            try
             {
-                item.Status = "NotAvailable";
-                // StockQuantity is not set to 0 because sometimes admin might not want to display the product even if it is available
-            }
+                var products = await Database.Products
+                    .Where(p => p.ProductId == guid)
+                    .ToListAsync();
 
-            await Database.SaveChangesAsync();
-            return Ok(await Database.Products.ToListAsync());
+                if (!products.Any())
+                {
+                    return NotFound("Product not found.");
+                }
+
+                foreach (var item in products)
+                {
+                    item.Status = "NotAvailable";
+                }
+
+                await Database.SaveChangesAsync();
+
+                return Ok(await Database.Products.ToListAsync());
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, $"Internal server Error deleting product with ID {guid}.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
         [Authorize(Policy = SecurityPolicy.Admin)]
@@ -98,55 +152,49 @@ namespace ComputerStorageSolutions.Controllers
             try
             {
                 var file = Request.Form.Files["image"];
-                var folderName = "wwwroot/Images/";
-                var PathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-
-                if (file.Length > 0)
-                {
-                    var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    var fullPath = Path.Combine(PathToSave, fileName);
-                    var dbPath = Path.Combine(folderName, fileName);
-
-                    using (var stream = new FileStream(fullPath, FileMode.Create))
-                    {
-                        file.CopyTo(stream);
-                    }
-
-                    // Get additional form data
-                    var productName = Request.Form["productName"];
-                    var description = Request.Form["description"];
-                    var price = decimal.Parse(Request.Form["price"]);
-                    var categoryId = int.Parse(Request.Form["categoryId"]);
-                    var stockQuantity = int.Parse(Request.Form["stockQuantity"]);
-                    var status = Request.Form["status"];
-
-                    // Create a new product model
-                    var newProduct = new ProductsModel
-                    {
-                        ProductName = productName,
-                        Description = description,
-                        Price = price,
-                        CategoryId = categoryId,
-                        StockQuantity = stockQuantity,
-                        Status = status,
-                        ImageUrl = $"/Images/{fileName}" // Save the relative path or URL
-                    };
-
-
-                    Database.Products.Add(newProduct);
-                    Database.SaveChanges(); // Save changes to the database
-
-
-                    return Ok(new { success = true, message = "Product added successfully" });
-                }
-                else
+                if (file == null || file.Length == 0)
                 {
                     return BadRequest("No file uploaded.");
                 }
+
+                var folderName = "wwwroot/Images/";
+                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+                var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                var fullPath = Path.Combine(pathToSave, fileName);
+                var dbPath = Path.Combine(folderName, fileName);
+
+                using (var stream = new FileStream(fullPath, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+
+                var productName = Request.Form["productName"];
+                var description = Request.Form["description"];
+                var price = decimal.Parse(Request.Form["price"]);
+                var categoryId = int.Parse(Request.Form["categoryId"]);
+                var stockQuantity = int.Parse(Request.Form["stockQuantity"]);
+                var status = Request.Form["status"];
+
+                var newProduct = new ProductsModel
+                {
+                    ProductName = productName,
+                    Description = description,
+                    Price = price,
+                    CategoryId = categoryId,
+                    StockQuantity = stockQuantity,
+                    Status = status,
+                    ImageUrl = $"/Images/{fileName}"
+                };
+
+                Database.Products.Add(newProduct);
+                Database.SaveChanges();
+
+                return Ok(new { success = true, message = "Product added successfully" });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal Server Error");
+                Logger.LogError(ex, "Internal server Error adding product.");
+                return StatusCode(500, "Internal server error.");
             }
         }
 
@@ -159,10 +207,16 @@ namespace ComputerStorageSolutions.Controllers
             {
                 var file = Request.Form.Files["image"];
                 var folderName = "wwwroot/Images/";
-                var PathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-                Guid ProductId = new Guid(Request.Form["ProductId"]);
+                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+                var productId = new Guid(Request.Form["ProductId"]);
 
-                // Get additional form data
+                var product = await Database.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+
+                if (product == null)
+                {
+                    return NotFound(new { success = false, message = "Product not found." });
+                }
+
                 var productName = Request.Form["productName"];
                 var description = Request.Form["description"];
                 var price = decimal.Parse(Request.Form["price"]);
@@ -170,27 +224,17 @@ namespace ComputerStorageSolutions.Controllers
                 var stockQuantity = int.Parse(Request.Form["stockQuantity"]);
                 var status = Request.Form["status"];
 
-                var product = await Database.Products.FirstOrDefaultAsync(p => p.ProductId == ProductId);
-
-                if (product == null)
-                {
-                    return NotFound(new { success = false, message = "Product not found." });
-                }
-
-                // Update product details
                 product.ProductName = productName;
-                product.CategoryId = categoryId;
                 product.Description = description;
                 product.Price = price;
+                product.CategoryId = categoryId;
                 product.StockQuantity = stockQuantity;
                 product.Status = status;
 
-                // If a file is provided, update the ImageUrl
                 if (file != null && file.Length > 0)
                 {
                     var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    var fullPath = Path.Combine(PathToSave, fileName);
-                    var dbPath = Path.Combine(folderName, fileName);
+                    var fullPath = Path.Combine(pathToSave, fileName);
 
                     using (var stream = new FileStream(fullPath, FileMode.Create))
                     {
@@ -205,10 +249,10 @@ namespace ComputerStorageSolutions.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal Server Error");
+                Logger.LogError(ex, "Internal server Error modifying product.");
+                return StatusCode(500, "Internal server error.");
             }
         }
-
 
         public class ProductWithImageDto
         {

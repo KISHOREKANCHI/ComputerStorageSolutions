@@ -76,8 +76,8 @@ namespace ComputerStorageSolutions.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred during login attempt for email: {Email} at {Time}.", input.Email, DateTime.UtcNow);
-                return StatusCode(500, "An error occurred while processing your request.");
+                _logger.LogError(ex, "An Internal Server error occurred during login attempt for email: {Email} at {Time}.", input.Email, DateTime.UtcNow);
+                return StatusCode(500, "An Internal server error occurred while processing your request.");
             }
         }
 

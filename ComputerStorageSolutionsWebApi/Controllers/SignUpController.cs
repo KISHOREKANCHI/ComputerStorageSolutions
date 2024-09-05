@@ -116,7 +116,7 @@ namespace ComputerStorageSolutions.Controllers
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, $"An error occurred while trying to register user {input.Username}.");
+                Logger.LogError(ex, $"An Internal server error occurred while trying to register user {input.Username}.");
                 return StatusCode(500, "An internal server error occurred. Please try again later.");
             }
         }

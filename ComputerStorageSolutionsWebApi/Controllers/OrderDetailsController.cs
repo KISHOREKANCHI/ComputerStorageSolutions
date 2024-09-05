@@ -63,8 +63,8 @@ namespace ComputerStorageSolutions.Controllers
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "An error occurred while retrieving orders for the user.");
-                return StatusCode(500, "An error occurred while processing your request.");
+                Logger.LogError(ex, "An Internal server error occurred while retrieving orders for the user.");
+                return StatusCode(500, "An Internal server error occurred while processing your request.");
             }
         }
 
@@ -73,94 +73,107 @@ namespace ComputerStorageSolutions.Controllers
         [Authorize]
         public async Task<IActionResult> OrderProduct([FromBody] OrderRequest orderRequest)
         {
-            // Validate the product orders list
-            if (orderRequest == null || orderRequest.ProductOrders == null || !orderRequest.ProductOrders.Any())
+            try
             {
-                return BadRequest("Product orders list cannot be null or empty.");
-            }
-
-            var userId = GetUserIdFromToken();
-
-            if (userId == Guid.Empty)
-            {
-                return Unauthorized("Invalid token.");
-            }
-
-            // Convert the list of ProductOrder to get product IDs
-            var productGuids = orderRequest.ProductOrders.Select(po => po.ProductId).ToList();
-
-            // Retrieve product prices and IDs from the database
-            var products = await Database.Products
-                .Where(product => productGuids.Contains(product.ProductId))
-                .ToListAsync();
-
-            // Check if any products were found
-            if (!products.Any())
-            {
-                return NotFound("No products found for the given IDs.");
-            }
-
-            // Calculate the total amount based on quantities and check stock
-            decimal totalAmount = 0;
-            var orderDetailsList = new List<Models.OrderDetailsModel>();
-
-            foreach (var order in orderRequest.ProductOrders)
-            {
-                var product = products.FirstOrDefault(p => p.ProductId == order.ProductId);
-                if (product != null)
+                // Validate the product orders list
+                if (orderRequest == null || orderRequest.ProductOrders == null || !orderRequest.ProductOrders.Any())
                 {
-                    // Check stock quantity and status
-                    if (product.StockQuantity < order.Quantity || product.Status != "Available")
+                    Logger.LogWarning("Order request is null or product orders list is empty.");
+                    return BadRequest("Product orders list cannot be null or empty.");
+                }
+
+                var userId = GetUserIdFromToken();
+
+                if (userId == Guid.Empty)
+                {
+                    Logger.LogWarning("Unauthorized access attempt with invalid token.");
+                    return Unauthorized("Invalid token.");
+                }
+
+                // Convert the list of ProductOrder to get product IDs
+                var productGuids = orderRequest.ProductOrders.Select(po => po.ProductId).ToList();
+
+                // Retrieve product prices and IDs from the database
+                var products = await Database.Products
+                    .Where(product => productGuids.Contains(product.ProductId))
+                    .ToListAsync();
+
+                // Check if any products were found
+                if (!products.Any())
+                {
+                    Logger.LogWarning($"No products found for the given product IDs: {string.Join(", ", productGuids)}");
+                    return NotFound("No products found for the given IDs.");
+                }
+
+                // Calculate the total amount based on quantities and check stock
+                decimal totalAmount = 0;
+                var orderDetailsList = new List<Models.OrderDetailsModel>();
+
+                foreach (var order in orderRequest.ProductOrders)
+                {
+                    var product = products.FirstOrDefault(p => p.ProductId == order.ProductId);
+                    if (product != null)
                     {
-                        return BadRequest($"Insufficient stock for product '{product.ProductName}'. Available: {product.StockQuantity}");
+                        // Check stock quantity and status
+                        if (product.StockQuantity < order.Quantity || product.Status != "Available")
+                        {
+                            Logger.LogWarning($"Insufficient stock or unavailable product '{product.ProductName}' (ID: {product.ProductId}). Requested: {order.Quantity}, Available: {product.StockQuantity}");
+                            return BadRequest($"Insufficient stock for product '{product.ProductName}'. Available: {product.StockQuantity}");
+                        }
+
+                        totalAmount += product.Price * order.Quantity; // Accumulate total amount
+
+                        // Create order detail for each product
+                        var orderDetail = new Models.OrderDetailsModel
+                        {
+                            ProductId = product.ProductId, // Use the actual ProductId
+                            Quantity = order.Quantity,     // Use the quantity from the order
+                            UnitPrice = product.Price      // Use the price from the product
+                        };
+                        orderDetailsList.Add(orderDetail);
                     }
-
-                    totalAmount += product.Price * order.Quantity; // Accumulate total amount
-
-                    // Create order detail for each product
-                    var orderDetail = new Models.OrderDetailsModel
-                    {
-                        ProductId = product.ProductId, // Use the actual ProductId
-                        Quantity = order.Quantity,       // Use the quantity from the order
-                        UnitPrice = product.Price        // Use the price from the product
-                    };
-                    orderDetailsList.Add(orderDetail);
                 }
-            }
 
-            // Create a new order
-            var newOrder = new Models.OrdersModel
-            {
-                UserId = userId,
-                OrderDate = DateTime.Now,
-                TotalAmount = totalAmount,
-                OrderStatus = "Order Placed",
-                ShippingAddress = orderRequest.ShippingAddress // Use the shipping address from the request
-            };
-
-            // Add the order to the database
-            await Database.Orders.AddAsync(newOrder);
-            await Database.SaveChangesAsync(); // Save changes to get the new order ID
-
-            // Now add the order details with the new order ID and reduce stock quantity
-            foreach (var detail in orderDetailsList)
-            {
-                detail.OrderId = newOrder.OrderId; // Assign the OrderId to the order detail
-                await Database.OrderDetails.AddAsync(detail); // Add each detail to the database
-
-                // Reduce stock quantity
-                var productToUpdate = await Database.Products.FindAsync(detail.ProductId);
-                if (productToUpdate != null)
+                // Create a new order
+                var newOrder = new Models.OrdersModel
                 {
-                    productToUpdate.StockQuantity -= detail.Quantity; // Decrease stock quantity
+                    UserId = userId,
+                    OrderDate = DateTime.Now,
+                    TotalAmount = totalAmount,
+                    OrderStatus = "Order Placed",
+                    ShippingAddress = orderRequest.ShippingAddress // Use the shipping address from the request
+                };
 
+                // Add the order to the database
+                await Database.Orders.AddAsync(newOrder);
+                await Database.SaveChangesAsync(); // Save changes to get the new order ID
+
+                // Now add the order details with the new order ID and reduce stock quantity
+                foreach (var detail in orderDetailsList)
+                {
+                    detail.OrderId = newOrder.OrderId; // Assign the OrderId to the order detail
+                    await Database.OrderDetails.AddAsync(detail); // Add each detail to the database
+
+                    // Reduce stock quantity
+                    var productToUpdate = await Database.Products.FindAsync(detail.ProductId);
+                    if (productToUpdate != null)
+                    {
+                        productToUpdate.StockQuantity -= detail.Quantity; // Decrease stock quantity
+                    }
                 }
+
+                await Database.SaveChangesAsync(); // Save changes for order details and stock updates
+
+                Logger.LogInformation($"Order placed successfully for user {userId}, Order ID: {newOrder.OrderId}");
+                return Ok("Order placed successfully.");
             }
-
-            await Database.SaveChangesAsync(); // Save changes for order details and stock updates
-
-            return Ok("Order placed successfully.");
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "An Internal server error occurred while placing the order.");
+                return StatusCode(500, "Internal server error while processing the order.");
+            }
         }
+
 
 
         // Private method to extract the UserId from the JWT token

@@ -3,7 +3,7 @@ using ComputerStorageSolutions.Models;
 using System.Linq;
 using System;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authorization; // Ensure to import this if Logger is used
+using Microsoft.AspNetCore.Authorization;
 
 namespace ComputerStorageSolutions.Controllers
 {
@@ -12,14 +12,14 @@ namespace ComputerStorageSolutions.Controllers
     public class ManageUsersController : ControllerBase
     {
         private readonly DataBaseConnect _database;
-        private readonly ILogger<ManageUsersController> _logger; // Assuming you have a logger
-        private readonly IJwtService JwtService;
+        private readonly ILogger<ManageUsersController> _logger;
+        private readonly IJwtService _jwtService;
 
-        public ManageUsersController(DataBaseConnect database, ILogger<ManageUsersController> logger, IJwtService _jwtService)
+        public ManageUsersController(DataBaseConnect database, ILogger<ManageUsersController> logger, IJwtService jwtService)
         {
             _database = database;
             _logger = logger;
-            JwtService = _jwtService;
+            _jwtService = jwtService;
         }
 
         private Guid GetUserIdFromToken()
@@ -29,7 +29,7 @@ namespace ComputerStorageSolutions.Controllers
                 var token = Request.Headers["Authorization"].ToString();
                 token = token.Substring("Bearer ".Length).Trim();
 
-                return Guid.Parse(JwtService.GetUserIdFromToken(token)); // Use Parse to convert string to Guid
+                return Guid.Parse(_jwtService.GetUserIdFromToken(token)); // Use Parse to convert string to Guid
             }
             catch (Exception ex)
             {
@@ -62,17 +62,18 @@ namespace ComputerStorageSolutions.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An Internal server error occurred while retrieving users.");
                 return StatusCode(500, "Internal server error");
             }
         }
 
         [Authorize(Policy = SecurityPolicy.Admin)]
         [HttpPost("promote")]
-        public IActionResult PromoteToAdmin([FromBody] User User)
+        public IActionResult PromoteToAdmin([FromBody] User userRequest)
         {
             try
             {
-                var user = _database.Users.FirstOrDefault(u => u.UserId.ToString().ToUpper() == User.UserId.ToString().ToUpper());
+                var user = _database.Users.FirstOrDefault(u => u.UserId == userRequest.UserId);
                 if (user == null)
                 {
                     return NotFound("User not found");
@@ -91,37 +92,37 @@ namespace ComputerStorageSolutions.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error promoting user.");
-                return StatusCode(500, $"Internal server error");
+                _logger.LogError(ex, "Internal server Error promoting user to Admin.");
+                return StatusCode(500, "Internal server error");
             }
         }
 
         [Authorize(Policy = SecurityPolicy.Admin)]
         [HttpPost("demote")]
-        public IActionResult DemoteToUser([FromBody] User User)
+        public IActionResult DemoteToUser([FromBody] User userRequest)
         {
-            var requesterId = GetUserIdFromToken();
-            if (requesterId == Guid.Empty)
-            {
-                return Unauthorized("Invalid token.");
-            }
-
-            // Check if the requester is an admin
-            var requester = (from u in _database.Users
-                             join r in _database.Roles on u.RoleId equals r.RoleId
-                             where u.UserId == requesterId && r.RoleName == "Admin"
-                             select u).FirstOrDefault();
-            if (requester == null)
-            {
-                return Forbid("Only admins can demote users.");
-            }
-
             try
             {
-                var user = (from u in _database.Users
-                            join r in _database.Roles on u.RoleId equals r.RoleId
-                            where u.UserId.ToString().ToLower() == User.UserId.ToString().ToLower()
-                            select new { u, r.RoleName }).FirstOrDefault();
+                var requesterId = GetUserIdFromToken();
+                if (requesterId == Guid.Empty)
+                {
+                    return Unauthorized("Invalid token.");
+                }
+
+                // Check if the requester is an admin
+                var requester = _database.Users
+                    .Join(_database.Roles, u => u.RoleId, r => r.RoleId, (u, r) => new { u, r })
+                    .FirstOrDefault(ur => ur.u.UserId == requesterId && ur.r.RoleName == "Admin");
+
+                if (requester == null)
+                {
+                    return Forbid("Only admins can demote users.");
+                }
+
+                var user = _database.Users
+                    .Join(_database.Roles, u => u.RoleId, r => r.RoleId, (u, r) => new { u, r })
+                    .FirstOrDefault(ur => ur.u.UserId == userRequest.UserId);
+
                 if (user == null)
                 {
                     return NotFound("User not found");
@@ -134,11 +135,11 @@ namespace ComputerStorageSolutions.Controllers
                 }
 
                 // Ensure there's more than one admin before demoting
-                var adminCount = (from u in _database.Users
-                                  join r in _database.Roles on u.RoleId equals r.RoleId
-                                  where r.RoleName == "Admin"
-                                  select u).Count();
-                if (adminCount <= 1 && user.RoleName == "Admin")
+                var adminCount = _database.Users
+                    .Join(_database.Roles, u => u.RoleId, r => r.RoleId, (u, r) => new { u, r })
+                    .Count(ur => ur.r.RoleName == "Admin");
+
+                if (adminCount <= 1 && user.r.RoleName == "Admin")
                 {
                     return BadRequest("Cannot demote the last admin.");
                 }
@@ -151,36 +152,34 @@ namespace ComputerStorageSolutions.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error demoting user.");
-                return StatusCode(500, $"Internal server error");
+                _logger.LogError(ex, "Internal server Error demoting user to User.");
+                return StatusCode(500, "Internal server error");
             }
         }
 
         [Authorize(Policy = SecurityPolicy.Admin)]
         [HttpDelete]
-        public IActionResult DeleteUser([FromBody] User User)
+        public IActionResult DeleteUser([FromBody] User userRequest)
         {
-            var requesterId = GetUserIdFromToken();
-            if (requesterId == Guid.Empty)
-            {
-                return Unauthorized("Invalid token.");
-            }
-
-            // Check if the requester is an admin
-            var requester = (from u in _database.Users
-                             join r in _database.Roles on u.RoleId equals r.RoleId
-                             where u.UserId == requesterId && r.RoleName == "Admin"
-                             select u).FirstOrDefault();
-            if (requester == null)
-            {
-                return Forbid("Only admins can delete users.");
-            }
-
             try
             {
-                var user = (from u in _database.Users
-                            where u.UserId.ToString().ToLower() == User.UserId.ToString().ToLower()
-                            select u).FirstOrDefault();
+                var requesterId = GetUserIdFromToken();
+                if (requesterId == Guid.Empty)
+                {
+                    return Unauthorized("Invalid token.");
+                }
+
+                // Check if the requester is an admin
+                var requester = _database.Users
+                    .Join(_database.Roles, u => u.RoleId, r => r.RoleId, (u, r) => new { u, r })
+                    .FirstOrDefault(ur => ur.u.UserId == requesterId && ur.r.RoleName == "Admin");
+
+                if (requester == null)
+                {
+                    return Forbid("Only admins can delete users.");
+                }
+
+                var user = _database.Users.FirstOrDefault(u => u.UserId == userRequest.UserId);
                 if (user == null)
                 {
                     return NotFound("User not found");
@@ -193,8 +192,8 @@ namespace ComputerStorageSolutions.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting user.");
-                return StatusCode(500, $"Internal server error");
+                _logger.LogError(ex, "Internal server Error deleting user.");
+                return StatusCode(500, "Internal server error");
             }
         }
 
@@ -202,25 +201,25 @@ namespace ComputerStorageSolutions.Controllers
         [HttpPost("toggleStatus")]
         public IActionResult ToggleUserStatus([FromBody] UserStatusUpdateRequest request)
         {
-            var requesterId = GetUserIdFromToken();
-            if (requesterId == Guid.Empty)
-            {
-                return Unauthorized("Invalid token.");
-            }
-
-            // Check if the requester is an admin
-            var requester = (from u in _database.Users
-                             join r in _database.Roles on u.RoleId equals r.RoleId
-                             where u.UserId == requesterId && r.RoleName == "Admin"
-                             select u).FirstOrDefault();
-            if (requester == null)
-            {
-                return Forbid("Only admins can change user status.");
-            }
-
             try
             {
-                var user = _database.Users.FirstOrDefault(u => u.UserId.ToString().ToLower() == request.UserId.ToString().ToLower());
+                var requesterId = GetUserIdFromToken();
+                if (requesterId == Guid.Empty)
+                {
+                    return Unauthorized("Invalid token.");
+                }
+
+                // Check if the requester is an admin
+                var requester = _database.Users
+                    .Join(_database.Roles, u => u.RoleId, r => r.RoleId, (u, r) => new { u, r })
+                    .FirstOrDefault(ur => ur.u.UserId == requesterId && ur.r.RoleName == "Admin");
+
+                if (requester == null)
+                {
+                    return Forbid("Only admins can change user status.");
+                }
+
+                var user = _database.Users.FirstOrDefault(u => u.UserId == request.UserId);
                 if (user == null)
                 {
                     return NotFound("User not found");
@@ -233,13 +232,11 @@ namespace ComputerStorageSolutions.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error changing user status.");
-                return StatusCode(500, $"Internal server error");
+                _logger.LogError(ex, "Internal server Error changing user status.");
+                return StatusCode(500, "Internal server error");
             }
         }
     }
-
-
 
     public class User
     {
@@ -251,5 +248,4 @@ namespace ComputerStorageSolutions.Controllers
         public Guid UserId { get; set; }
         public bool IsActive { get; set; }
     }
-
 }
