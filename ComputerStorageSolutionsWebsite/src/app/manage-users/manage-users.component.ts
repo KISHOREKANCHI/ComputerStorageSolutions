@@ -1,57 +1,131 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ApiServiceService } from '../Services/api-service.service';
+
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-manage-users',
   templateUrl: './manage-users.component.html',
   styleUrls: ['./manage-users.component.css']
 })
-export class ManageUsersComponent {
-  users = [
-    { id: 1, username: 'john_doe', email: 'john@example.com', role: 'User' },
-    { id: 2, username: 'jane_smith', email: 'jane@example.com', role: 'Admin' },
-    // Add more users as needed
-  ];
-
+export class ManageUsersComponent implements OnInit {
+  users: any[] = [];
   selectedAction: string | null = null;
-  selectedUser: any = null;
+  selectedUserId: string | null = null;
+  selectedUserStatus: boolean = false; // Default to false
+  popupText: string | undefined;
+  popupVisible: boolean = false;
 
-  promoteToAdmin(user: any) {
+  constructor(private apiService: ApiServiceService) {}
+
+  ngOnInit() {
+    this.loadUsers();
+  }
+
+  loadUsers() {
+    this.apiService.getUsers().subscribe({
+      next: (data: any) => {
+        this.users = data;
+        console.log("data", this.users);
+      },
+      error: (error: any) => {
+        this.showPopup('Error loading users');
+        console.error('Error loading users', error); // Optional: Keep console log for debugging
+      }
+    });
+  }
+
+  promoteToAdmin(userId: string) {
     this.selectedAction = 'Promote to Admin';
-    this.selectedUser = user;
+    this.selectedUserId = userId;
     this.openConfirmationModal();
   }
 
-  demoteToUser(user: any) {
+  demoteToUser(userId: string) {
     this.selectedAction = 'Demote to User';
-    this.selectedUser = user;
+    this.selectedUserId = userId;
     this.openConfirmationModal();
   }
 
-  deleteUser(user: any) {
-    this.selectedAction = 'Delete User';
-    this.selectedUser = user;
+  toggleUserStatus(userId: string, isActive: boolean) {
+    this.selectedAction = isActive ? 'Deactivate User' : 'Activate User';
+    this.selectedUserId = userId;
+    this.selectedUserStatus = !isActive;
     this.openConfirmationModal();
   }
 
   confirmAction() {
-    if (this.selectedAction === 'Promote to Admin') {
-      this.selectedUser.role = 'Admin';
-    } else if (this.selectedAction === 'Demote to User') {
-      this.selectedUser.role = 'User';
-    } else if (this.selectedAction === 'Delete User') {
-      this.users = this.users.filter((u) => u.id !== this.selectedUser.id);
+    console.log('Confirm action called for:', this.selectedAction);
+    if (this.selectedUserId) {
+      if (this.selectedAction === 'Promote to Admin') {
+        this.apiService.promoteToAdmin(this.selectedUserId).subscribe({
+          next: (response: any) => {
+            this.loadUsers();
+            this.showPopup('User promoted to Admin successfully!');
+          },
+          error: (error: any) => {
+            this.showPopup('Error promoting user');
+            console.error('Error promoting user', error); // Optional: Keep console log for debugging
+          }
+        });
+      } else if (this.selectedAction === 'Demote to User') {
+        this.apiService.demoteToUser(this.selectedUserId).subscribe({
+          next: (response: any) => {
+            this.loadUsers();
+            this.showPopup('User demoted to User successfully!');
+          },
+          error: (error: any) => {
+            this.showPopup('Error demoting user');
+            console.error('Error demoting user', error); // Optional: Keep console log for debugging
+          }
+        });
+      } else if (this.selectedAction === 'Deactivate User' || this.selectedAction === 'Activate User') {
+        this.apiService.toggleUserStatus(this.selectedUserId, this.selectedUserStatus).subscribe({
+          next: (response: any) => {
+            this.loadUsers();
+            this.showPopup(response);
+          },
+          error: (error: any) => {
+            this.showPopup(`Error ${this.selectedUserStatus ? 'activating' : 'deactivating'} user`);
+            console.error(`Error ${this.selectedUserStatus ? 'activating' : 'deactivating'} user`, error); // Optional: Keep console log for debugging
+          }
+        });
+      }
     }
     this.closeConfirmationModal();
   }
 
   openConfirmationModal() {
-    // Logic to open the modal, depends on how you've implemented the modal
+    // Open the modal using Bootstrap's JavaScript methods
+    const modalElement = document.getElementById('confirmationModal');
+    if (modalElement) {
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
+      console.log('Modal opened for action:', this.selectedAction);
+    }
   }
 
   closeConfirmationModal() {
-    // Logic to close the modal
+    // Close the modal using Bootstrap's JavaScript methods
+    const modalElement = document.getElementById('confirmationModal');
+    if (modalElement) {
+      const modal = bootstrap.Modal.getInstance(modalElement);
+      if (modal) {
+        modal.hide();
+        console.log('Modal closed');
+      }
+    }
     this.selectedAction = null;
-    this.selectedUser = null;
+    this.selectedUserId = null;
+    this.selectedUserStatus = false; // Reset to default
+  }
+
+  showPopup(message: string): void {
+    this.popupText = message;
+    this.popupVisible = true;
+
+    setTimeout(() => {
+      this.popupVisible = false;
+    }, 2000);
   }
 }
-

@@ -20,6 +20,8 @@ export class SignuppageComponent {
   RegistrationMessage: string = ''; 
   ShowPassword: boolean = false; 
   ShowConfirmPassword: boolean = false; 
+  popupText: string | undefined;
+  popupVisible: boolean=false;
 
   constructor(
     private router: Router, 
@@ -97,16 +99,27 @@ export class SignuppageComponent {
 
     this.userDetailsService.RegisterDetails(SignupData).subscribe({
       next: (response: any) => {
-        console.log(response);
         this.RegistrationMessage = response.message+' Redirecting to login...';
+        this.showPopup(this.RegistrationMessage);
         setTimeout(() => {
           this.router.navigate(['login']);
         }, 2000); // Redirect after 2 seconds
       },
       error: (error: any) => {
-        console.log(error);
         this.RegistrationMessage = error.message+'Registration failed. Please try again.';
+        this.showPopup(this.RegistrationMessage);
       }
     });
+
+    
+  }
+
+  showPopup(message: string): void {
+    this.popupText = message;
+    this.popupVisible = true;
+
+    setTimeout(() => {
+      this.popupVisible = false;
+    }, 2000);
   }
 }

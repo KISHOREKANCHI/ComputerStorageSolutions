@@ -46,7 +46,7 @@ namespace ComputerStorageSolutions.Controllers
 
                 var result = (from user in _database.Users
                               join role in _database.Roles on user.RoleId equals role.RoleId
-                              where user.Email == input.Email && user.PasswordHash == hashedPassword
+                              where user.Email.ToLower() == input.Email.ToLower() && user.PasswordHash == hashedPassword
                               select new
                               {
                                   User = user,

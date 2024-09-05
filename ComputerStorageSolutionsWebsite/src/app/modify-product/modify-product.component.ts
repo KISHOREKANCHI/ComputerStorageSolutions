@@ -18,10 +18,6 @@ export class ModifyProductComponent {
   popupVisible: boolean = false;
   popupText: string = '';
   searchTerm: string = '';
-  productsCount: number = 0;
-  pageNumber: number = 1;
-  pageSize: number = 5;
-  paginationList: number[] = [];
   Role: string ='';
   role:string ='9c06200d-5af1-4b14-bb74-9364b10977fe'
   showUploadOption: boolean = false;
@@ -29,18 +25,9 @@ export class ModifyProductComponent {
   showEditDescription: boolean = false;
   showEditPrice: boolean = false;
   showUploadOptions: boolean[] = [];
-  uploadedImage: string | ArrayBuffer | null = null;
   selectedFile: File | null = null;
-  errorMessage: string = '';
-  product = {
-    productName: '',
-    description: '',
-    price: '',
-    categoryId: '',
-    stockQuantity: '',
-    status: '',
-  };
-
+  uploadedImage: (string | ArrayBuffer | null)[] = [];
+  OriginalProductDetails: any[] = [];
 
   constructor(
     private apiService: ApiServiceService,
@@ -64,29 +51,55 @@ export class ModifyProductComponent {
       next: (response: any) => {
         this.ProductDetails = response;
         this.FilteredProducts = this.ProductDetails;
-        console.log(this.ProductDetails);
+        this.OriginalProductDetails = this.ProductDetails.map(product => ({ ...product }));
+        this.showUploadOptions = new Array(this.ProductDetails.length).fill(false); // Initialize the upload options array
+        this.uploadedImage = new Array(this.ProductDetails.length).fill(null);
       },
     });
   }
 
-  getPage(pageNumber: number) {
-    this.pageNumber = pageNumber;
-    this.apiService.getProducts(pageNumber, this.pageSize).subscribe({
-      next: (response: any) => {
-        this.ProductDetails = response;
-        this.FilteredProducts = this.ProductDetails;
-      },
-    });
+  resetForm(index:number): void {
+    this.ProductDetails[index] = { ...this.OriginalProductDetails[index] }; // Reset the product to its original data
+    this.uploadedImage[index] = null; // Clear any uploaded images for this product
+    this.cdRef.detectChanges(); // Trigger change detection manually
   }
+  
+  UpdateProduct(ProductId:string){
+    const product = this.ProductDetails.find(p => p.productId === ProductId);
+    if (!product.productName || !product.description || 
+      product.price == null || product.categoryId || 
+      product.stockQuantity == null || product.status) {
+      const formData = new FormData();
+      formData.append('ProductId',ProductId);
+      formData.append('productName', product.productName);
+      formData.append('description', product.description);
+      formData.append('price', product.price.toString());
+      formData.append('categoryId', product.categoryId.toString());
+      formData.append('stockQuantity', product.stockQuantity.toString());
+      formData.append('status', product.status);
+      if (this.selectedFile) {
+          formData.append('image', this.selectedFile, this.selectedFile.name);
+      }
 
-  modifyField(field: string, productId: number) {
-      // Logic for modifying fields like name, description, price
+      // Convert the FormData object to an array of [key, value] pairs
+      // formData.forEach((value, key) => {
+      //     console.log(key,value)
+      // });
+
+      this.apiService.ModifyProduct(formData).subscribe({
+        next: (response) => {
+          this.showPopup(response.message); 
+        },
+        error: err => {
+          console.log(err);
+          this.showPopup(err);
+        },
+      });
+    }
+    else{
+      this.showPopup("all fields are required")
+    }  
   }
-
-  toggleCart(categoryId: number, description: string, imageUrl: string, price: number,    productId: number, productName: string, stockQuantity: number) {
-      // Logic for toggling cart state
-  }
-
 
   editField(field: string, product: any) {
     if (field === 'name') {
@@ -98,14 +111,14 @@ export class ModifyProductComponent {
     }
   }
 
-  onFileChange(event: any,files:any) {
+  onFileChange(event: any,index:number,files:any):void{
     if (event.target.files && event.target.files.length > 0) {
-      this.selectedFile = <File>files[0]; // Set the selected file
+      this.selectedFile = <File>files[0];
       const reader = new FileReader();
       reader.onload = (e) => {
         // Check if e.target is not null
         if (e.target && e.target.result) {
-          this.uploadedImage = e.target.result; // Set uploaded image to display
+          this.uploadedImage[index] = e.target.result; // Set uploaded image to display
         }
       };
       reader.readAsDataURL(this.selectedFile);
@@ -164,53 +177,8 @@ export class ModifyProductComponent {
     this.router.navigate(['ManageUsers'])
   }
 
-  UpdateProduct(ProductId:any) {
-    this.errorMessage = ''
-
-    if (!this.product.productName || !this.product.description || 
-      this.product.price == null || !this.product.categoryId || 
-      this.product.stockQuantity == null || !this.product.status) {
-      this.errorMessage = 'All fields are required!';
-      return;
-    }
-    if (this.selectedFile) {
-      const formData = new FormData();
-      formData.append('image', this.selectedFile);
-      formData.append('productName', this.product.productName);
-      formData.append('description', this.product.description);
-      formData.append('price', this.product.price.toString()); // Ensure price is a string
-      formData.append('categoryId', this.product.categoryId.toString()); // Ensure categoryId is a string
-      formData.append('stockQuantity', this.product.stockQuantity.toString()); // Ensure stockQuantity is a string
-      formData.append('status', this.product.status);
-
-      this.apiService.AddProduct(formData).subscribe({
-        next: response => {
-          this.showPopup(`${this.product.productName} added successfully`);
-          this.resetForm(); // Optionally reset the form after successful addition
-        },
-        error: err => {
-          this.showPopup('Error adding product');
-        },
-      });
-    } else {
-      this.showPopup('Please select an image');
-    }
-  }
-
-  resetForm() {
-    // Reset the product fields
-    this.product = {
-      productName: '',
-      description: '',
-      price: '',
-      categoryId: '',
-      stockQuantity: '',
-      status: ''
-    };
-    this.selectedFile = null; // Reset selected file
-    this.uploadedImage = null; // Clear the uploaded image
-    this.showUploadOption = false; // Hide upload option
-    this.errorMessage = ''; // Clear any error message
+  Statistics(){
+    this.router.navigate(['Statistics']);
   }
 
   showPopup(message: string): void {

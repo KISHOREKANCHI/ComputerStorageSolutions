@@ -100,5 +100,7 @@ export class AddProductpageComponent {
     this.showUploadOption = false; // Hide upload option
     this.errorMessage = ''; // Clear any error message
   }
+
+  
   
 }

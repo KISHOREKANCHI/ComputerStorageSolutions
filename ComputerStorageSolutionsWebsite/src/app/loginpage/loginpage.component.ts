@@ -19,6 +19,8 @@ export class LoginpageComponent {
   rememberMeChecked: boolean = true;
   ShowPassword: boolean=false;
   token: any| null = null;
+  popupText: string | undefined;
+  popupVisible: boolean=false;
 
   constructor(
     private userDetailsService: UserDetailsService,
@@ -42,12 +44,13 @@ export class LoginpageComponent {
         const exp = this.token.exp;
         const expirationDate = new Date(exp * 1000);
         document.cookie = `token=${btoa(this.Token.token)};expires=${expirationDate.toUTCString()}; Secure;SameSite=Strict; Priority=${this.priority}; path=/`;
+        this.showPopup("Logged in successfully");
         this.router.navigate(['products']);
         const expiry = 1;
         this.manager.checkToken(expiry);
       },
       error: (error: any) => {
-        console.log("Failed to fetch data", error);
+        this.showPopup(error);
       }
     });
   }
@@ -58,5 +61,14 @@ export class LoginpageComponent {
 
   toggleShowPassword() {
     this.ShowPassword = !this.ShowPassword;
+  }
+
+  showPopup(message: string): void {
+    this.popupText = message;
+    this.popupVisible = true;
+
+    setTimeout(() => {
+      this.popupVisible = false;
+    }, 2000);
   }
 }

@@ -9,6 +9,7 @@ import { CookieManagerService } from './cookie-manager.service';
 export class ApiServiceService {
   private productApi = 'http://localhost:5037/api/Products';
   private orderApi = 'http://localhost:5037/api/OrderDetails';
+  private ModifyUserApi = 'http://localhost:5037/api/ManageUsers';
 
   headers: HttpHeaders;
 
@@ -78,9 +79,53 @@ export class ApiServiceService {
   }
 
   AddProduct(formData: FormData): Observable<any>{
-    console.log("form data",formData);
     return this.http.post(`${this.productApi}/AddProduct`, formData,{
       headers:this.headers,
     });
   }
+
+  ModifyProduct(formData: FormData): Observable<any>{
+    return this.http.patch(`${this.productApi}/ModifyProduct`, formData,{
+      headers:this.headers,
+    });
+  }
+
+  getUsers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.ModifyUserApi}/users`, {
+      headers: this.headers,
+    });
+  }
+
+  promoteToAdmin(userId: string): Observable<any> {
+    console.log("Promoting user with ID:", userId);
+    const body = JSON.stringify({ UserId: userId });
+    return this.http.post<any>(`${this.ModifyUserApi}/promote`, body, {
+      headers: this.headers.set('Content-Type', 'application/json'),
+    });
+  }
+
+  demoteToUser(userId: string): Observable<any> {
+    const body = JSON.stringify({ UserId: userId });
+    return this.http.post<any>(`${this.ModifyUserApi}/demote`, body, {
+      headers: this.headers.set('Content-Type', 'application/json'),
+    });
+  }
+
+  deleteUser(userId: string): Observable<any> {
+    const body = { UserId: userId }; // Create an object to send in the body
+    return this.http.delete(this.ModifyUserApi, {
+      headers: this.headers.set('Content-Type', 'application/json'),
+      body: body // Pass the body with the request
+    });
+  }
+
+  toggleUserStatus(userId: string, isActive: boolean): Observable<any> {
+    const body={
+      userId:userId,
+      isActive:isActive
+    }
+    console.log("sent touserstatus",{userId,isActive});
+    return this.http.post(`${this.ModifyUserApi}/toggleStatus`, body, { headers: this.headers.set('Content-Type', 'application/json'),});
+  }
+  
 }

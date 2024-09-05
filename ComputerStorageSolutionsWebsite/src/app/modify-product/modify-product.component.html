@@ -103,7 +103,7 @@
             <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="AddProduct(); $event.preventDefault();"><i class="fa fa-plus"></i> Add Product</a></li>
             <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="ModifyProduct(); $event.preventDefault();"><i class="fa fa-pencil-alt" ></i> Modify Product</a></li>
             <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="ManageUsers(); $event.preventDefault();"><i class="fa-solid fa-users" ></i> Manage users</a></li>
-            <li *ngIf="Role === role"><a class="dropdown-item" href="#"><i class="fa fa-line-chart"></i> Statistics</a></li>
+            <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="Statistics(); $event.preventDefault();"><i class="fa fa-line-chart"></i> Statistics</a></li>
             <li><a class="dropdown-item" href="#" (click)="logout(); $event.preventDefault();"><i class="fa fa-sign-out"></i> Logout</a></li>
           </ul>
         </li>
@@ -129,14 +129,15 @@
                   (mouseleave)="showUploadOption = false"
                   style="width: 100%; height: 100%; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center;"
                 >
-                  <img
-                    *ngIf="uploadedImage; else defaultImage"
-                    [src]="uploadedImage"
-                    class="w-100"
-                    style="object-fit: cover; height: 100%;"
-                  />
+                <img
+                  *ngIf="uploadedImage[i]!=null; else defaultImage"
+                  [src]="uploadedImage[i]"
+                  class="w-100"
+                  style="object-fit: cover; height: 100%;"
+                />
                   <ng-template #defaultImage>
                     <img
+                    *ngIf="!showUploadOptions[i] && product.imageUrl"
                     [src]="'http://localhost:5037' + product.imageUrl"
                     class="w-100"
                     style="object-fit: cover; height: 100%;"
@@ -151,10 +152,10 @@
                       type="file"
                       accept="image/*"
                       style="display: none;"
-                      (change)="onFileChange($event, file.files)"
+                      (change)="onFileChange($event, i,file.files)"
                       #file
                     />
-                    <button 
+                    <button
                       class="btn btn-primary"
                       (click)="file.click()"
                     >
@@ -239,9 +240,22 @@
               </div>
             </div>
             <!-- Add Product Button -->
-            <div class="text-center mt-4">
-              <button class="btn btn-success" (click)="UpdateProduct(product.ProductId)">
+            <div class="d-flex justify-content-between mt-4">
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              </span>
+              <button
+                class="btn btn-success"
+                (click)="UpdateProduct(product.productId)"
+              >
                 Modify Product
+              </button>
+              <button
+                class="btn btn-secondary"
+                (click)="resetForm(i)"
+              >
+                Reset Form
               </button>
             </div>
           </div>
@@ -253,5 +267,3 @@
 <div id="popupMessage" class="popup-message" *ngIf="popupVisible">
   {{ popupText }}
 </div>
-
-  

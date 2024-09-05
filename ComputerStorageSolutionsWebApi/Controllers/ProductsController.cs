@@ -97,7 +97,7 @@ namespace ComputerStorageSolutions.Controllers
         {
             try
             {
-                var file = Request.Form.Files[0];
+                var file = Request.Form.Files["image"];
                 var folderName = "wwwroot/Images/";
                 var PathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
 
@@ -135,9 +135,9 @@ namespace ComputerStorageSolutions.Controllers
 
                     Database.Products.Add(newProduct);
                     Database.SaveChanges(); // Save changes to the database
-                    
 
-                    return Ok(new { dbPath });
+
+                    return Ok(new { success = true, message = "Product added successfully" });
                 }
                 else
                 {
@@ -150,29 +150,17 @@ namespace ComputerStorageSolutions.Controllers
             }
         }
 
-
         [Authorize(Policy = SecurityPolicy.Admin)]
         [HttpPatch("ModifyProduct")]
         [DisableRequestSizeLimit]
-        public async Task<IActionResult> ModifyProduct([FromBody] ProductsModel product)
+        public async Task<IActionResult> ModifyProduct()
         {
             try
             {
-                var file = Request.Form.Files[0];
+                var file = Request.Form.Files["image"];
                 var folderName = "wwwroot/Images/";
                 var PathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-
-                if (file.Length > 0)
-                {
-                    var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    var fullPath = Path.Combine(PathToSave, fileName);
-                    var dbPath = Path.Combine(folderName, fileName);
-
-                    using (var stream = new FileStream(fullPath, FileMode.Create))
-                    {
-                        file.CopyTo(stream);
-                    }
-                }
+                Guid ProductId = new Guid(Request.Form["ProductId"]);
 
                 // Get additional form data
                 var productName = Request.Form["productName"];
@@ -182,23 +170,38 @@ namespace ComputerStorageSolutions.Controllers
                 var stockQuantity = int.Parse(Request.Form["stockQuantity"]);
                 var status = Request.Form["status"];
 
-                var result = await Database.Products
-                .Where(p => p.ProductId == product.ProductId)
-                .ToListAsync();
+                var product = await Database.Products.FirstOrDefaultAsync(p => p.ProductId == ProductId);
 
-                foreach (var item in result)
+                if (product == null)
                 {
-                    item.ProductName = product.ProductName;
-                    item.CategoryId = product.CategoryId;
-                    item.Description = product.Description;
-                    item.Price = product.Price;
-                    item.StockQuantity = product.StockQuantity;
-                    item.ImageUrl = product.ImageUrl;
-                    item.Status = product.Status;
+                    return NotFound(new { success = false, message = "Product not found." });
+                }
+
+                // Update product details
+                product.ProductName = productName;
+                product.CategoryId = categoryId;
+                product.Description = description;
+                product.Price = price;
+                product.StockQuantity = stockQuantity;
+                product.Status = status;
+
+                // If a file is provided, update the ImageUrl
+                if (file != null && file.Length > 0)
+                {
+                    var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                    var fullPath = Path.Combine(PathToSave, fileName);
+                    var dbPath = Path.Combine(folderName, fileName);
+
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    product.ImageUrl = $"/Images/{fileName}";
                 }
 
                 await Database.SaveChangesAsync();
-                return Ok(await Database.Products.ToListAsync());
+                return Ok(new { success = true, message = "Product modified successfully" });
             }
             catch (Exception ex)
             {
@@ -206,11 +209,11 @@ namespace ComputerStorageSolutions.Controllers
             }
         }
 
+
         public class ProductWithImageDto
         {
             public ProductsModel Product { get; set; }
             public IFormFile ImageFile { get; set; }
         }
-
     }
 }
