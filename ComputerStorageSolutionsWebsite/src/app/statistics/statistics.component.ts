@@ -54,8 +54,8 @@ export class StatisticsComponent implements OnInit {
     this.apiService.getTotalSalesMonthWise().subscribe(data => {
       console.log('Total Sales Month Wise:', data);
       this.totalSalesData = data;
-      const labels = data.map(sale => sale.month);
-      const salesValues = data.map(sale => sale.totalSales);
+      const labels = data.map((sale: { month: any; }) => sale.month);
+      const salesValues = data.map((sale: { totalSales: any; }) => sale.totalSales);
       this.renderTotalSalesChart(labels, salesValues);
     });
   }

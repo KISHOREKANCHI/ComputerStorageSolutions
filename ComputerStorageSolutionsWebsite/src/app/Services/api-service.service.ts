@@ -128,40 +128,41 @@ export class ApiServiceService {
     return this.http.post(`${this.ModifyUserApi}/toggleStatus`, body, { headers: this.headers.set('Content-Type', 'application/json'),});
   }
 
-  getTotalSalesMonthWise(): Observable<{ month: string, totalSales: number }[]> {
-    return this.http.get<{ month: string, totalSales: number }[]>(`${this.StatisticsApi}/TotalSalesMonthWise`, { headers: this.headers });
+  getTotalSalesMonthWise(): Observable<any> {
+    return this.http.get<any>(`${this.StatisticsApi}/TotalSalesMonthWise`, { headers: this.headers });
   }
 
-  getTotalOrdersByCustomerMonthWise(customerId: string): Observable<{ month: string, totalOrders: number }[]> {
-    return this.http.get<{ month: string, totalOrders: number }[]>(`${this.StatisticsApi}/TotalOrdersByCustomerMonthWise/${customerId}`, { headers: this.headers });
+  getTotalOrdersByCustomerMonthWise(customerId: string): Observable<any> {
+    return this.http.get<any>(`${this.StatisticsApi}/TotalOrdersByCustomerMonthWise?customerId=${customerId}`, { headers: this.headers });
   }
 
-  getOrdersByCustomerInSpecificMonth(customerId: string, year: number, month: number): Observable<{ orderId: string, orderDate: Date, totalAmount: number }[]> {
-    return this.http.get<{ orderId: string, orderDate: Date, totalAmount: number }[]>(`${this.StatisticsApi}/OrdersByCustomerInMonth/${customerId}/${year}/${month}`, { headers: this.headers });
+  getOrdersByCustomerInSpecificMonth(customerId: string, year: number, month: number): Observable<any> {
+    return this.http.get<any>(`${this.StatisticsApi}/OrdersByCustomerInMonth?customerId=${customerId}&year=${year}&month=${month}`, { headers: this.headers });
   }
 
-  getInactiveCustomers(): Observable<{ customerId: string, customerName: string }[]> {
-    return this.http.get<{ customerId: string, customerName: string }[]>(`${this.StatisticsApi}/CustomersWithNoOrdersInLast3Months`, { headers: this.headers });
+  getInactiveCustomers(): Observable<any> {
+    return this.http.get<any>(`${this.StatisticsApi}/CustomersWithNoOrdersInLast3Months`, { headers: this.headers });
   }
 
-  getUnitsSoldInPriceRange(minPrice: number, maxPrice: number): Observable<{ productName: string, unitsSold: number }[]> {
-    return this.http.get<{ productName: string, unitsSold: number }[]>(`${this.StatisticsApi}/UnitsSoldInPriceRange/${minPrice}/${maxPrice}`, { headers: this.headers });
+  getUnitsSoldInPriceRange(minPrice: number, maxPrice: number): Observable<any> {
+    return this.http.get<any>(`${this.StatisticsApi}/UnitsSoldInPriceRange?minPrice=${minPrice}&maxPrice=${maxPrice}`, { headers: this.headers });
   }
 
-  getPopularProductDetailsForMonth(year: number, month: number): Observable<{ productName: string, unitsSold: number }[]> {
-    return this.http.get<{ productName: string, unitsSold: number }[]>(`${this.StatisticsApi}/MostPopularProduct/${year}/${month}`, { headers: this.headers });
+  getPopularProductDetailsForMonth(year: number, month: number): Observable<any> {
+    return this.http.get<any>(`${this.StatisticsApi}/MostPopularProduct?year=${year}&month=${month}`, { headers: this.headers });
   }
 
-  getLeastPopularProductDetailsForMonth(year: number, month: number): Observable<{ productName: string, unitsSold: number }[]> {
-    return this.http.get<{ productName: string, unitsSold: number }[]>(`${this.StatisticsApi}/LeastPopularProduct/${year}/${month}`, { headers: this.headers });
+
+  getLeastPopularProductDetailsForMonth(year: number, month: number): Observable<any> {
+    return this.http.get<any>(`${this.StatisticsApi}/LeastPopularProduct?year=${year}&month=${month}`, { headers: this.headers });
   }
 
-  getCustomerProductsOrderedInQuarter(customerId: string, year: number, quarter: number): Observable<{ orderId: string, orderDate: Date, products: string[] }[]> {
-    return this.http.get<{ orderId: string, orderDate: Date, products: string[] }[]>(`${this.StatisticsApi}/CustomerProductsInQuarter/${customerId}/${year}/${quarter}`, { headers: this.headers });
+  getCustomerProductsOrderedInQuarter(customerId: string, year: number, quarter: number): Observable<any> {
+    return this.http.get<any>(`${this.StatisticsApi}/CustomerProductsInQuarter?customerId=${customerId}&year=${year}&quarter=${quarter}`, { headers: this.headers });
   }
 
-  getOrderIdAndCustomerDetailsForHighestSellingProduct(): Observable<{ orderId: string, customerName: string }[]> {
-    return this.http.get<{ orderId: string, customerName: string }[]>(`${this.StatisticsApi}/OrderAndCustomerForHighestSellingProduct`, { headers: this.headers });
+  getOrderIdAndCustomerDetailsForHighestSellingProduct(): Observable<any> {
+    return this.http.get<any>(`${this.StatisticsApi}/OrderAndCustomerForHighestSellingProduct`, { headers: this.headers });
   }
 }
 
