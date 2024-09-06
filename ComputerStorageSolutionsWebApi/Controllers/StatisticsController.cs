@@ -43,7 +43,7 @@ namespace ComputerStorageSolutions.Controllers
         public async Task<IActionResult> GetTotalOrdersByCustomerMonthWise(Guid customerId)
         {
             var orders = await (from o in Database.Orders
-                                where o.UserId == customerId
+                                where o.UserId.ToString().ToLower() == customerId.ToString().ToLower()
                                 group o by new { o.OrderDate.Year, o.OrderDate.Month } into g
                                 select new
                                 {
@@ -62,7 +62,7 @@ namespace ComputerStorageSolutions.Controllers
         public async Task<IActionResult> GetOrdersByCustomerInMonth(Guid customerId, int year, int month)
         {
             var orders = await Database.Orders
-                .Where(o => o.UserId == customerId && o.OrderDate.Year == year && o.OrderDate.Month == month)
+                .Where(o => o.UserId.ToString().ToLower() == customerId.ToString().ToLower() && o.OrderDate.Year == year && o.OrderDate.Month == month)
                 .ToListAsync();
 
             return Ok(orders);
@@ -75,7 +75,12 @@ namespace ComputerStorageSolutions.Controllers
         {
             var threeMonthsAgo = DateTime.Now.AddMonths(-3);
             var customers = await Database.Users
-                .Where(c => !Database.Orders.Any(o => o.UserId == c.UserId && o.OrderDate >= threeMonthsAgo))
+                .Where(c => !Database.Orders.Any(o => o.UserId.ToString().ToLower() == c.UserId.ToString().ToLower() && o.OrderDate >= threeMonthsAgo && c.IsActive==true))
+                .Select(c => new
+                {
+                    customerId=c.UserId,
+                    customerName=c.Username
+                })
                 .ToListAsync();
 
             return Ok(customers);
@@ -146,7 +151,7 @@ namespace ComputerStorageSolutions.Controllers
             var endMonth = startMonth + 2;
 
             var orders = await Database.Orders
-                .Where(o => o.UserId == customerId && o.OrderDate.Year == year && o.OrderDate.Month >= startMonth && o.OrderDate.Month <= endMonth)
+                .Where(o => o.UserId.ToString().ToLower() == customerId.ToString().ToLower() && o.OrderDate.Year == year && o.OrderDate.Month >= startMonth && o.OrderDate.Month <= endMonth)
                 .Select(o => new
                 {
                     o.OrderId,
