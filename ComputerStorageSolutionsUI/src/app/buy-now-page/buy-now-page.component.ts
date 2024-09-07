@@ -78,7 +78,7 @@ export class BuyNowPageComponent implements OnInit {
       },2000);
 
     } else {
-      this.showPopup('Please fill in all fields.');
+      this.showPopup("Field/s cannot be empty in Billing Address");
     }
   }
 
