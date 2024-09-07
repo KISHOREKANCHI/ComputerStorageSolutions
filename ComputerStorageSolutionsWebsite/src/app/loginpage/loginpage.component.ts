@@ -62,6 +62,10 @@ export class LoginpageComponent {
       };
       this.userDetailsService.GetUserDetails(loginData).subscribe({
         next: (response: any) => {
+          if(response.message){
+            this.showPopup(response.message);
+            return;
+          }
           this.Token = response;
           this.token = jwtDecode<any>(this.Token.token);
           const exp = this.token.exp;

@@ -27,24 +27,9 @@
               >All</a
             >
           </li>
-          <li>
-            <a class="dropdown-item" href="#" (click)="filterByCategory(1)"
-              >SSD</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item" href="#" (click)="filterByCategory(2)"
-              >HDD</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item" href="#" (click)="filterByCategory(3)"
-              >Flash Drive</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item" href="#" (click)="filterByCategory(4)"
-              >Memory Card</a
+          <li *ngFor="let category of categories">
+            <a class="dropdown-item" href="#" (click)="filterByCategory(category.categoryId)"
+              >{{category.categoryName}}</a
             >
           </li>
         </ul>

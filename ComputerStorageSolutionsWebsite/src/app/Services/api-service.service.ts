@@ -29,6 +29,29 @@ export class ApiServiceService {
     this.manager.checkToken(expiry);
   }
 
+  getCategories():Observable<any>{
+    return this.http.get<any>(`${this.productApi}/Categories`, {
+      headers: this.headers,})
+  }
+
+  getProductByCategory(categoryId:number,pageNumber?: number, pageSize?: number):Observable<any>{
+    let params = new HttpParams();
+    console.log("service",categoryId)
+    if (categoryId) {
+      params = params.set('categoryId', categoryId);
+    }
+    if (pageNumber) {
+      params = params.set('pageNumber', pageNumber);
+    }
+    if (pageSize) {
+      params = params.set('pageSize', pageSize);
+    }
+    return this.http.get<any>(`${this.productApi}/GetProductsByCategoryId`,{
+      headers:this.headers,
+      params: params,
+    });
+  }
+
   getProducts(pageNumber?: number, pageSize?: number): Observable<any> {
     let params = new HttpParams();
 
@@ -45,15 +68,59 @@ export class ApiServiceService {
     });
   }
 
-  getAllProducts(): Observable<any> {
+  getAllProducts(pageNumber?: number, pageSize?: number): Observable<any> {
+    let params = new HttpParams();
+
+    if (pageNumber) {
+      params = params.set('pageNumber', pageNumber);
+    }
+    if (pageSize) {
+      params = params.set('pageSize', pageSize);
+    }
     return this.http.get<any>(`${this.productApi}/GetAllProducts`, {
       headers: this.headers,
+      params: params,
     });
+  }
+
+  getProductCountbyCategory(categoryId:number):Observable<number>{
+    let params = new HttpParams();
+    if(categoryId){
+      params=params.set('categoryId',categoryId)
+    }
+    return this.http.get<number>(`${this.productApi}/getProductCountbyCategory`,{
+      headers:this.headers,
+      params:params
+    })
   }
 
   getProductCount(): Observable<number> {
     return this.http.get<number>(`${this.productApi}/count`, {
       headers: this.headers,
+    });
+  }
+
+  getProductCountBySearch(searchTerm: string): Observable<number> {
+    return this.http.get<number>(`${this.productApi}/count/search`, {
+      headers: this.headers,
+      params: { search: searchTerm },
+    });
+  }
+
+  getProductBySearch(search?: string,pageNumber?: number, pageSize?: number):Observable<any>{
+    let params = new HttpParams();
+    if (search) {
+      params = params.set('search', search);
+    }
+    if (pageNumber) {
+      params = params.set('pageNumber', pageNumber);
+    }
+    if (pageSize) {
+      params = params.set('pageSize', pageSize);
+    }
+    return this.http.get<any>(`${this.productApi}/search`, {
+      headers: this.headers,
+      params: params,
     });
   }
 

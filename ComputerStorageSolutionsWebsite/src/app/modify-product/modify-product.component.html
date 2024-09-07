@@ -27,24 +27,9 @@
               >All</a
             >
           </li>
-          <li>
-            <a class="dropdown-item" href="#" (click)="filterByCategory(1)"
-              >SSD</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item" href="#" (click)="filterByCategory(2)"
-              >HDD</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item" href="#" (click)="filterByCategory(3)"
-              >Flash Drive</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item" href="#" (click)="filterByCategory(4)"
-              >Memory Card</a
+          <li *ngFor="let category of categories">
+            <a class="dropdown-item" href="#" (click)="filterByCategory(category.categoryId)"
+              >{{category.categoryName}}</a
             >
           </li>
         </ul>
@@ -206,14 +191,12 @@
                   <label class="form-label" for="price">Price</label>
                 </div>
 
-                <!-- Category Dropdown -->
+                <!-- Category Dropdown -->              
                 <div class="form-outline mb-4">
                   <select class="form-select" [(ngModel)]="product.categoryId" name="categoryId" required>
                     <option value="" disabled selected>Select Category</option>
-                    <option value="1">SSD</option>
-                    <option value="2">HDD</option>
-                    <option value="3">Flash Drive</option>
-                    <option value="4">Memory Card</option>
+                    <option *ngFor="let category of categories" [value]="category.categoryId">
+                      {{category.categoryName}}</option>
                   </select>
                   <label class="form-label" for="categoryId">Category</label>
                 </div>
@@ -268,6 +251,29 @@
     </div>
   </div>
 </section>
+<div class="d-flex justify-content-center">
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      <li class="page-item">
+        <a class="page-link" (click)="getPreviousPage()" aria-label="Previous">
+          <span aria-hidden="true">&larr;</span>
+        </a>
+      </li>
+      <li
+        class="page-item"
+        *ngFor="let item of paginationList; let index = index"
+        [ngClass]="index + 1 == pageNumber ? 'active' : 'disable'"
+      >
+        <a class="page-link" (click)="getPage(index + 1)">{{ index + 1 }}</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" (click)="getNextPage()" aria-label="Next">
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
 <div id="popupMessage" class="popup-message" *ngIf="popupVisible">
   {{ popupText }}
 </div>

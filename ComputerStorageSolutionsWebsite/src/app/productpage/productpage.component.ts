@@ -24,6 +24,7 @@ export class ProductpageComponent implements OnInit {
   paginationList: number[] = [];
   Role: string ='';
   role:string ='9c06200d-5af1-4b14-bb74-9364b10977fe'
+  categories:any;
 
   constructor(
     private apiService: ApiServiceService,
@@ -36,77 +37,163 @@ export class ProductpageComponent implements OnInit {
     const expiry = 1;
     this.manager.checkToken(expiry);
     this.loadProducts();
+    this.getCategories();
   }
 
   GoToCart() {
     this.router.navigate(['Cart']);
   }
 
+  getCategories() {
+    this.apiService.getCategories().subscribe({
+      next: (result: any) => {
+        this.categories = result;  // Store the fetched categories
+        console.log(result);
+      },
+      error: (error: any) => {
+        console.error('Error fetching categories', error);  // Handle errors if needed
+      }
+    });
+  }
+
   loadProducts(): void {
     const token = document.cookie.split(';')[0];
     const Jwttoken = jwtDecode<any>(atob(token.replace('token=', '')));
     this.Username = Jwttoken.UserName;
-    this.Role=Jwttoken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+    this.Role = Jwttoken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
 
     this.apiService.getProductCount().subscribe({
       next: (res) => {
         this.productsCount = res;
         this.paginationList = new Array(Math.ceil(res / this.pageSize));
+        this.cdRef.detectChanges(); // Ensure change detection after updating paginationList
+        this.getPage(1); // Fetch the first page of products
       },
+      error: (err) => {
+        console.error('Failed to load product count', err);
+      }
     });
 
     this.apiService.getProducts(this.pageNumber, this.pageSize).subscribe({
       next: (response: any) => {
         this.ProductDetails = response;
         this.FilteredProducts = this.ProductDetails;
-        console.log(this.ProductDetails);
+        this.cdRef.detectChanges(); // Ensure change detection after updating ProductDetails
       },
+      error: (err) => {
+        console.error('Failed to load products', err);
+        this.popupText = 'Unable to load products. Please try again later.';
+        this.popupVisible = true;
+      }
     });
   }
 
-  getPage(pageNumber: number) {
-    this.pageNumber = pageNumber;
-    this.apiService.getProducts(pageNumber, this.pageSize).subscribe({
-      next: (response: any) => {
-        this.ProductDetails = response;
-        this.FilteredProducts = this.ProductDetails;
-      },
-    });
-  }
-
-  getPreviousPage() {
-    if (this.pageNumber - 1 < 1) {
-      return;
-    }
-    this.pageNumber -= 1;
-    this.apiService.getProducts(this.pageNumber, this.pageSize).subscribe({
-      next: (response: any) => {
-        this.ProductDetails = response;
-        this.FilteredProducts = this.ProductDetails;
-      },
-    });
-  }
-
-  getNextPage() {
-    if (this.pageNumber + 1 > this.paginationList.length) {
-      return;
-    }
-    this.pageNumber += 1;
-    this.apiService.getProducts(this.pageNumber, this.pageSize).subscribe({
-      next: (response: any) => {
-        this.ProductDetails = response;
-        this.FilteredProducts = this.ProductDetails;
-      },
-    });
-  }
-
-  public filterByCategory(categoryId: number | null): void {
+  filterByCategory(categoryId: any): void {
+    this.searchTerm=''
+    console.log("called categoryId",categoryId)
     if (categoryId === null) {
-      this.FilteredProducts = this.ProductDetails;
+      this.loadProducts()
     } else {
-      this.FilteredProducts = this.ProductDetails.filter(
-        (product) => product.categoryId === categoryId
-      );
+        this.apiService.getProductCountbyCategory(categoryId).subscribe({
+          next: (res) => {
+            this.productsCount = res;
+            this.paginationList = new Array(Math.ceil(res / this.pageSize));
+            this.cdRef.detectChanges(); // Ensure change detection after updating paginationList
+          },
+          error: (err) => {
+            console.error('Failed to load product count', err);
+          }
+        });
+    
+        this.apiService.getProductByCategory(categoryId,this.pageNumber, this.pageSize).subscribe({
+          next: (response: any) => {
+            this.ProductDetails = response;
+            this.FilteredProducts = this.ProductDetails;
+            this.cdRef.detectChanges(); 
+          },
+          error: (err) => {
+            console.error('Failed to load products by category', err);
+            this.popupText = 'Unable to load products by category. Please try again later.';
+            this.popupVisible = true;
+          }
+        })
+    }
+  }
+
+  searchProducts(): void {
+    this.categoryId=null;
+    if (this.searchTerm) {
+      this.apiService.getProductCountBySearch(this.searchTerm).subscribe({
+        next: (res) => {
+          this.productsCount = res;
+          console.log(res)
+          this.paginationList = new Array(Math.ceil(res / this.pageSize)); // Update pagination based on search results
+          console.log("pagination List",this.paginationList)
+          this.cdRef.detectChanges(); // Ensure change detection after updating paginationList
+          this.getPage(this.pageNumber); // Fetch the first page of results
+        },
+        error: (err) => {
+          console.error('Failed to get product count by search', err);
+          this.popupText = 'Failed to get product count by search';
+          this.popupVisible = true;
+        }
+      });
+    }else {
+      this.loadProducts();
+      console.log("failed search")
+    }
+  }
+
+  getPage(pageNumber: number): void {
+    this.pageNumber = pageNumber; // Update the current page number
+
+    if (this.searchTerm) {
+      this.apiService.getProductBySearch(this.searchTerm, this.pageNumber, this.pageSize).subscribe({
+        next: (response: any) => {
+          this.ProductDetails = response;
+          this.FilteredProducts = this.ProductDetails;
+          this.cdRef.detectChanges(); // Ensure change detection after updating ProductDetails
+        },
+        error: (err) => {
+          console.error('Failed to load products based on search', err);
+        }
+      });
+    } else if(this.categoryId!=null && this.categoryId!=0){
+      this.apiService.getProductByCategory(this.categoryId, this.pageNumber, this.pageSize).subscribe({
+        next: (response: any) => {
+          this.ProductDetails = response;
+          this.FilteredProducts = this.ProductDetails;
+          this.cdRef.detectChanges(); // Ensure change detection after updating ProductDetails
+        },
+        error: (err) => {
+          console.error('Failed to load products based on category', err);
+        }
+      });
+    }else {
+      this.apiService.getProducts(this.pageNumber, this.pageSize).subscribe({
+        next: (response: any) => {
+          this.ProductDetails = response;
+          this.FilteredProducts = this.ProductDetails;
+          this.cdRef.detectChanges(); // Ensure change detection after updating ProductDetails
+        },
+        error: (err) => {
+          console.error('Failed to load products', err);
+        }
+      });
+    }
+  }
+
+  getPreviousPage(): void {
+    if (this.pageNumber > 1) {
+      this.pageNumber--;
+      this.getPage(this.pageNumber); // Fetch the previous page
+    }
+  }
+  
+  getNextPage(): void {
+    if (this.pageNumber < this.paginationList.length) {
+      this.pageNumber++;
+      this.getPage(this.pageNumber); // Fetch the next page
     }
   }
 
@@ -173,20 +260,7 @@ export class ProductpageComponent implements OnInit {
       this.popupVisible = false;
     }, 1000);
   }
-
-  searchProducts(): void {
-    if (this.searchTerm) {
-      this.FilteredProducts = this.ProductDetails.filter((product) =>
-        product.productName
-          .toLowerCase()
-          .includes(this.searchTerm.toLowerCase())
-      );
-    } else {
-      this.FilteredProducts = this.ProductDetails; // Reset to show all products if searchTerm is empty
-    }
-
-    this.cdRef.detectChanges(); // Trigger change detection manually
-  }
+  
 
   AddProduct(){
     this.router.navigate(['AddProduct']);

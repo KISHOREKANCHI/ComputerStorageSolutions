@@ -19,20 +19,11 @@ export class UserDetailsService {
 
   GetUserDetails(credentials: any) : Observable<any>{
    // const headers = new HttpHeaders({'Content-Type':'application/json'}
-    return this.http.post<any>(this.Endpoint+"Login",credentials).pipe(
-      catchError(this.handleError)
-    );
+    return this.http.post<any>(this.Endpoint+"Login",credentials);
   }
 
   RegisterDetails(credentials: any) : Observable<any>{
     // const headers = new HttpHeaders({'Content-Type':'application/json'}
-     return this.http.post<any>(this.Endpoint+"SignUp",credentials).pipe(
-       catchError(this.handleError)
-     );
+     return this.http.post<any>(this.Endpoint+"SignUp",credentials);
    }
-
-  private handleError(error: HttpErrorResponse) {
-    console.error('An error occurred:', error.error);
-    return throwError(() => new Error('Unable to fetch user details'));
-  }
 }
