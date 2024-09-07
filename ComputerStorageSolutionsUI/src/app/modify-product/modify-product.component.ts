@@ -72,7 +72,7 @@ export class ModifyProductComponent {
       }
     });
 
-    this.apiService.getProducts(this.pageNumber, this.pageSize).subscribe({
+    this.apiService.getAllProducts(this.pageNumber, this.pageSize).subscribe({
       next: (response: any) => {
         this.ProductDetails = response;
         this.FilteredProducts = this.ProductDetails;
@@ -180,7 +180,7 @@ export class ModifyProductComponent {
         }
       });
     }else {
-      this.apiService.getProducts(this.pageNumber, this.pageSize).subscribe({
+      this.apiService.getAllProducts(this.pageNumber, this.pageSize).subscribe({
         next: (response: any) => {
           this.ProductDetails = response;
           this.FilteredProducts = this.ProductDetails;
