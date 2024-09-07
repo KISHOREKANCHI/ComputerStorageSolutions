@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiServiceService } from '../Services/api-service.service';
 import { CookieManagerService } from '../Services/cookie-manager.service';
+import { environment } from 'src/environments/environment.development';
 
 @Component({
   selector: 'app-buy-now-page',
@@ -21,6 +22,7 @@ export class BuyNowPageComponent implements OnInit {
   shippingAddress:string= '';
   popupVisible: boolean = false;
   popupText: string = '';
+  serverUrl=environment.serverUrl;
 
   constructor(private route: ActivatedRoute, private apiService: ApiServiceService, private manager:CookieManagerService,private router:Router) { }
 
@@ -35,10 +37,21 @@ export class BuyNowPageComponent implements OnInit {
   }
 
   getProductDetails(id: string): void {
-    this.apiService.getProductById(id).subscribe((response: any) => {
-      this.product = response[0]; // Store product details
+    this.apiService.getProductById(id).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        if (response && response.length > 0) {
+          this.product = response[0]; // Store product details
+        } else {
+          this.showPopup('No product found. Please check the ID and try again.');
+        }
+      },
+      error: (err) => {
+        this.showPopup('An error occurred while loading the product details. Please try again later.');
+      },
     });
   }
+  
 
   OrderProduct() {
     if (this.Address.name && this.Address.address && this.Address.city && this.Address.zip) {

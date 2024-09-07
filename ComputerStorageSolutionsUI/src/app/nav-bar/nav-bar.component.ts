@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {  Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { CookieManagerService } from '../Services/cookie-manager.service';
+import { environment } from 'src/environments/environment.development';
 
 
 @Component({
@@ -15,7 +16,7 @@ export class NavBarComponent {
   FilteredProducts: any;
   product:any;
   Role:string ='';
-  role:string ='9c06200d-5af1-4b14-bb74-9364b10977fe'
+  AdminRole:string =environment.roles.AdminRole
   
   constructor(private router:Router,private manager:CookieManagerService){}
 

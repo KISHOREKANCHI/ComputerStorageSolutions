@@ -85,10 +85,10 @@
             🙎🏻 {{ Username }}
           </a>
           <ul class="dropdown-menu" aria-labelledby="userMenuButton">
-            <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="AddProduct(); $event.preventDefault();"><i class="fa fa-plus"></i> Add Product</a></li>
-            <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="ModifyProduct(); $event.preventDefault();"><i class="fa fa-pencil-alt" ></i> Modify Product</a></li>
-            <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="ManageUsers(); $event.preventDefault();"><i class="fa-solid fa-users" ></i> Manage users</a></li>
-            <li *ngIf="Role === role"><a class="dropdown-item" href="#" (click)="Statistics(); $event.preventDefault();"><i class="fa fa-line-chart"></i> Statistics</a></li>
+            <li *ngIf="Role === AdminRole"><a class="dropdown-item" href="#" (click)="AddProduct(); $event.preventDefault();"><i class="fa fa-plus"></i> Add Product</a></li>
+            <li *ngIf="Role === AdminRole"><a class="dropdown-item" href="#" (click)="ModifyProduct(); $event.preventDefault();"><i class="fa fa-pencil-alt" ></i> Modify Product</a></li>
+            <li *ngIf="Role === AdminRole"><a class="dropdown-item" href="#" (click)="ManageUsers(); $event.preventDefault();"><i class="fa-solid fa-users" ></i> Manage users</a></li>
+            <li *ngIf="Role === AdminRole"><a class="dropdown-item" href="#" (click)="Statistics(); $event.preventDefault();"><i class="fa fa-line-chart"></i> Statistics</a></li>
             <li><a class="dropdown-item" href="#" (click)="logout(); $event.preventDefault();"><i class="fa fa-sign-out"></i> Logout</a></li>
           </ul>
         </li>
@@ -113,7 +113,7 @@
             <div class="row">
               <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
                 <div class="bg-image hover-zoom ripple rounded ripple-surface">
-                  <img [src]="'http://localhost:5037' + product.imageUrl" class="w-100"  />
+                  <img [src]="serverUrl + product.imageUrl" class="w-100"  />
                   <a href="#!">
                     <div class="hover-overlay">
                       <div

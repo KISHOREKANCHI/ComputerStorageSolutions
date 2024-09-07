@@ -307,16 +307,13 @@ namespace ComputerStorageSolutions.Controllers
         }
 
 
-
-
-
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetProductById(Guid Id)
         {
             try
             {
                 var result = await Database.Products
-                    .Where(p => p.ProductId == Id && p.Status == "Available" && p.StockQuantity > 0)
+                    .Where(p => p.ProductId.ToString().ToLower() == Id.ToString().ToLower() && p.Status == "Available" && p.StockQuantity > 0)
                     .ToListAsync();
 
                 if (!result.Any())

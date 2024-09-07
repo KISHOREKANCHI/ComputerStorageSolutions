@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiServiceService } from '../Services/api-service.service';
 import { CookieManagerService } from '../Services/cookie-manager.service';
 import { jwtDecode } from 'jwt-decode';
+import { environment } from 'src/environments/environment.development';
 
 @Component({
   selector: 'app-order',
@@ -11,6 +12,7 @@ import { jwtDecode } from 'jwt-decode';
 export class OrderspageComponent implements OnInit {
   orders: any[] = [];
   Username: any;
+  serverUrl=environment.serverUrl;
 
   constructor(private apiService: ApiServiceService,private manager : CookieManagerService){}
 

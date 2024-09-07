@@ -2,15 +2,17 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CookieManagerService } from './cookie-manager.service';
+import { environment } from 'src/environments/environment.development';
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiServiceService {
-  private productApi = 'http://localhost:5037/api/Products';
-  private orderApi = 'http://localhost:5037/api/OrderDetails';
-  private ModifyUserApi = 'http://localhost:5037/api/ManageUsers';
-  private StatisticsApi = 'http://localhost:5037/api/Statistics';
+  private productApi = environment.apiUrls.productApi;
+  private orderApi = environment.apiUrls.orderApi;    
+  private ModifyUserApi = environment.apiUrls.modifyUserApi; 
+  private StatisticsApi = environment.apiUrls.statisticsApi;
 
   headers: HttpHeaders;
 
@@ -36,7 +38,6 @@ export class ApiServiceService {
 
   getProductByCategory(categoryId:number,pageNumber?: number, pageSize?: number):Observable<any>{
     let params = new HttpParams();
-    console.log("service",categoryId)
     if (categoryId) {
       params = params.set('categoryId', categoryId);
     }
@@ -131,7 +132,7 @@ export class ApiServiceService {
   }
 
   getProductById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.productApi}/Id?Id=${id}`, {
+    return this.http.get<any>(`${this.productApi}/${id}`, {
       headers: this.headers,
     });
   }
@@ -165,7 +166,6 @@ export class ApiServiceService {
   }
 
   promoteToAdmin(userId: string): Observable<any> {
-    console.log("Promoting user with ID:", userId);
     const body = JSON.stringify({ UserId: userId });
     return this.http.post<any>(`${this.ModifyUserApi}/promote`, body, {
       headers: this.headers.set('Content-Type', 'application/json'),

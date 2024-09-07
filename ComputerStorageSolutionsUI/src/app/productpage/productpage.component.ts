@@ -3,6 +3,7 @@ import { ApiServiceService } from '../Services/api-service.service';
 import { CookieManagerService } from '../Services/cookie-manager.service';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
+import { environment } from 'src/environments/environment.development';
 
 @Component({
   selector: 'app-productpage',
@@ -23,8 +24,9 @@ export class ProductpageComponent implements OnInit {
   pageSize: number = 5;
   paginationList: number[] = [];
   Role: string ='';
-  role:string ='9c06200d-5af1-4b14-bb74-9364b10977fe'
+  AdminRole:string =environment.roles.AdminRole
   categories:any;
+  serverUrl=environment.serverUrl;
 
   constructor(
     private apiService: ApiServiceService,
@@ -36,10 +38,8 @@ export class ProductpageComponent implements OnInit {
   ngOnInit(): void {
     const expiry = 1;
     this.manager.checkToken(expiry);
-    if(this.checkCookieExists()){
-      this.loadProducts();
-      this.getCategories();
-    }
+    this.loadProducts();
+    this.getCategories();
   }
 
   GoToCart() {
@@ -57,7 +57,6 @@ export class ProductpageComponent implements OnInit {
     this.apiService.getCategories().subscribe({
       next: (result: any) => {
         this.categories = result;  // Store the fetched categories
-        console.log(result);
       },
       error: (error: any) => {
         console.error('Error fetching categories', error);  // Handle errors if needed
@@ -99,7 +98,6 @@ export class ProductpageComponent implements OnInit {
 
   filterByCategory(categoryId: any): void {
     this.searchTerm=''
-    console.log("called categoryId",categoryId)
     if (categoryId === null) {
       this.loadProducts()
     } else {
@@ -135,9 +133,7 @@ export class ProductpageComponent implements OnInit {
       this.apiService.getProductCountBySearch(this.searchTerm).subscribe({
         next: (res) => {
           this.productsCount = res;
-          console.log(res)
           this.paginationList = new Array(Math.ceil(res / this.pageSize)); // Update pagination based on search results
-          console.log("pagination List",this.paginationList)
           this.cdRef.detectChanges(); // Ensure change detection after updating paginationList
           this.getPage(this.pageNumber); // Fetch the first page of results
         },
@@ -149,7 +145,6 @@ export class ProductpageComponent implements OnInit {
       });
     }else {
       this.loadProducts();
-      console.log("failed search")
     }
   }
 
@@ -219,7 +214,7 @@ export class ProductpageComponent implements OnInit {
   }
 
   navigateToProductDetails(productId: string): void {
-    this.router.navigate(['PurchaseProduct', productId]);
+    this.router.navigate(['Products', productId]);
   }
 
   isInCart(productId: string): boolean {

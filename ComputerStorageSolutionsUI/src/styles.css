@@ -4,3 +4,10 @@
   color: white;
   border-color: #007bff;
 }
+
+body, html {
+  height: 100%;
+  margin: 0;
+  background-color: #eee !important; /* Light gray background */
+}
+

@@ -3,6 +3,7 @@ import { ApiServiceService } from '../Services/api-service.service';
 import { CookieManagerService } from '../Services/cookie-manager.service';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
+import { environment } from 'src/environments/environment.development';
 
 @Component({
   selector: 'app-modify-product',
@@ -19,7 +20,7 @@ export class ModifyProductComponent {
   popupText: string = '';
   searchTerm: string = '';
   Role: string ='';
-  role:string ='9c06200d-5af1-4b14-bb74-9364b10977fe'
+  AdminRole:string =environment.roles.AdminRole
   showUploadOption: boolean = false;
   showEditName: boolean = false;
   showEditDescription: boolean = false;
@@ -33,6 +34,7 @@ export class ModifyProductComponent {
   pageSize: number = 5;
   paginationList: number[] = [];
   categories:any;
+  serverUrl=environment.serverUrl;
 
   constructor(
     private apiService: ApiServiceService,
@@ -90,7 +92,6 @@ export class ModifyProductComponent {
     this.apiService.getCategories().subscribe({
       next: (result: any) => {
         this.categories = result;  // Store the fetched categories
-        console.log(result);
       },
       error: (error: any) => {
         console.error('Error fetching categories', error);  // Handle errors if needed
@@ -100,7 +101,6 @@ export class ModifyProductComponent {
 
   filterByCategory(categoryId: any): void {
     this.searchTerm=''
-    console.log("called categoryId",categoryId)
     if (categoryId === null) {
       this.loadProducts();
     } else {
@@ -136,9 +136,7 @@ export class ModifyProductComponent {
       this.apiService.getProductCountBySearch(this.searchTerm).subscribe({
         next: (res) => {
           this.productsCount = res;
-          console.log(res)
           this.paginationList = new Array(Math.ceil(res / this.pageSize)); // Update pagination based on search results
-          console.log("pagination List",this.paginationList)
           this.cdRef.detectChanges(); // Ensure change detection after updating paginationList
           this.getPage(this.pageNumber); // Fetch the first page of results
         },
@@ -150,7 +148,6 @@ export class ModifyProductComponent {
       });
     }else {
       this.loadProducts();
-      console.log("failed search")
     }
   }
 
@@ -240,7 +237,6 @@ export class ModifyProductComponent {
           this.showPopup(response.message); 
         },
         error: err => {
-          console.log(err);
           this.showPopup(err);
         },
       });

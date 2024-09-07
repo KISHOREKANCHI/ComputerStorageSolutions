@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiServiceService } from '../Services/api-service.service';
 import { CookieManagerService } from '../Services/cookie-manager.service';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment.development';
 
 @Component({
   selector: 'app-cartpage',
@@ -21,6 +22,7 @@ export class CartpageComponent implements OnInit {
     zip: ''
   };
   shippingAddress: string ='';
+  serverUrl=environment.serverUrl;
 
   constructor(private apiService:ApiServiceService,private manager:CookieManagerService,private route:Router){}
 

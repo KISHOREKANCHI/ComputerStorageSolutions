@@ -26,7 +26,6 @@ export class ManageUsersComponent implements OnInit {
     this.apiService.getUsers().subscribe({
       next: (data: any) => {
         this.users = data;
-        console.log("data", this.users);
       },
       error: (error: any) => {
         this.showPopup('Error loading users');
@@ -55,7 +54,6 @@ export class ManageUsersComponent implements OnInit {
   }
 
   confirmAction() {
-    console.log('Confirm action called for:', this.selectedAction);
     if (this.selectedUserId) {
       if (this.selectedAction === 'Promote to Admin') {
         this.apiService.promoteToAdmin(this.selectedUserId).subscribe({
@@ -101,7 +99,6 @@ export class ManageUsersComponent implements OnInit {
     if (modalElement) {
       const modal = new bootstrap.Modal(modalElement);
       modal.show();
-      console.log('Modal opened for action:', this.selectedAction);
     }
   }
 
@@ -112,7 +109,6 @@ export class ManageUsersComponent implements OnInit {
       const modal = bootstrap.Modal.getInstance(modalElement);
       if (modal) {
         modal.hide();
-        console.log('Modal closed');
       }
     }
     this.selectedAction = null;
