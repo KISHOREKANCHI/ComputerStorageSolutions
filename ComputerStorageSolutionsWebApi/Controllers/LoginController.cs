@@ -72,7 +72,7 @@ namespace ComputerStorageSolutions.Controllers
                 }
 
                 _logger.LogWarning("Failed login attempt for email: {Email} at {Time}.", input.Email, DateTime.UtcNow);
-                return BadRequest("Email or password does not exist");
+                return Ok(new { success = false, message = "Email or Password does not exist" });
             }
             catch (Exception ex)
             {

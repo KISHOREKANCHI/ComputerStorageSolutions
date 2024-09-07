@@ -47,6 +47,12 @@ export class ModifyProductComponent {
     this.loadProducts();
     this.getCategories()
   }
+
+  checkCookieExists(): boolean {
+    const cookies = document.cookie.split('; '); // Split cookies into an array
+    const exists = cookies.some(cookie => cookie.startsWith(`token=`)); // Check if any cookie starts with the specified name
+    return exists; // Return the boolean value
+  }
   
   loadProducts(): void {
     const token = document.cookie.split(';')[0];

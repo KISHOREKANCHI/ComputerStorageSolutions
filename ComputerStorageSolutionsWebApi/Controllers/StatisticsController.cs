@@ -141,6 +141,7 @@ namespace ComputerStorageSolutions.Controllers
                                        select new
                                        {
                                            ProductId = g.Key,
+                                           Productname = Database.Products.Where(p => p.ProductId ==g.Key).Select(p=>p.ProductName),
                                            UnitsSold = g.Sum(od => od.Quantity)
                                        }).ToListAsync();
 

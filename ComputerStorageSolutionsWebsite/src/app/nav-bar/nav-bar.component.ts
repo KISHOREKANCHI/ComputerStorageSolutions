@@ -23,6 +23,12 @@ export class NavBarComponent {
     this.expireCookie('token');
   }
 
+  checkCookieExists(): boolean {
+    const cookies = document.cookie.split('; '); // Split cookies into an array
+    const exists = cookies.some(cookie => cookie.startsWith('token=')); // Check if any cookie starts with the specified name
+    return exists; // Return the boolean value
+  }
+
   expireCookie = (name: string) => {
     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
     this.router.navigate(['login'])

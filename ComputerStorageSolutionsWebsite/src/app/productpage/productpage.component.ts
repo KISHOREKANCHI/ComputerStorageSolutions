@@ -36,13 +36,22 @@ export class ProductpageComponent implements OnInit {
   ngOnInit(): void {
     const expiry = 1;
     this.manager.checkToken(expiry);
-    this.loadProducts();
-    this.getCategories();
+    if(this.checkCookieExists()){
+      this.loadProducts();
+      this.getCategories();
+    }
   }
 
   GoToCart() {
     this.router.navigate(['Cart']);
   }
+
+  checkCookieExists(): boolean {
+    const cookies = document.cookie.split('; '); // Split cookies into an array
+    const exists = cookies.some(cookie => cookie.startsWith(`token=`)); // Check if any cookie starts with the specified name
+    return exists; // Return the boolean value
+  }
+  
 
   getCategories() {
     this.apiService.getCategories().subscribe({
