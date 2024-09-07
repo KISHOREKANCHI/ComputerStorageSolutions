@@ -3,6 +3,7 @@ import { ApiServiceService } from '../Services/api-service.service';
 import { CookieManagerService } from '../Services/cookie-manager.service';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from 'src/environments/environment.development';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-order',
@@ -14,7 +15,10 @@ export class OrderspageComponent implements OnInit {
   Username: any;
   serverUrl=environment.serverUrl;
 
-  constructor(private apiService: ApiServiceService,private manager : CookieManagerService){}
+  constructor(
+    private apiService: ApiServiceService,
+    private manager : CookieManagerService,
+    private router:Router){}
 
   ngOnInit(){
     const expiry = 1;
@@ -34,5 +38,9 @@ export class OrderspageComponent implements OnInit {
       error: (error) => {
       }
     });
+  }
+
+  navigateToProductDetails(productId: string): void {
+    this.router.navigate(['Products', productId]);
   }
 }

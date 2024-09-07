@@ -307,8 +307,8 @@ namespace ComputerStorageSolutions.Controllers
         }
 
 
-        [HttpGet("BuyNow")]
-        public async Task<IActionResult> GetProductById([FromQuery] Guid Id)
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetProductById(Guid Id)
         {
             try
             {

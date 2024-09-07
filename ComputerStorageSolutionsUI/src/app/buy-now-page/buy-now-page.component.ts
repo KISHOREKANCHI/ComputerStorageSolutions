@@ -39,7 +39,6 @@ export class BuyNowPageComponent implements OnInit {
   getProductDetails(id: string): void {
     this.apiService.getProductById(id).subscribe({
       next: (response: any) => {
-        console.log(response);
         if (response && response.length > 0) {
           this.product = response[0]; // Store product details
         } else {
