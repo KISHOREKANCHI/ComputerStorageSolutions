@@ -164,7 +164,6 @@ namespace ComputerStorageSolutions.Controllers
                                        group od by od.ProductId into g
                                        select new
                                        {
-                                           ProductId = g.Key,
                                            ProductName = Database.Products
                                                .Where(p => p.ProductId == g.Key)
                                                .Select(p => p.ProductName)
@@ -276,29 +275,59 @@ namespace ComputerStorageSolutions.Controllers
         // 8. Display the customer and products he/she ordered in a quarter
         [HttpGet("CustomerProductsInQuarter")]
         [Authorize(Policy = SecurityPolicy.Admin)]
-        public async Task<IActionResult> GetCustomerProductsInQuarter(Guid customerId, int year, int quarter)
+        public async Task<IActionResult> GetCustomerProductsInQuarter(Guid userId, int year, int quarter)
         {
-            if (customerId == Guid.Empty || year <= 0 || quarter <= 0 || quarter > 4)
+            if (quarter < 1 || quarter > 4 || year < 1)
             {
                 return BadRequest("Invalid input parameters.");
             }
 
             try
             {
-                var startMonth = (quarter - 1) * 3 + 1;
-                var endMonth = startMonth + 2;
+                // Calculate the start and end months for the given quarter
+                int startMonth = ((quarter - 1) * 3) + 1;
+                int endMonth = startMonth + 2;
 
-                var orders = await Database.Orders
-                    .Where(o => o.UserId.ToString().ToLower() == customerId.ToString().ToLower() && o.OrderDate.Year == year && o.OrderDate.Month >= startMonth && o.OrderDate.Month <= endMonth)
-                    .Select(o => new
+                // Retrieve the orders for the specified userId, quarter, and year
+                var orderDetails = await Database.OrderDetails
+                    .Where(od => od.Order.OrderDate.Year == year
+                              && od.Order.OrderDate.Month >= startMonth
+                              && od.Order.OrderDate.Month <= endMonth
+                              && od.Order.UserId == userId)
+                    .Select(od => new
                     {
-                        o.OrderId,
-                        o.OrderDate,
-                        Products = o.OrderDetails.Select(od => od.Products)
+                        ProductId = od.ProductId,
+                        OrderDate = od.Order.OrderDate // Get the OrderDate directly from the Order navigation property
                     })
                     .ToListAsync();
 
-                return Ok(orders);
+                // Retrieve ProductNames using the ProductIds
+                var productIds = orderDetails.Select(od => od.ProductId).ToList();
+                var products = await Database.Products
+                    .Where(p => productIds.Contains(p.ProductId))
+                    .Select(p => new
+                    {
+                        ProductId = p.ProductId,
+                        ProductName = p.ProductName
+                    })
+                    .ToListAsync();
+
+                // Join order details with product names
+                var results = from od in orderDetails
+                              join p in products on od.ProductId equals p.ProductId
+                              select new
+                              {
+                                  ProductName = p.ProductName,
+                                  OrderDate = od.OrderDate
+                              };
+
+                // Check if any data was found
+                if (results == null || !results.Any())
+                {
+                    return Ok("No products found for the specified user in the given quarter.");
+                }
+
+                return Ok(results.ToList());
             }
             catch (Exception ex)
             {

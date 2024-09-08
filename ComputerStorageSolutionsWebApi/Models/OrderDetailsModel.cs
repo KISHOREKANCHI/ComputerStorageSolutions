@@ -23,10 +23,10 @@ namespace ComputerStorageSolutions.Models
         public decimal UnitPrice { get; set; }
 
         [JsonIgnore]
-        public virtual OrdersModel? Order { get; set; }
+        public virtual OrdersModel Order { get; set; } = null!; 
+
         [JsonIgnore]
-        public virtual ProductsModel? Products { get; set; }
-        //public ICollection<OrderDetailsModel>? OrderDetails { get; set; } = new List<OrderDetailsModel>();
+        public virtual ProductsModel Products { get; set; } = null!;
 
 
     }
