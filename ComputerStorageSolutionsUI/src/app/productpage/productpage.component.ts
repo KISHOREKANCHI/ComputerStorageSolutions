@@ -89,7 +89,6 @@ export class ProductpageComponent implements OnInit {
         this.cdRef.detectChanges(); // Ensure change detection after updating ProductDetails
       },
       error: (err) => {
-        console.error('Failed to load products', err);
         this.popupText = 'Unable to load products. Please try again later.';
         this.popupVisible = true;
       }

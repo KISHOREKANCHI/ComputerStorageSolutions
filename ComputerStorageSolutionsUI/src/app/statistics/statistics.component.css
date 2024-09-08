@@ -1,42 +1,73 @@
 * {
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 20px;
-  }
-  
-  .container {
-    max-width: 600px;  /* Reduced maximum width */
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;  /* Reduced margin for the main title */
-    color: #333;
-  }
-  
-  .chart-card {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;  /* Reduced margin between cards */
-    padding: 10px;  /* Reduced padding */
-  }
-  
-  .chart-card h2 {
-    margin-bottom: 10px;  /* Reduced margin for headings */
-    color: #333;
-  }
-  
-  canvas {
-    width: 100% !important;  /* Ensures the chart takes full width of the card */
-    height: 200px;  /* Reduced height for the charts */
-    max-width: 100%;  /* Ensures responsiveness */
-  }
-  
+  box-sizing: border-box;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+  font-family: 'Arial', sans-serif;
+  letter-spacing: 1px;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.chart-card h2 {
+  margin-bottom: 15px;
+  color: #444;
+}
+
+canvas {
+  width: 100% !important;
+  height: 300px;
+  max-width: 100%;
+}
+
+.month-picker-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+.popup-message {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  opacity: 0.9;
+  font-size: 14px;
+}

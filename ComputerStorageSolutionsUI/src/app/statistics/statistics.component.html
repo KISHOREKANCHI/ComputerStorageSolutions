@@ -17,22 +17,41 @@
   </div>
 
   <div class="chart-card">
-    <h2>Customer Products in Quarter</h2>
-    <canvas id="customerProductsInQuarterChart"></canvas>
-  </div>
+    <h2>Least Popular Product</h2>
+    
+    <div class="month-picker-container">
+      <label for="leastPopulartmonthPicker">Select Month:</label>
+      <input type="month" id="leastPopularmonthPicker" name="monthPicker">
+    </div>
+
+    <button id="loadLeastPopularProductBtn">Load Chart</button>
+  
+    <canvas id="leastPopularProductChart"></canvas>
+  </div>  
 
   <div class="chart-card">
-    <h2>Least Popular Product</h2>
-    <canvas id="leastPopularProductChart"></canvas>
+    <h2>Most Popular Product</h2>
+    
+    <div class="month-picker-container">
+      <label for="mostPopularMonthPicker">Select Month:</label>
+      <input type="month" id="mostPopularMonthPicker" name="mostPopularMonthPicker">
+    </div>
+  
+    <button id="loadMostPopularChartBtn">Load Chart</button>
+    
+    <canvas id="mostPopularProductChart"></canvas>
+  </div>
+  
+  <div class="chart-card">
+    <h2>Customer Products in Quarter</h2>
+    <canvas id="customerProductsInQuarterChart"></canvas>
   </div>
 
   <div class="chart-card">
     <h2>Units Sold in Price Range</h2>
     <canvas id="unitsSoldInPriceRangeChart"></canvas>
   </div>
-
-  <div class="chart-card">
-    <h2>Most Popular Product</h2>
-    <canvas id="mostPopularProductChart"></canvas>
-  </div>
+</div>
+<div id="popupMessage" class="popup-message" *ngIf="popupVisible">
+  {{ popupText }}
 </div>

@@ -33,6 +33,8 @@ export class StatisticsComponent implements OnInit {
   month: number = new Date().getMonth() + 1; // Default to current month
   minPrice: number = 0; // Default price range
   maxPrice: number = 500;
+  popupText: string='';
+  popupVisible: boolean=false;
 
   constructor(private apiService: ApiServiceService) {
     Chart.register(...registerables);
@@ -41,22 +43,67 @@ export class StatisticsComponent implements OnInit {
   ngOnInit() {
     this.loadTotalSalesMonthWise();
     this.loadInactiveCustomers();
-    this.loadUnitsSoldInPriceRange(this.minPrice, this.maxPrice);
-    this.loadMostPopularProduct(this.year, this.month);
-    this.loadLeastPopularProduct(this.year, this.month);
     this.loadHighestSellingProductOrderDetails();
-    this.loadOrdersByCustomer(); // To load total orders by customer
-    this.loadCustomerProductsInQuarter(); // To load customer products in quarter
+    this.loadOrdersByCustomer();
+    this.loadCustomerProductsInQuarter();
+
+    const leastPopularmonthPicker = document.getElementById('leastPopularmonthPicker') as HTMLInputElement;
+    const loadLeastPopularProductBtn = document.getElementById('loadLeastPopularProductBtn') as HTMLButtonElement;
+  
+    // Event listener to handle chart loading on button click
+    loadLeastPopularProductBtn.addEventListener('click', () => {
+      const selectedDate = leastPopularmonthPicker.value; // Format: 'YYYY-MM'
+      if (selectedDate) {
+        const [year, month] = selectedDate.split('-').map(Number); // Extract year and month
+        this.loadLeastPopularProduct(year, month); // Call function with selected year and month
+      } else {
+        console.error('No date selected');
+      }
+    });
+
+    const mostPopularMonthPicker = document.getElementById('mostPopularMonthPicker') as HTMLInputElement;
+    const loadMostPopularProductBtn = document.getElementById('loadMostPopularChartBtn') as HTMLButtonElement;
+    loadMostPopularProductBtn.addEventListener('click', () => {
+      const selectedDate = mostPopularMonthPicker.value; // Format: 'YYYY-MM'
+      if (selectedDate) {
+        const [year, month] = selectedDate.split('-').map(Number); // Extract year and month
+        this.loadMostPopularProduct(year, month); // Call function with selected year and month
+      } else {
+        console.error('No date selected');
+      }
+    });
+    this.loadUnitsSoldInPriceRange(this.minPrice, this.maxPrice);
   }
 
   // Fetching total sales data and rendering a chart
   loadTotalSalesMonthWise() {
-    this.apiService.getTotalSalesMonthWise().subscribe(data => {
-      console.log('Total Sales Month Wise:', data);
-      this.totalSalesData = data;
-      const labels = data.map((sale: { month: any; }) => sale.month);
-      const salesValues = data.map((sale: { totalSales: any; }) => sale.totalSales);
-      this.renderTotalSalesChart(labels, salesValues);
+    this.apiService.getTotalSalesMonthWise().subscribe({
+      next: (data) => {
+        if (!data || data.length === 0) {
+          // Handle no data scenario (e.g., show a message to the user)
+          this.showPopup('Data does not exist');
+          return; // Exit the method early
+        }
+        console.log('Total Sales Month Wise:', data);
+        this.totalSalesData = data;
+  
+        // Prepare the labels and sales values
+        const labels = Array.from({ length: 12 }, (_, i) => new Date(0, i).toLocaleString('default', { month: 'long' }));
+        const salesValues = new Array(12).fill(0); // Initialize sales values for each month
+  
+        // Populate sales values for each year
+        data.forEach((yearData: { months: any[]; }) => {
+          yearData.months.forEach((monthData: { month: number; totalSales: any; }) => {
+            const monthIndex = monthData.month - 1; // Adjust month to 0-based index
+            salesValues[monthIndex] += monthData.totalSales; // Accumulate total sales for each month
+          });
+        });
+  
+        this.renderTotalSalesChart(labels, salesValues);
+      },
+      error: (error) => {
+        this.showPopup(error);
+      }
     });
   }
 
@@ -66,25 +113,282 @@ export class StatisticsComponent implements OnInit {
     const context = ctx.getContext('2d');
     if (context) {
       new Chart(context, {
-        type: 'line',
+        type: 'bar', // Change to 'bar' for a bar chart
         data: {
           labels: labels,
           datasets: [{
             label: 'Total Sales',
             data: salesValues,
-            fill: false,
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
             borderColor: 'rgba(75, 192, 192, 1)',
-            tension: 0.1
+            borderWidth: 1
           }]
         },
         options: {
           scales: {
             y: {
-              beginAtZero: true
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Total Sales'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Months'
+              }
+            }
+          },
+          responsive: true,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top'
             }
           }
         }
       });
+    }
+  }
+
+  loadInactiveCustomers() {
+    this.apiService.getInactiveCustomers().subscribe(data => {
+        console.log('Inactive Customers:', data);
+        this.inactiveCustomers = data;
+        this.renderInactiveCustomersChart(); // Call to render the chart
+    });
+  }
+
+  // Render chart for inactive customers
+  renderInactiveCustomersChart() {
+    const ctx = <HTMLCanvasElement>document.getElementById('inactiveCustomersChart');
+    const context = ctx.getContext('2d');
+    
+    if (context) {
+        const customerNames = this.inactiveCustomers.map(customer => customer.customerName);
+        const customerCounts = Array(this.inactiveCustomers.length).fill(1); // Each customer gets a count of 1
+
+        new Chart(context, {
+            type: 'pie',
+            data: {
+                labels: customerNames,
+                datasets: [{
+                    label: 'Inactive Customers',
+                    data: customerCounts,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(153, 102, 255, 0.6)',
+                        'rgba(255, 159, 64, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (tooltipItem) => {
+                                const dataset = tooltipItem.dataset;
+                                const total = dataset.data.reduce((sum, value) => sum + value, 0);
+                                const currentValue = dataset.data[tooltipItem.dataIndex];
+                                const percentage = Math.floor(((currentValue / total) * 100) + 0.5);
+                                return `${tooltipItem.label}: ${percentage}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+  }
+
+
+  // Load details for the highest-selling product's order and customer details
+  loadHighestSellingProductOrderDetails() {
+    this.apiService.getOrderIdAndCustomerDetailsForHighestSellingProduct().subscribe(data => {
+      console.log('Highest Selling Product Details:', data);
+      this.highestSellingProduct = data;
+      this.renderHighestSellingProductChart(data.productName, data.customerName); // Call to render the chart
+    });
+  }
+
+  
+
+  // Render doughnut chart for highest selling product and customer
+  renderHighestSellingProductChart(productName: string, customerName: string) {
+    const ctx = <HTMLCanvasElement>document.getElementById('highestSellingProductChart');
+    const context = ctx.getContext('2d');
+
+    if (context) {
+        new Chart(context, {
+            type: 'doughnut',
+            data: {
+                labels: ['Product', 'Customer'],
+                datasets: [{
+                    label: 'Highest Selling Product Info',
+                    data: [1, 1], // Equal weight for both product and customer for visualization
+                    backgroundColor: ['rgba(75, 192, 192, 0.5)', 'rgba(255, 159, 64, 0.5)'],
+                    borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 159, 64, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                if (context.label === 'Product') {
+                                    return `Product: ${productName}`;
+                                } else {
+                                    return `Customer: ${customerName}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+  }
+
+  loadLeastPopularProduct(year: number, month: number) {
+    this.apiService.getLeastPopularProductDetailsForMonth(year, month).subscribe(data => {
+      if (!data || data.length === 0) {
+        this.showPopup("No data available for the specified month and year.");
+        return; // Exit the method early
+      }  
+      console.log('Least Popular Product:', data);
+      this.leastPopularProduct = data;
+  
+      // Create chart for least popular product
+      this.renderLeastPopularProductChart();
+    });
+  }
+  
+  // Render the chart using the least popular product data
+  renderLeastPopularProductChart() {
+    const ctx = <HTMLCanvasElement>document.getElementById('leastPopularProductChart');
+    if (ctx) {
+      const context = ctx.getContext('2d');
+      if (context) {
+        const label = this.leastPopularProduct.product; // Use 'product' from the data
+        const unitsSold = this.leastPopularProduct.unitsSold;
+  
+        new Chart(context, {
+          type: 'bar',
+          data: {
+            labels: [label],
+            datasets: [{
+              label: 'Units Sold',
+              data: [unitsSold],
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1,
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            },
+            plugins: {
+              legend: {
+                display: true,
+              },
+              tooltip: {
+                enabled: true,
+              }
+            }
+          }
+        });
+      } else {
+        console.error('Failed to get 2D context for least popular product chart.');
+      }
+    } else {
+      console.error('Canvas element for least popular product chart not found.');
+    }
+  }  
+
+  loadMostPopularProduct(year: number, month: number) {
+    this.apiService.getPopularProductDetailsForMonth(year, month).subscribe({
+      next: (data) => {
+        if (!data || data.length === 0) {
+          this.showPopup("No data available for the specified month and year.");
+          return; // Exit the method early
+        }
+        this.mostPopularProduct = data;
+        console.log("most poular product",this.mostPopularProduct)
+        this.renderMostPopularProductChart();
+      },
+      error: (err) => {
+        this.mostPopularProduct = null; 
+        this.showPopup(err);
+      }
+    });
+  }
+
+   // Render chart for most popular product
+  renderMostPopularProductChart() {
+    const ctx = <HTMLCanvasElement>document.getElementById('mostPopularProductChart');
+    if (ctx) {
+      const context = ctx.getContext('2d');
+      if (context) {
+        const label = this.mostPopularProduct.product; // Use 'product' from the data
+        const unitsSold = this.mostPopularProduct.unitsSold;
+  
+        new Chart(context, {
+          type: 'bar',
+          data: {
+            labels: [label],
+            datasets: [{
+              label: 'Units Sold',
+              data: [unitsSold],
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1,
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            },
+            plugins: {
+              legend: {
+                display: true,
+              },
+              tooltip: {
+                enabled: true,
+              }
+            }
+          }
+        });
+      } else {
+        console.error('Failed to get 2D context for mostt popular product chart.');
+      }
+    } else {
+      console.error('Canvas element for most popular product chart not found.');
     }
   }
 
@@ -110,14 +414,6 @@ export class StatisticsComponent implements OnInit {
     });
   }
 
-  // Load inactive customers
-  loadInactiveCustomers() {
-    this.apiService.getInactiveCustomers().subscribe(data => {
-      console.log('Inactive Customers:', data);
-      this.inactiveCustomers = data;
-      this.renderInactiveCustomersChart(); // Call to render the chart
-    });
-  }
 
   // Load units sold in a specified price range
   loadUnitsSoldInPriceRange(minPrice: number, maxPrice: number) {
@@ -126,106 +422,7 @@ export class StatisticsComponent implements OnInit {
       this.unitsSoldInPriceRange = data;
     });
   }
-
-  loadMostPopularProduct(year: number, month: number) {
-    this.apiService.getPopularProductDetailsForMonth(year, month).subscribe(data => {
-      console.log('Most Popular Product:', data);
-      this.mostPopularProduct = data;
-    });
-  }
   
-  loadLeastPopularProduct(year: number, month: number) {
-    this.apiService.getLeastPopularProductDetailsForMonth(year, month).subscribe(data => {
-      console.log('Least Popular Product:', data);
-      this.leastPopularProduct = data;
-  
-      // Create chart for least popular product
-      this.renderLeastPopularProductChart();
-    });
-  }
-
-  // Load details for the highest-selling product's order and customer details
-  loadHighestSellingProductOrderDetails() {
-    this.apiService.getOrderIdAndCustomerDetailsForHighestSellingProduct().subscribe(data => {
-      console.log('Highest Selling Product Details:', data);
-      this.highestSellingProduct = data;
-      this.renderHighestSellingProductChart(); // Call to render the chart
-    });
-  }
-
-  // Render chart for inactive customers
-  renderInactiveCustomersChart() {
-    const ctx = <HTMLCanvasElement>document.getElementById('inactiveCustomersChart');
-    const context = ctx.getContext('2d');
-    if (context) {
-      const usernames = this.inactiveCustomers.map(customer => customer.username);
-      const customerCount = this.inactiveCustomers.length;
-
-      new Chart(context, {
-        type: 'bar',
-        data: {
-          labels: usernames,
-          datasets: [{
-            label: 'Inactive Customers',
-            data: Array(customerCount).fill(1), // Each customer gets a count of 1
-            backgroundColor: 'rgba(75, 192, 192, 0.5)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
-    }
-  }
-
-  // Render chart for highest selling product orders
-  renderHighestSellingProductChart() {
-    const ctx = <HTMLCanvasElement>document.getElementById('highestSellingProductChart');
-    const context = ctx.getContext('2d');
-    if (context) {
-      const orderIds = this.highestSellingProduct.map((order: HighestSellingProductOrder) => order.orderId);
-      const customerNames = this.highestSellingProduct.map((order: HighestSellingProductOrder) => order.customerName);
-
-      new Chart(context, {
-        type: 'pie',
-        data: {
-          labels: customerNames,
-          datasets: [{
-            label: 'Highest Selling Product Orders',
-            data: Array(orderIds.length).fill(1), // Each order gets a count of 1
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.5)',
-              'rgba(54, 162, 235, 0.5)',
-              'rgba(255, 206, 86, 0.5)',
-              'rgba(75, 192, 192, 0.5)'
-            ],
-            borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)'
-            ],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
-            },
-          }
-        }
-      });
-    }
-  }
-
   // Render chart for customer products in the quarter
   renderCustomerProductsInQuarterChart() {
     const ctx = <HTMLCanvasElement>document.getElementById('customerProductsInQuarterChart');
@@ -264,45 +461,6 @@ export class StatisticsComponent implements OnInit {
     }
   }
 
-  renderLeastPopularProductChart() {
-    const ctx = <HTMLCanvasElement>document.getElementById('leastPopularProductChart');
-    if (ctx) {
-      const context = ctx.getContext('2d');
-      if (context) {
-        const label = this.leastPopularProduct.productName;
-        const unitsSold = this.leastPopularProduct.unitsSold;
-  
-        new Chart(context, {
-          type: 'doughnut',
-          data: {
-            labels: [label],
-            datasets: [{
-              label: 'Least Popular Product',
-              data: [unitsSold],
-              backgroundColor: ['rgba(255, 99, 132, 0.2)'],
-              borderColor: ['rgba(255, 99, 132, 1)'],
-              borderWidth: 1,
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: {
-                display: true,
-              },
-              tooltip: {
-                enabled: true,
-              }
-            }
-          }
-        });
-      } else {
-        console.error('Failed to get 2D context for least popular product chart.');
-      }
-    } else {
-      console.error('Canvas element for least popular product chart not found.');
-    }
-  }
 
   renderUnitsSoldInPriceRangeChart() {
     const ctx = <HTMLCanvasElement>document.getElementById('unitsSoldInPriceRangeChart');
@@ -334,37 +492,13 @@ export class StatisticsComponent implements OnInit {
     }
   }
 
-  // Render chart for most popular product
-  renderMostPopularProductChart() {
-    const ctx = <HTMLCanvasElement>document.getElementById('mostPopularProductChart');
-    const context = ctx.getContext('2d');
-    if (context) {
-      const labels = [this.mostPopularProduct.productName];
-      const data = [this.mostPopularProduct.unitsSold];
+  showPopup(message: string): void {
+    this.popupText = message;
+    this.popupVisible = true;
 
-      new Chart(context, {
-        type: 'doughnut',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Most Popular Product',
-            data: data,
-            backgroundColor: 'rgba(75, 192, 192, 0.5)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
-            },
-          }
-        }
-      });
-    }
+    setTimeout(() => {
+      this.popupVisible = false;
+    }, 2000);
   }
-
   
 }
