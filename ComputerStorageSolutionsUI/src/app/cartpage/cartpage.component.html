@@ -4,9 +4,11 @@
       <div class="col-10">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h3 class="fw-normal mb-0">Shopping Cart</h3>
-          <button type="button" class="btn btn-secondary" (click)="toggleSelectAll()">
+          <div *ngIf="!isCartEmpty()">
+          <button type="button" class="btn btn-secondary" (click)="toggleSelectAll() ">
             {{ allSelected() ? 'Unselect All' : 'Select All' }}
           </button>
+          </div>
         </div>
 
         <div *ngIf="isCartEmpty()" class="alert alert-info text-center">
