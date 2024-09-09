@@ -260,6 +260,21 @@ export class ModifyProductComponent {
   onFileChange(event: any,index:number,files:any):void{
     if (event.target.files && event.target.files.length > 0) {
       this.selectedFile = <File>files[0];
+      const validImageTypes = [
+        'image/jpeg', 'image/png', 'image/gif', 
+        'image/bmp', 'image/tiff', 'image/webp' , 'image/jpg'
+      ];
+
+      if (!validImageTypes.includes(this.selectedFile.type)) {
+        this.showPopup('Invalid file type. Only Images are allowed.');
+        return;
+      }
+
+      const maxSizeInBytes = 2 * 1024 * 1024; // 2MB
+      if (this.selectedFile.size > maxSizeInBytes) {
+        this.showPopup('File size exceeds the 2MB limit.');
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (e) => {
         // Check if e.target is not null
@@ -268,6 +283,8 @@ export class ModifyProductComponent {
         }
       };
       reader.readAsDataURL(this.selectedFile);
+    }else{
+      return;
     }
   }
 

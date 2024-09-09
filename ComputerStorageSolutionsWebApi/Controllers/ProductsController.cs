@@ -363,7 +363,6 @@ namespace ComputerStorageSolutions.Controllers
 
         [Authorize(Policy = SecurityPolicy.Admin)]
         [HttpPost("AddProduct")]
-        [DisableRequestSizeLimit]
         public IActionResult AddProduct()
         {
             try
@@ -374,11 +373,21 @@ namespace ComputerStorageSolutions.Controllers
                     return BadRequest("No file uploaded.");
                 }
 
+                if (!IsValidImageFile(file))
+                {
+                    return BadRequest("Invalid image file. Only image types are allowed.");
+                }
+
+                // Limit the file size to 2 MB
+                if (file.Length > 2 * 1024 * 1024)
+                {
+                    return BadRequest("File size exceeds the 2MB limit.");
+                }
+
                 var folderName = "wwwroot/Images/";
-                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-                var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                var fullPath = Path.Combine(pathToSave, fileName);
-                var dbPath = Path.Combine(folderName, fileName);
+                var randomFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName).ToLower()}"; // Generate random GUID-based file name
+                var fullPath = Path.Combine(Directory.GetCurrentDirectory(), folderName, randomFileName);
+                var dbPath = $"/Images/{randomFileName}";
 
                 using (var stream = new FileStream(fullPath, FileMode.Create))
                 {
@@ -400,7 +409,7 @@ namespace ComputerStorageSolutions.Controllers
                     CategoryId = categoryId,
                     StockQuantity = stockQuantity,
                     Status = status,
-                    ImageUrl = $"/Images/{fileName}"
+                    ImageUrl = dbPath,
                 };
 
                 Database.Products.Add(newProduct);
@@ -417,14 +426,11 @@ namespace ComputerStorageSolutions.Controllers
 
         [Authorize(Policy = SecurityPolicy.Admin)]
         [HttpPatch("ModifyProduct")]
-        [DisableRequestSizeLimit]
         public async Task<IActionResult> ModifyProduct()
         {
             try
             {
                 var file = Request.Form.Files["image"];
-                var folderName = "wwwroot/Images/";
-                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
                 var productId = new Guid(Request.Form["ProductId"]);
 
                 var product = await Database.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
@@ -434,31 +440,34 @@ namespace ComputerStorageSolutions.Controllers
                     return NotFound(new { success = false, message = "Product not found." });
                 }
 
-                var productName = Request.Form["productName"];
-                var description = Request.Form["description"];
-                var price = decimal.Parse(Request.Form["price"]);
-                var categoryId = int.Parse(Request.Form["categoryId"]);
-                var stockQuantity = int.Parse(Request.Form["stockQuantity"]);
-                var status = Request.Form["status"];
-
-                product.ProductName = productName;
-                product.Description = description;
-                product.Price = price;
-                product.CategoryId = categoryId;
-                product.StockQuantity = stockQuantity;
-                product.Status = status;
+                product.ProductName = Request.Form["productName"];
+                product.Description = Request.Form["description"];
+                product.Price = decimal.Parse(Request.Form["price"]);
+                product.CategoryId = int.Parse(Request.Form["categoryId"]);
+                product.StockQuantity = int.Parse(Request.Form["stockQuantity"]);
+                product.Status = Request.Form["status"];
 
                 if (file != null && file.Length > 0)
                 {
-                    var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    var fullPath = Path.Combine(pathToSave, fileName);
+                    if (!IsValidImageFile(file))
+                    {
+                        return BadRequest(new { success = false, message = "Invalid file type or content." });
+                    }
+
+                    var folderName = "wwwroot/Images/";
+                    var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+                    // Generate a random file name using GUID
+                    var randomFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName).ToLower()}"; // Random GUID-based file name
+                    var fullPath = Path.Combine(pathToSave, randomFileName);
+                    var dbPath = $"/Images/{randomFileName}";
 
                     using (var stream = new FileStream(fullPath, FileMode.Create))
                     {
                         await file.CopyToAsync(stream);
                     }
 
-                    product.ImageUrl = $"/Images/{fileName}";
+                    product.ImageUrl =dbPath;
                 }
 
                 await Database.SaveChangesAsync();
@@ -492,5 +501,65 @@ namespace ComputerStorageSolutions.Controllers
                 return Guid.Empty; // Return an empty GUID if there is an error
             }
         }
+
+        private bool IsValidImageFile(IFormFile file)
+        {
+            // List of allowed MIME types and extensions for common image formats
+            var allowedMimeTypes = new[]
+            {
+        "image/jpeg", "image/png", "image/gif", "image/bmp", "image/tiff", "image/webp"
+    };
+            var allowedExtensions = new[]
+            {
+        ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".webp"
+    };
+
+            var mimeType = file.ContentType.ToLower();
+            var extension = Path.GetExtension(file.FileName).ToLower();
+
+            // Validate MIME type and file extension
+            if (!allowedMimeTypes.Contains(mimeType) || !allowedExtensions.Contains(extension))
+            {
+                return false;
+            }
+
+            // Validate the file's magic number based on its MIME type
+            using (var reader = new BinaryReader(file.OpenReadStream()))
+            {
+                byte[] headerBytes = reader.ReadBytes(4);
+                return IsValidImageMagicNumber(headerBytes, mimeType);
+            }
+        }
+
+        private bool IsValidImageMagicNumber(byte[] headerBytes, string mimeType)
+        {
+            // Validate magic numbers for each common image format
+            switch (mimeType)
+            {
+                case "image/jpeg":
+                    return headerBytes[0] == 0xFF && headerBytes[1] == 0xD8; // JPEG magic number
+
+                case "image/png":
+                    return headerBytes[0] == 0x89 && headerBytes[1] == 0x50 && headerBytes[2] == 0x4E && headerBytes[3] == 0x47; // PNG magic number
+
+                case "image/gif":
+                    return headerBytes[0] == 0x47 && headerBytes[1] == 0x49 && headerBytes[2] == 0x46 && headerBytes[3] == 0x38; // GIF magic number
+
+                case "image/bmp":
+                    return headerBytes[0] == 0x42 && headerBytes[1] == 0x4D; // BMP magic number (BM)
+
+                case "image/tiff":
+                    // TIFF magic numbers (two variants: "II" and "MM")
+                    return (headerBytes[0] == 0x49 && headerBytes[1] == 0x49) ||
+                           (headerBytes[0] == 0x4D && headerBytes[1] == 0x4D);
+
+                case "image/webp":
+                    return headerBytes[0] == 0x52 && headerBytes[1] == 0x49 && headerBytes[2] == 0x46 && headerBytes[3] == 0x46; // WebP magic number (RIFF)
+
+                default:
+                    return false; // Unknown format
+            }
+        }
+
     }
 }

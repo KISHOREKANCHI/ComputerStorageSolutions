@@ -53,9 +53,12 @@ builder.Services.AddCors(options =>
 
 builder.Services.Configure<FormOptions>(options =>
 {
-    options.ValueLengthLimit = int.MaxValue;
-    options.MultipartBoundaryLengthLimit = int.MaxValue;
-    options.MemoryBufferThreshold = int.MaxValue;
+    options.MultipartBodyLengthLimit = 2 * 1024 * 1024; // 2 MB for file uploads
+    options.ValueLengthLimit = 16 * 1024 * 1024; // 16 MB for form field values
+    options.MultipartBoundaryLengthLimit = 128; // Boundary size
+    options.MemoryBufferThreshold = 128 * 1024; // 128 KB before switching to disk
+    options.BufferBodyLengthLimit = 2 * 1024 * 1024; // 2 MB for buffering
+    options.KeyLengthLimit = 256; // Maximum form field key length
 }
 
 );
