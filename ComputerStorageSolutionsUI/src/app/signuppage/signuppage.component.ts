@@ -99,8 +99,12 @@ export class SignuppageComponent {
 
     this.userDetailsService.RegisterDetails(SignupData).subscribe({
       next: (response: any) => {
+        console.log(response);
+        if(!response.sucess){
+          this.RegistrationMessage = response.message;
+          return;
+        }
         this.RegistrationMessage = response.message+' Redirecting to login...';
-        this.showPopup(this.RegistrationMessage);
         setTimeout(() => {
           this.router.navigate(['login']);
         }, 2000); // Redirect after 2 seconds

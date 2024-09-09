@@ -48,7 +48,7 @@
         </div>
 
         <form (ngSubmit)="placeOrder($event)">
-          <div class="mt-4">
+          <div class="mt-4" *ngIf="!isCartEmpty()">
             <h5>Billing Address</h5>
             <div class="mb-3">
               <label for="name" class="form-label">Name</label>

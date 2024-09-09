@@ -70,8 +70,13 @@ export class CartpageComponent implements OnInit {
       this.showPopup("Please select at least one item to place an order.");
       return;
     }
-    if ((this.Address.name || this.Address.address || this.Address.city || this.Address.zip)=== ''){
+    if (!this.Address.name || !this.Address.address || !this.Address.city || !this.Address.zip){
       this.showPopup("Field/s cannot be empty in Billing Address");
+      return;
+    }
+
+    if (this.Address.zip.toString().length > 6) {
+      this.showPopup("Zip Code cannot be more than 6 digits.");
       return;
     }
   
@@ -87,6 +92,15 @@ export class CartpageComponent implements OnInit {
 
     this.apiService.placeOrder(orderDetails, this.shippingAddress).subscribe({
       next: (response) => {
+        orderDetails.forEach(order => {
+          this.removeFromCart(order.productId);
+        });
+  
+        // Navigate to the Orders page
+        setTimeout(() => {
+          this.route.navigate(['Orders']);
+        }, 2000);
+        
         this.showPopup(`${response}`);
         // Handle successful order placement (e.g., navigate to another page, show success message)
       },
@@ -95,9 +109,6 @@ export class CartpageComponent implements OnInit {
         // Handle error (e.g., show error message)
       }
     });
-    setTimeout(()=>{
-      this.route.navigate(['Orders']);
-    },2000);
   }
   
   
