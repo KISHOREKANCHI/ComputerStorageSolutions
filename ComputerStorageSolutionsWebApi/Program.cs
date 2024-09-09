@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Configure database context
 builder.Services.AddDbContext<DataBaseConnect>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/ComputerStorageSolutions.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
 // Configure authentication
 builder.Services.AddAuthentication(options =>
@@ -66,7 +72,11 @@ builder.Services.AddSingleton<IJwtService, TokenService>(); // Register TokenSer
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+builder.Host.UseSerilog();
+
 var app = builder.Build();
+app.UseSerilogRequestLogging();
 
 // Configure middleware
 app.UseStaticFiles();

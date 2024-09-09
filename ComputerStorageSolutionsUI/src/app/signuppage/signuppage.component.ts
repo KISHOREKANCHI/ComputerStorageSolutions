@@ -100,7 +100,7 @@ export class SignuppageComponent {
     this.userDetailsService.RegisterDetails(SignupData).subscribe({
       next: (response: any) => {
         console.log(response);
-        if(!response.sucess){
+        if(!response.success){
           this.RegistrationMessage = response.message;
           return;
         }
