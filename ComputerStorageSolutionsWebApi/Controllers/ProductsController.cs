@@ -507,12 +507,12 @@ namespace ComputerStorageSolutions.Controllers
             // List of allowed MIME types and extensions for common image formats
             var allowedMimeTypes = new[]
             {
-        "image/jpeg", "image/png", "image/gif", "image/bmp", "image/tiff", "image/webp"
-    };
+                "image/jpeg", "image/png", "image/gif", "image/bmp", "image/tiff", "image/webp"
+            };
             var allowedExtensions = new[]
             {
-        ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".webp"
-    };
+                ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".webp"
+            };
 
             var mimeType = file.ContentType.ToLower();
             var extension = Path.GetExtension(file.FileName).ToLower();
