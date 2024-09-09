@@ -78,6 +78,7 @@ export class ModifyProductComponent {
       next: (response: any) => {
         this.ProductDetails = response;
         this.FilteredProducts = this.ProductDetails;
+        this.OriginalProductDetails = response.map((product: any) => ({ ...product }));
         this.cdRef.detectChanges(); // Ensure change detection after updating ProductDetails
       },
       error: (err) => {
